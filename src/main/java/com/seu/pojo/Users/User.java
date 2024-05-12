@@ -1,9 +1,12 @@
-package com.seu.pojo;
+package com.seu.pojo.Users;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 用户类
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
