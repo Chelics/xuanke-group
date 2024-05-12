@@ -74,17 +74,17 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--JWT令牌token依赖-->
+        <!--JWT令牌 token依赖-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
+        <!--单元测试 @Test 所需依赖-->
         <dependency>
-            <groupId>junit</groupId>git
+            <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-
     </dependencies>
     <dependencyManagement>
         <dependencies>
