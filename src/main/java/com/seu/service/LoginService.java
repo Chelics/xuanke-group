@@ -1,5 +1,7 @@
 package com.seu.service;
 
+import com.seu.pojo.Users.User;
+
 public interface LoginService {
     /**
      * 登录验证
@@ -7,5 +9,5 @@ public interface LoginService {
      * @param password
      * @return
      */
-    boolean checkCredentials(String username, String password);
+    User checkCredentials(String username, String password);
 }

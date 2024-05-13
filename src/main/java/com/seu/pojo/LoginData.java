@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * 登录信息类
+ * 只包含username和password, 用于验证登录信息
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

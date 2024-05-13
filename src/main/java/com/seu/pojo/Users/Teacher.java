@@ -1,5 +1,8 @@
-package com.seu.pojo;
+package com.seu.pojo.Users;
 
-public class Teacher extends User{
+/**
+ * 教师类
+ */
+public class Teacher extends User {
 
 }
