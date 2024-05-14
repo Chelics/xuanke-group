@@ -41,25 +41,29 @@ public class StaffRoomServiceImpl implements StaffRoomService {
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
-    public Course getCourseByRoomId(Integer id) {
-        RoomCourse roomCourse= courseMapper.getCourseByRoomId(id);//子类强转父类
-        //获取教室ID
-        int courseId=roomCourse.getId();
+    public List<RoomCourse> getCoursesByRoomId(Integer id) {
+        List<RoomCourse> roomCourses= courseMapper.getCoursesByRoomId(id);//子类强转父类
+        for (int i = 0; i < roomCourses.size(); i++) {
+            RoomCourse roomCourse = roomCourses.get(i);//对于每一个course
+            //获取教室ID
+            int courseId = roomCourse.getId();
 
-        //下面为避免Join联查，将联查分开
+            //下面为避免Join联查，将联查分开
 
-        //查询教师ID
-        List<Integer> teacherIds=courseTeacherMapper.getTeacherIdsByCourseId(courseId);
-        //根据教师ID查询名字
-        List<String> teachers=teacherMapper.getNamesByIds(teacherIds);
+            //查询教师ID
+            List<Integer> teacherIds = courseTeacherMapper.getTeacherIdsByCourseId(courseId);
+            //根据教师ID查询名字
+            List<String> teachers = teacherMapper.getNamesByIds(teacherIds);
 
-        //查询班级ID
-        List<Integer> classIds=courseClassMapper.getClassIdsByCourseId(courseId);
-        //根据班级ID查询名字
-        List<String> classes=classMapper.getNamesByIds(classIds);
-        //补充返回的课程类
-        roomCourse.setTeachers(teachers);
-        roomCourse.setClasses(classes);
-        return roomCourse;
+            //查询班级ID
+            List<Integer> classIds = courseClassMapper.getClassIdsByCourseId(courseId);
+            //根据班级ID查询名字
+            List<String> classes = classMapper.getNamesByIds(classIds);
+            //补充返回的课程类
+            roomCourse.setTeachers(teachers);
+            roomCourse.setClasses(classes);
+
+        }
+        return roomCourses;
     }
 }

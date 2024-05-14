@@ -14,6 +14,6 @@ public interface CourseMapper {
      * @return
      */
     @Select("select * from course where room_id=#{id}")
-    RoomCourse getCourseByRoomId(Integer id);
+    List<RoomCourse> getCoursesByRoomId(Integer id);
 
 }
