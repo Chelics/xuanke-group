@@ -2,8 +2,7 @@ create table checking
 (
     id             int auto_increment comment '主键'
         primary key,
-    course_id      int                          null comment '关联课程主键',
-    course_num     char(8)                      null comment '课程编号',
+    course_number  char(8)                      null comment '课程编号',
     course_name    varchar(30)                  null comment '课程名',
     type           tinyint unsigned             null comment '课程类别',
     course_hour    tinyint unsigned             null comment '课时',
@@ -12,7 +11,6 @@ create table checking
     teacher_ids    varchar(30)                  null comment '教师',
     faculty        varchar(30)                  null comment '学院',
     credit         tinyint unsigned             null comment '学分',
-    style          tinyint unsigned             not null comment '操作类型',
     course_status  tinyint unsigned default '1' not null comment '审核状态',
     commit_time    datetime                     not null comment '提交时间'
 )

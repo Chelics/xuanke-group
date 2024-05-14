@@ -25,8 +25,8 @@ public class StaffRoomServiceImpl implements StaffRoomService {
         //1. 设置分页参数
         PageHelper.startPage(page,pageSize);
         //2. 执行查询
-        List<Room> empList= roomMapper.list(building, roomName, storageBegin, storageEnd);
-        Page<Room> p=(Page<Room>)empList;
+        List<Room> roomList= roomMapper.list(building, roomName, storageBegin, storageEnd);
+        Page<Room> p=(Page<Room>)roomList;
         //3. 封装pageBean 对象
         PageBean pageBean=new PageBean(p.getResult(),p.getTotal());
 

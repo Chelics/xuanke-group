@@ -9,7 +9,7 @@
         from room
         <where>
             <if test="building!=null and building!=''">building like concat('%', #{building}, '%')</if>
-            <if test="roomName!=null and roomName!=''">room_name like concat(#{roomName}, '%')</if>
+            <if test="roomName!=null and roomName!=''">and room_name like concat(#{roomName}, '%')</if>
             <if test="begin!=null and end!=null">and room_storage between #{begin} and #{end}</if>
         </where>
         order by room_name
