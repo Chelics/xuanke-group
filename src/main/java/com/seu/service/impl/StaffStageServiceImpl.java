@@ -1,6 +1,6 @@
 package com.seu.service.impl;
 
-import com.seu.mapper.StaffStageMapper;
+import com.seu.mapper.StageMapper;
 import com.seu.pojo.Stage;
 import com.seu.service.StaffStageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,30 +11,30 @@ import java.util.List;
 @Service
 public class StaffStageServiceImpl implements StaffStageService {
     @Autowired
-    private StaffStageMapper staffStageMapper;
+    private StageMapper stageMapper;
     @Override
     public List<Stage> list() {
-        return staffStageMapper.list();
+        return stageMapper.list();
     }
 
     @Override
     public Stage getById(Integer id) {
-        return staffStageMapper.getById(id);
+        return stageMapper.getById(id);
     }
 
     @Override
     public void update(Stage stage) {
-        staffStageMapper.update(stage);
+        stageMapper.update(stage);
     }
 
     @Override
     public Stage getTermName() {
-        Stage stage=staffStageMapper.getTerName();
+        Stage stage= stageMapper.getTerName();
         return stage;
     }
 
     @Override
     public void updateTermName(Stage stage) {
-        staffStageMapper.updateTermName(stage);
+        stageMapper.updateTermName(stage);
     }
 }

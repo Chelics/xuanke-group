@@ -1,14 +1,13 @@
 package com.seu.controller;
 
+import com.seu.pojo.Course;
 import com.seu.pojo.PageBean;
 import com.seu.pojo.Result;
+import com.seu.pojo.Stage;
 import com.seu.service.StaffRoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -33,4 +32,17 @@ public class StaffRoomController {
         PageBean pageBean=staffRoomService.page(page,pageSize,building,roomName,storageBegin,storageEnd);
         return Result.success(pageBean);
     }
+
+    /**
+     * 根据ID查询该教室课表
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result getCourseByRoomId(@PathVariable Integer id){
+        log.info("根据ID查询课表,ID:{}",id);
+        Course course= staffRoomService.getCourseByRoomId(id);
+        return Result.success(course);
+    }
+
 }

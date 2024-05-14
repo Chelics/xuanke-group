@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 @Mapper
-public interface StaffRoomMapper {
+public interface RoomMapper {
     /**
      * 分页获取列表数据
      * @param building
