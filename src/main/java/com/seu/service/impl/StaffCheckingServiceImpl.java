@@ -7,8 +7,10 @@ import com.seu.mapper.ClassMapper;
 import com.seu.mapper.TeacherMapper;
 import com.seu.pojo.FullCheckingCourse;
 import com.seu.pojo.PageBean;
+import com.seu.pojo.Result;
 import com.seu.service.StaffCheckingService;
 import com.seu.utils.IdUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ public class StaffCheckingServiceImpl implements StaffCheckingService {
     private TeacherMapper teacherMapper;
     @Autowired
     private ClassMapper classMapper;
+
     @Transactional(rollbackFor = {Exception.class})
     @Override
     public PageBean page(Integer page, Integer pageSize, String courseName) {
@@ -47,5 +50,33 @@ public class StaffCheckingServiceImpl implements StaffCheckingService {
         PageBean pageBean=new PageBean(p.getResult(),p.getTotal());
 
         return pageBean;
+    }
+
+    @Override
+    public void reject(List<Integer> ids) {
+        checkingMapper.reject(ids);
+    }
+
+    @Override
+    public void pass(List<Integer> ids) {
+        checkingMapper.pass(ids);
+
+        //自动分配时间和教室
+
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
+    public FullCheckingCourse getById(Integer id) {
+        FullCheckingCourse basic=checkingMapper.getById(id);
+        //使用IdUtils类 解码','分隔的teacher和class
+        List<Integer> teacherIDs = IdUtils.stringToList(basic.getTeacherIds());
+        List<Integer> classIDs = IdUtils.stringToList(basic.getClassIds());
+        //补充完整信息
+        List<String> teachers=teacherMapper.getNamesByIds(teacherIDs);
+        basic.setTeachers(teachers);
+        List<String> classes=classMapper.getNamesByIds(classIDs);
+        basic.setClasses(classes);
+        return basic;
     }
 }
