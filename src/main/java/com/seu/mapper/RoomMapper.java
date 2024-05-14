@@ -19,4 +19,14 @@ public interface RoomMapper {
      */
     //@Select("select * from room")
     List<Room> list(@Param("building")String building, @Param("roomName")String roomName, @Param("begin")Short storageBegin, @Param("end")Short storageEnd);
+
+
+
+    /**
+     * 根据ID查询教学楼-教室名
+     * @param roomId
+     * @return
+     */
+    @Select("SELECT CONCAT(building, '-', room_name) AS roomDetails FROM room WHERE id = #{roomId}")
+    String getRoomById(Integer roomId);
 }

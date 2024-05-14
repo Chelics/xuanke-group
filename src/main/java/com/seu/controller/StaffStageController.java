@@ -15,6 +15,11 @@ import java.util.List;
 public class StaffStageController {
     @Autowired
     private StaffStageService staffStageService;
+
+    /**
+     * 查询全部阶段信息
+     * @return
+     */
     @GetMapping
     public Result list(){
         log.info("查询全部阶段信息");
