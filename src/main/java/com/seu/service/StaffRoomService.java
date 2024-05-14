@@ -1,8 +1,7 @@
 package com.seu.service;
 
-import com.seu.pojo.Course;
 import com.seu.pojo.PageBean;
-import com.seu.pojo.RoomCourse;
+import com.seu.pojo.FullCourse;
 
 import java.util.List;
 
@@ -24,5 +23,5 @@ public interface StaffRoomService {
      * @param id
      * @return
      */
-    List<RoomCourse> getCoursesByRoomId(Integer id);
+    List<FullCourse> getCoursesByRoomId(Integer id);
 }

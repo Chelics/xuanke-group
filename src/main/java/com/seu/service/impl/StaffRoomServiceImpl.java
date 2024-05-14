@@ -4,7 +4,6 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.seu.mapper.*;
 import com.seu.pojo.*;
-import com.seu.pojo.Users.Teacher;
 import com.seu.service.StaffRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,12 +40,12 @@ public class StaffRoomServiceImpl implements StaffRoomService {
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
-    public List<RoomCourse> getCoursesByRoomId(Integer id) {
-        List<RoomCourse> roomCourses= courseMapper.getCoursesByRoomId(id);//子类强转父类
-        for (int i = 0; i < roomCourses.size(); i++) {
-            RoomCourse roomCourse = roomCourses.get(i);//对于每一个course
+    public List<FullCourse> getCoursesByRoomId(Integer id) {
+        List<FullCourse> fullCours = courseMapper.getCoursesByRoomId(id);//子类强转父类
+        for (int i = 0; i < fullCours.size(); i++) {
+            FullCourse fullCourse = fullCours.get(i);//对于每一个course
             //获取教室ID
-            int courseId = roomCourse.getId();
+            int courseId = fullCourse.getId();
 
             //下面为避免Join联查，将联查分开
 
@@ -60,10 +59,10 @@ public class StaffRoomServiceImpl implements StaffRoomService {
             //根据班级ID查询名字
             List<String> classes = classMapper.getNamesByIds(classIds);
             //补充返回的课程类
-            roomCourse.setTeachers(teachers);
-            roomCourse.setClasses(classes);
+            fullCourse.setTeachers(teachers);
+            fullCourse.setClasses(classes);
 
         }
-        return roomCourses;
+        return fullCours;
     }
 }
