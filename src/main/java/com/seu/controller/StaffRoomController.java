@@ -1,13 +1,12 @@
 package com.seu.controller;
 
-import com.seu.pojo.Course;
-import com.seu.pojo.PageBean;
-import com.seu.pojo.Result;
-import com.seu.pojo.Stage;
+import com.seu.pojo.*;
 import com.seu.service.StaffRoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -41,8 +40,8 @@ public class StaffRoomController {
     @GetMapping("/{id}")
     public Result getCourseByRoomId(@PathVariable Integer id){
         log.info("根据ID查询课表,ID:{}",id);
-        Course course= staffRoomService.getCourseByRoomId(id);
-        return Result.success(course);
+        List<RoomCourse> courses= staffRoomService.getCoursesByRoomId(id);
+        return Result.success(courses);
     }
 
 }
