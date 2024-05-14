@@ -5,6 +5,7 @@ import com.seu.pojo.FullCourse;
 import com.seu.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class CourseServiceImpl implements CourseService {
     private CourseClassMapper courseClassMapper;
     @Autowired
     private RoomMapper roomMapper;
+    //凡是需要联查的都需要用事件
+    @Transactional(rollbackFor = {Exception.class})
     @Override
     public void getFullByBasic(FullCourse fullCourse) {
         //可复用
