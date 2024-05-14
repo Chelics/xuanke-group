@@ -12,4 +12,5 @@ import java.util.List;
 public class FullCourse extends Course{
     private List<String> teachers;
     private List<String> classes;
+    private String roomName;
 }
