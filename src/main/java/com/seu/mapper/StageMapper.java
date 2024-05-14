@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Update;
 import java.util.List;
 
 @Mapper
-public interface StaffStageMapper {
+public interface StageMapper {
 
     /**
      * 查询全部阶段

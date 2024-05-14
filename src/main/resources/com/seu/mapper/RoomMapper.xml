@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.seu.mapper.StaffRoomMapper">
+<mapper namespace="com.seu.mapper.RoomMapper">
     <!--    条件查询-->
     <select id="list" resultType="com.seu.pojo.Room">
         select *

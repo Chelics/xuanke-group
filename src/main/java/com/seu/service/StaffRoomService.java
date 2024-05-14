@@ -1,5 +1,6 @@
 package com.seu.service;
 
+import com.seu.pojo.Course;
 import com.seu.pojo.PageBean;
 
 public interface StaffRoomService {
@@ -14,4 +15,11 @@ public interface StaffRoomService {
      * @return
      */
     PageBean page(Integer page, Integer pageSize, String building, String roomName, Short storageBegin, Short storageEnd);
+
+    /**
+     * 根据教室ID查询课表
+     * @param id
+     * @return
+     */
+    Course getCourseByRoomId(Integer id);
 }

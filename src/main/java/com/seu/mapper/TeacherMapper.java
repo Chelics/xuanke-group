@@ -1,10 +1,9 @@
 package com.seu.mapper;
 
 import com.seu.pojo.Users.Teacher;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 @Mapper
 public interface TeacherMapper {
@@ -20,4 +19,7 @@ public interface TeacherMapper {
             @Result(property = "name", column = "teacher_name")
     })
     Teacher getByUsername(String username);
+
+    //@Select("select * from teacher where id in (#{teacherIdArray})")
+    List<String> getNamesByIds(@Param("ids")List<Integer> ids);
 }
