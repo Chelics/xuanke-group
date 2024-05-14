@@ -40,8 +40,9 @@ public class StaffRoomController {
     @GetMapping("/{id}")
     public Result getCourseByRoomId(@PathVariable Integer id){
         log.info("根据ID查询课表,ID:{}",id);
-        List<RoomCourse> courses= staffRoomService.getCoursesByRoomId(id);
-        return Result.success(courses);
+        List<FullCourse> courses= staffRoomService.getCoursesByRoomId(id);
+        CourseTable courseTable=new CourseTable(courses);
+        return Result.success(courseTable);
     }
 
 }

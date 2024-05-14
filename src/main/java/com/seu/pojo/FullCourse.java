@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomCourse extends Course{
+public class FullCourse extends Course{
     private List<String> teachers;
     private List<String> classes;
 }
