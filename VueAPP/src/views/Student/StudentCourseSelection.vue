@@ -1,0 +1,3 @@
+<template>
+    <StudentSidebar></StudentSidebar>
+</template>

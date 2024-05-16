@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seu.mapper.CheckingMapper">
+    <!--    条件查询-->
+    <select id="list" resultType="com.seu.pojo.FullCheckingCourse">
+        select *
+        from checking
+        <where>
+            course_status=1
+            <if test="courseName!=null and courseName!=''">and course_name like concat('%', #{courseName}, '%')</if>
+        </where>
+        order by commit_time desc
+    </select>
+
+    <!--    驳回请求-->
+    <update id="reject">
+        update checking
+        set course_status=3
+        where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--    通过请求-->
+    <update id="pass">
+        update checking
+        set course_status=2
+        where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>
