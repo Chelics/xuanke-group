@@ -1,6 +1,6 @@
 package com.seu.controller;
 
-import com.seu.pojo.LoginData;
+import com.seu.dto.request.LoginData;
 import com.seu.pojo.Result;
 import com.seu.pojo.Users.User;
 import com.seu.service.LoginService;

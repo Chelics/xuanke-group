@@ -30,7 +30,7 @@ public class LoginServiceImpl implements LoginService {
         User user = null;
 
         if (username.charAt(0) == '0') {
-            user = studentMapper.getByUsername(username);
+            user = studentMapper.getStudentByUsername(username);
         }else if(username.charAt(0) == '1'){
             user = teacherMapper.getByUsername(username);
         }else if(username.charAt(0) == '2'){
