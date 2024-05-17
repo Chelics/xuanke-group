@@ -2,6 +2,8 @@ package com.seu.mapper;
 
 import com.seu.pojo.FullCheckingCourse;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -14,4 +16,24 @@ public interface CheckingMapper {
      * @return
      */
     List<FullCheckingCourse> list(String courseName);
+
+    /**
+     * 驳回请求
+     * @param ids
+     */
+    void reject(@Param("ids")List<Integer> ids);
+
+    /**
+     * 通过请求
+     * @param ids
+     */
+    void pass(@Param("ids")List<Integer> ids);
+
+    /**
+     * 根据ID查询
+     * @param id
+     * @return
+     */
+    @Select("select * from checking where id=#{id}")
+    FullCheckingCourse getById(Integer id);
 }

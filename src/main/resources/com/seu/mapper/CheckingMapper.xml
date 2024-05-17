@@ -14,4 +14,23 @@
         order by commit_time desc
     </select>
 
+    <!--    驳回请求-->
+    <update id="reject">
+        update checking
+        set course_status=3
+        where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--    通过请求-->
+    <update id="pass">
+        update checking
+        set course_status=2
+        where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
 </mapper>
