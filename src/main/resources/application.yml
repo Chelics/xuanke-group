@@ -9,9 +9,9 @@ spring:
   #数据库连接信息
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/courseselectionsystem
-    username: root
-    password: 1234
+    url: jdbc:mysql://121.36.199.171:3306/courseselectionsystem
+    username: sqlUser
+    password: strong_password
   servlet:
     multipart:
       max-file-size: 10MB
@@ -23,5 +23,6 @@ mybatis:
     map-underscore-to-camel-case: true
 #spring事务管理日志
 logging:
+
   level:
     org.springframework.jdbc.support.JdbcTransactionManager: debug

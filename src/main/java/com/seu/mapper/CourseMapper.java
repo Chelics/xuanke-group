@@ -1,6 +1,9 @@
 package com.seu.mapper;
 
+import com.seu.pojo.Course;
 import com.seu.pojo.FullCourse;
+import com.seu.pojo.Stage;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -15,5 +18,4 @@ public interface CourseMapper {
      */
     @Select("select * from course where room_id=#{id}")
     List<FullCourse> getCoursesByRoomId(Integer id);
-
 }

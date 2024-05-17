@@ -18,6 +18,27 @@ public interface StageMapper {
     List<Stage> list();
 
     /**
+     * 查询未审核阶段
+     * @return
+     */
+    @Select("select 1 from ")
+    List<Stage> listNotReviewed();
+
+    /**
+     * 查询已通过阶段
+     * @return
+     */
+    @Select("select 2 from stage")
+    List<Stage> listPassed();
+
+    /**
+     * 查询已驳回阶段
+     * @return
+     */
+    @Select("select 3 from stage")
+    List<Stage> listRejected();
+
+    /**
      * 根据ID查询阶段
      * @param id
      * @return
@@ -45,4 +66,6 @@ public interface StageMapper {
      */
     @Update("update stage set stage_name=#{stageName} where id=#{id}")
     void updateTermName(Stage stage);
+
+
 }
