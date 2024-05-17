@@ -65,4 +65,5 @@ public interface CourseMapper {
                                             @Param("idsSearchedByTeacher")List<Integer> idsSearchedByTeacher,
                                             @Param("idsSearchedByRoom")List<Integer> idsSearchedByRoom);
 
+
 }

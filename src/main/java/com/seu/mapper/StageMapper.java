@@ -22,7 +22,7 @@ public interface StageMapper {
      * 查询未审核阶段
      * @return
      */
-    @Select("select 1 from ")
+    @Select("select 1 from stage")
     List<Stage> listNotReviewed();
 
     /**
@@ -67,7 +67,7 @@ public interface StageMapper {
      */
     @Update("update stage set stage_name=#{stageName} where id=#{id}")
     void updateTermName(Stage stage);
-    
+
     /**
      * 根据时间获取阶段
      * @param time
