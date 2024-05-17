@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -45,4 +46,12 @@ public interface StageMapper {
      */
     @Update("update stage set stage_name=#{stageName} where id=#{id}")
     void updateTermName(Stage stage);
+
+    /**
+     * 根据时间获取阶段
+     * @param time
+     * @return
+     */
+    @Select("SELECT * FROM stage WHERE start_time<=#{time} AND end_time>=#{time}")
+    Stage getCurrStage(LocalDateTime time);
 }

@@ -29,4 +29,12 @@ public interface RoomMapper {
      */
     @Select("SELECT CONCAT(building, '-', room_name) AS roomDetails FROM room WHERE id = #{roomId}")
     String getRoomById(Integer roomId);
+
+    /**
+     * 根据教学楼和教室编号搜索教室id
+     * @param building
+     * @param roomName
+     * @return
+     */
+    List<Integer> getIdsByName(@Param("building")String building, @Param("roomName")String roomName);
 }

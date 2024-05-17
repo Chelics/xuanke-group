@@ -15,4 +15,15 @@
         order by room_name
     </select>
 
+    <select id="getIdsByName" resultType="integer">
+        select id from room
+        <where>
+            <choose>
+                <when test="building!=null and building!=''">building like concat('%', #{building}, '%')</when>
+                <when test="roomName!=null and roomName!=''">and room_name like concat(#{roomName}, '%')</when>
+                <otherwise>1=0</otherwise>
+            </choose>
+        </where>
+    </select>
+
 </mapper>
