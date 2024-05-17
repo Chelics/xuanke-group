@@ -1,6 +1,7 @@
 package com.seu.service.impl;
 
 import com.seu.mapper.*;
+import com.seu.pojo.Course;
 import com.seu.pojo.FullCourse;
 import com.seu.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,4 +49,5 @@ public class CourseServiceImpl implements CourseService {
         fullCourse.setClasses(classes);
         fullCourse.setRoomName(roomName);
     }
+
 }
