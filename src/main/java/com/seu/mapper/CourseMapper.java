@@ -1,6 +1,9 @@
 package com.seu.mapper;
 
+import com.seu.pojo.Course;
 import com.seu.pojo.FullCourse;
+import com.seu.pojo.Stage;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -61,4 +64,5 @@ public interface CourseMapper {
     List<FullCourse> searchCoursesByKeyWord(@Param("keyWord") String keyWord,
                                             @Param("idsSearchedByTeacher")List<Integer> idsSearchedByTeacher,
                                             @Param("idsSearchedByRoom")List<Integer> idsSearchedByRoom);
+
 }
