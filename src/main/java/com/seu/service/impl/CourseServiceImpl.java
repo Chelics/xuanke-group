@@ -51,6 +51,8 @@ public class CourseServiceImpl implements CourseService {
 
     }
 
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
     public void getFullsByBasics(List<FullCourse> fullCourses){
         if(fullCourses == null || fullCourses.isEmpty()){
             return;

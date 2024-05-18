@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Room {
     private Integer id;
-    private String building;
+    private String building;//教学楼名 例：教一
     private String roomName;
     private Short roomStorage;
 }

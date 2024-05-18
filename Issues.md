@@ -38,3 +38,7 @@ com/seu/service/impl/LoginServiceImpl.java:22
 
 # 问题: 如何判断当前所属的选课阶段可以选课
 当前判断依据: 根据阶段名称是否含有subString("-开放选课")或subString("退改补")判断
+
+#问题：自动分配算法
+
+#问题：前端课表如何呈现(json格式见接口文档)

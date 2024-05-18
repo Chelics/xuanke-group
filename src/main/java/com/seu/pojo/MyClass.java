@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class ApplyingCourse extends FullCheckingCourse{
-
+public class MyClass {
+    private Integer id;//主键
+    private String className;//班级名称
 }
