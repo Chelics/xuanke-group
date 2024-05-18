@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * 拦截器类, 用于登录校验
  */
 @Slf4j
-//@Component
+@Component
 public class LoginCheckInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
@@ -30,7 +30,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String jwt = req.getHeader("token");
+        String jwt = req.getHeader("Authorization");
 
         //没有令牌, 不放行
         if(!StringUtils.hasLength(jwt)){
@@ -52,6 +52,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         }
 
         //放行
+        log.info("放行");
         return true;
     }
 
