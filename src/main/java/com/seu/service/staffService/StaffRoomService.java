@@ -1,4 +1,4 @@
-package com.seu.service;
+package com.seu.service.staffService;
 
 import com.seu.pojo.PageBean;
 import com.seu.pojo.FullCourse;

@@ -43,7 +43,7 @@ public interface CourseMapper {
 
     /**
      * 查询多个教室的课程
-     * @param id
+     * @param roomIds
      * @return
      */
     List<FullCourse> getCoursesByRoomIds(@Param("roomIds") List<Integer> roomIds);

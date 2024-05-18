@@ -1,11 +1,11 @@
-package com.seu.service.impl;
+package com.seu.service.impl.staffServiceImpl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.seu.mapper.*;
 import com.seu.pojo.*;
 import com.seu.service.CourseService;
-import com.seu.service.StaffRoomService;
+import com.seu.service.staffService.StaffRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
