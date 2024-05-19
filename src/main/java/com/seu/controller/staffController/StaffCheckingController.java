@@ -1,11 +1,12 @@
-package com.seu.controller;
+package com.seu.controller.staffController;
+
 
 import com.seu.exception.AllocateFailureException;
-import com.seu.pojo.CheckingChoice;
+import com.seu.dto.request.CheckingChoice;
 import com.seu.pojo.FullCheckingCourse;
 import com.seu.pojo.PageBean;
 import com.seu.pojo.Result;
-import com.seu.service.StaffCheckingService;
+import com.seu.service.staffService.StaffCheckingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
