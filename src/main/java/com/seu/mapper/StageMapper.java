@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -16,6 +17,27 @@ public interface StageMapper {
      */
     @Select("select * from stage")
     List<Stage> list();
+
+    /**
+     * 查询未审核阶段
+     * @return
+     */
+    @Select("select 1 from ")
+    List<Stage> listNotReviewed();
+
+    /**
+     * 查询已通过阶段
+     * @return
+     */
+    @Select("select 2 from stage")
+    List<Stage> listPassed();
+
+    /**
+     * 查询已驳回阶段
+     * @return
+     */
+    @Select("select 3 from stage")
+    List<Stage> listRejected();
 
     /**
      * 根据ID查询阶段
@@ -45,4 +67,13 @@ public interface StageMapper {
      */
     @Update("update stage set stage_name=#{stageName} where id=#{id}")
     void updateTermName(Stage stage);
+    
+    /**
+     * 根据时间获取阶段
+     * @param time
+     * @return
+     */
+    @Select("SELECT * FROM stage WHERE start_time<=#{time} AND end_time>=#{time}")
+    Stage getCurrStage(LocalDateTime time);
+
 }

@@ -1,7 +1,8 @@
-package com.seu.controller;
+package com.seu.controller.staffController;
 
+import com.seu.dto.response.CourseTable;
 import com.seu.pojo.*;
-import com.seu.service.StaffRoomService;
+import com.seu.service.staffService.StaffRoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

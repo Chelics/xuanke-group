@@ -1,4 +1,4 @@
-package com.seu.pojo;
+package com.seu.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
