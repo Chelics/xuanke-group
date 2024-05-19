@@ -5,6 +5,7 @@
 #  mybatis.type-aliases-package=com.itheima.mybatis.entity
 #  # 应用服务 WEB 访问端口
 #  server.port=8080
+
 spring:
   #数据库连接信息
   datasource:
@@ -16,6 +17,9 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 100MB
+  #其它配置文件信息
+  config:
+    import: classpath:scheduler-config.yml
 #Mybatis配置
 mybatis:
   configuration:
@@ -26,3 +30,9 @@ logging:
 
   level:
     org.springframework.jdbc.support.JdbcTransactionManager: debug
+
+#JWT令牌公钥和有效时间
+jwt:
+  signKey: "CsoU9KZy96MNRYAt5BDygHqcTH28NKtfwb5I5gAxe5yPwdhxbRSCehTFqTrBUFy3k6hd8DTKg20Ul0jFg5b8ulK30EgtUH6XxK4pEHQZeqb1z7dlvWTydE80TlLjLVKd4SWNR9TuJemrReAfdw5Uzq4GRSNlhCV0WqsXHAIz62tkBYhlqycqp8zeu7kNDtzT5mboOxWa1tPtLeFwj5bIk5Ljsb4kokPzvmWyYFTCqY5ov5b4xbXkMiaENbzoB936"
+  expire: 3600000
+

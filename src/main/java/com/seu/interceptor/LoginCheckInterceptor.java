@@ -1,16 +1,18 @@
 package com.seu.interceptor;
 
-import com.alibaba.fastjson.JSONObject;
-import com.seu.pojo.Result;
+import com.seu.config.JwtConfig;
+import com.seu.exception.UserNotLoggedInException;
 import com.seu.utils.JwtUtils;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 拦截器类, 用于登录校验
@@ -18,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @Component
 public class LoginCheckInterceptor implements HandlerInterceptor {
+    @Autowired
+    JwtConfig jwtConfig;
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
 
@@ -34,22 +38,14 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         //没有令牌, 不放行
         if(!StringUtils.hasLength(jwt)){
-            Result error = Result.error("Not log in");
-            String notLogin = JSONObject.toJSONString(error);
-            resp.getWriter().write(notLogin);
-            return false;
+            throw new UserNotLoggedInException("用户未登录");
         }
 
-        //解析失败, 不放行
-        try{
-            JwtUtils.parseJWT(jwt);
-        }catch (Exception e){
-            e.printStackTrace();
-            log.info("解析令牌失败!");
-            Result error = Result.error("Not log in");
-            String notLogin = JSONObject.toJSONString(error);
-            resp.getWriter().write(notLogin);
-        }
+        //解析(如果失败, 不放行)
+        Claims claims = JwtUtils.parseJWT(jwt, jwtConfig);
+
+        //存储claims为请求属性
+        req.setAttribute("claims", claims);
 
         //放行
         log.info("放行");

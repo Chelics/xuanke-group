@@ -59,4 +59,41 @@
                  </where>
     </select>
 
+    <insert id="insertCourse" parameterType="com.seu.mapper.CourseMapper" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO course (
+        course_name, type, course_number,
+        <if test="roomId != null">room_id,</if>
+        course_hour, course_storage,
+        <if test="startWeek != null">start_week,</if>
+        <if test="endWeek != null">end_week,</if>
+        <if test="time1 != null and time1 >= 0">time_1,</if>
+        <if test="time2 != null and time2 >= 0">time_2,</if>
+        <if test="time3 != null and time3 >= 0">time_3,</if>
+        <if test="faculty != null">faculty,</if>
+        credit
+        )
+        VALUES (
+        #{courseName},
+        #{type},
+        #{courseNumber},
+        <if test="roomId != null">#{roomId},</if>
+        #{courseHour},
+        #{courseStorage},
+        <if test="startWeek != null">#{startWeek},</if>
+        <if test="endWeek != null">#{endWeek},</if>
+        <if test="time1 != null and time1 >= 0">#{time1},</if>
+        <if test="time2 != null and time2 >= 0">#{time2},</if>
+        <if test="time3 != null and time3 >= 0">#{time3},</if>
+        <if test="faculty != null">#{faculty},</if>
+        #{credit}
+        )
+        ON DUPLICATE KEY UPDATE
+        id = LAST_INSERT_ID(id)
+    </insert>
+
+
+
+
+
+
 </mapper>

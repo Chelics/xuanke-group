@@ -1,5 +1,6 @@
 package com.seu.mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -23,4 +24,12 @@ public interface CourseTeacherMapper {
      */
     List<Integer> getCoursesByTeachers(@Param("teacherIds") List<Integer> teacherIds);
 
+    /**
+     * 添加课程信息
+     * @param courseId
+     * @param teacherId
+     * @return
+     */
+    @Insert("INSERT INTO course_teacher(course_id, teacher_id) VALUES(#{courseId}, #{teacherId}) ON DUPLICATE KEY UPDATE course_id = VALUES(course_id), teacher_id = VALUES(teacher_id)")
+    int insertCourseTeacher(@Param("courseId") Integer courseId, @Param("teacherId") Integer teacherId);
 }

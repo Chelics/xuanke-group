@@ -1,5 +1,6 @@
 package com.seu.controller;
 
+import com.seu.exception.AllocateFailureException;
 import com.seu.pojo.CheckingChoice;
 import com.seu.pojo.FullCheckingCourse;
 import com.seu.pojo.PageBean;
@@ -34,7 +35,7 @@ public class StaffCheckingController {
      * @return
      */
     @PutMapping
-    public Result choose(@RequestBody CheckingChoice choice){
+    public Result choose(@RequestBody CheckingChoice choice) throws AllocateFailureException {
         Integer status=choice.getStatus();
         List<Integer> ids=choice.getIds();
         if(status==2){//通过

@@ -19,6 +19,13 @@ public class SelectCourseController {
     @Autowired
     SelectCourseService studentSelectCourseService;
 
+    /**
+     * 学生选课
+     * @param courseSelection
+     * @return
+     * @throws InvalidInputException
+     * @throws SelectCourseFailureException
+     */
     @PostMapping
     public Result selectCourse(@RequestBody CourseSelection courseSelection) throws InvalidInputException, SelectCourseFailureException {
         Integer courseId = courseSelection.getCourseId();
