@@ -8,11 +8,8 @@ import com.seu.mapper.ClassMapper;
 import com.seu.mapper.TeacherMapper;
 import com.seu.pojo.FullCheckingCourse;
 import com.seu.pojo.PageBean;
-<<<<<<< HEAD:src/main/java/com/seu/service/impl/StaffCheckingServiceImpl.java
-import com.seu.service.StaffCheckingService;
-=======
+import com.seu.service.impl.CourseSchedulerImpl;
 import com.seu.service.staffService.StaffCheckingService;
->>>>>>> deaf9a05ae932250df0c112ec1261c939249a434:src/main/java/com/seu/service/impl/staffServiceImpl/StaffCheckingServiceImpl.java
 import com.seu.utils.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
