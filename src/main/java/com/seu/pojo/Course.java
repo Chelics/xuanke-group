@@ -15,8 +15,8 @@ public class Course {
     private Integer roomId;//对应教室主键
     private Short courseHour;//课时
     private Short courseStorage;//课程容量
-    private String startWeek;
-    private String endWeek;
+    private Short startWeek;
+    private Short endWeek;
     private Short time1;
     private Short time2;
     private Short time3;

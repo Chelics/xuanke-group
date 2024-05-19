@@ -35,6 +35,11 @@ public class JwtUtils {
      * @return
      */
     public static Claims parseJWT(String jwt){
+
+        if (jwt != null && jwt.startsWith("Bearer ")) {
+            jwt = jwt.substring(7); // "Bearer "有7个字符
+        }
+
         Claims claims = Jwts.parser()
                 .setSigningKey(signKey)
                 .parseClaimsJws(jwt)

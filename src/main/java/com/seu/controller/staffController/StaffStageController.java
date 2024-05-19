@@ -1,8 +1,8 @@
-package com.seu.controller;
+package com.seu.controller.staffController;
 
 import com.seu.pojo.Result;
 import com.seu.pojo.Stage;
-import com.seu.service.StaffStageService;
+import com.seu.service.staffService.StaffStageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

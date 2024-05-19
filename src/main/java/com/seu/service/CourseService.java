@@ -1,6 +1,9 @@
 package com.seu.service;
 
+import com.seu.pojo.Course;
 import com.seu.pojo.FullCourse;
+
+import java.util.List;
 
 public interface CourseService {
     /**
@@ -9,4 +12,6 @@ public interface CourseService {
      * @return
      */
     void getFullByBasic(FullCourse fullCourse);
+
+    void getFullsByBasics(List<FullCourse> fullCourses);
 }
