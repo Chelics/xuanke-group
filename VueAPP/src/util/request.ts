@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
 //import {pinia} from 'main'
 import { ElMessage } from 'element-plus'; // 或者使用其他UI库的消息提示组件
+import router from '@/router/router'
 
 // 创建axios实例
 const service: AxiosInstance = axios.create({
@@ -37,37 +38,20 @@ const { token } = storeToRefs(authStore);
 
 // 响应拦截器
 service.interceptors.response.use(
-  (response) => {
-    // 如果后端返回新的token，这里可以更新store中的token
-    // 假设新的token在response.data.newToken字段
-    //暂不考虑该功能
-    /* if (response.data.newToken) {
-      token.value = response.data.newToken;
-    } */
-    return response//.data; // 可能需要这么写，不然类型报错。自学的不确定
-  },
-  async (error) => {
-    const originalRequest = error.config;
-
-    // 处理401错误，尝试刷新令牌
-    if (error.response.status === 401 && !originalRequest._retry) {
-      //originalRequest._retry = true;
-
-      try {
-        // 这里假设有一个refreshToken的API，需要根据实际情况调整
-        //暂不实现
-      } catch (refreshError) {
-        // 使用Pinia store
-const authStore = useAuthStore();
-        ElMessage.error('登录状态已失效，请重新登录');
-        authStore.logout(); // 清理store中的认证信息
-      }
+  (response: any) => {
+    // 未登录回到登录页
+    if (response.data?.code === '401') {
+      return router?.push('/login')
     }
-
-    // 其他错误处理
-    ElMessage.error(error.message || '网络错误');
-    return Promise.reject(error);
+    if (response.data.code !== '200') {
+      ElMessage.error(response.data.msg)
+       return Promise.reject(response.data)
+     } else {
+       return response.data
+     }
+  },
+  (error: any) => {
+    return Promise.reject(error)
   }
-);
-
+)
 export default service;
