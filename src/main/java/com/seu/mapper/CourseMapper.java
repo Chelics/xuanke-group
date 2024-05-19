@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,14 +50,6 @@ public interface CourseMapper {
     List<FullCourse> getCoursesByRoomIds(@Param("roomIds") List<Integer> roomIds);
 
     /**
-     * 检查对应id的课程是否存在
-     * @param id
-     * @return
-     */
-    @Select("SELECT COUNT(id) FROM course WHERE id=#{id}")
-    int checkCourseExist(Integer id);
-
-    /**
      * 根据关键词搜索课程
      * @param keyWord
      * @return
@@ -65,5 +58,10 @@ public interface CourseMapper {
                                             @Param("idsSearchedByTeacher")List<Integer> idsSearchedByTeacher,
                                             @Param("idsSearchedByRoom")List<Integer> idsSearchedByRoom);
 
-
+    /**
+     * 添加课程
+     * @param course
+     * @return
+     */
+    int insertCourse(Course course);
 }

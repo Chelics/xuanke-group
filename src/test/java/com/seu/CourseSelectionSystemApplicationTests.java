@@ -44,6 +44,7 @@ public class CourseSelectionSystemApplicationTests {
     public void testParseJwt(){
         Claims claims = Jwts.parser()
                 .setSigningKey("SEUxuanke")
+                .build()
                 .parseClaimsJws("eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoi5byg5LiJIiwiaWQiOjEwMDg2LCJleHAiOjE3MTU1MTQxMTN9.ZsZA7TFYWV3FlenqKAs0GxKrAaLJBLk5gJEEFUPoCpU")
                 .getBody();
         System.out.println(claims);

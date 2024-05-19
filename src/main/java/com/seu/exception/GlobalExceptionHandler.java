@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Result ex(Exception ex){
         log.error("捕获到异常: ", ex);
-        return Result.error("对不起, 操作失败, 请联系管理员");
+        return Result.error("未知异常, 请联系管理员");
     }
 
     /**
@@ -72,6 +72,29 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<String> handleNullPointerException(NullPointerException ex) {
+        log.error("捕获到空指针异常", ex);
         return new ResponseEntity<>("Null Pointer Exception", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * 登录校验异常
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(UserNotLoggedInException.class)
+    public ResponseEntity<String> handleUserNotLoginException(UserNotLoggedInException ex){
+        log.error("捕获到登录校验异常", ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * 分配课程异常
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(AllocateFailureException.class)
+    public ResponseEntity<Object> handlerAllocateFailureException(AllocateFailureException ex) {
+        log.error("捕获到自动排课异常", ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
