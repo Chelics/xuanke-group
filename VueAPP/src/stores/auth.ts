@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response :ResponseData= await request.post('/login', { usernameInput, password });
       //应该是这么写，没调过，基本是对的
-        if (response.code === 200 && response.msg === 'success') { // 假设成功码为200，与拦截器逻辑匹配
+        if (response.code === 1 && response.msg === 'success') { // 假设成功码为200，与拦截器逻辑匹配
           token.value = response.data.token; //此处response为直接后端code，msg，data，找data的token属性。原生response.data是整个后端返回，包装已经拆除。
         username.value = usernameInput;
         //确定用户角色

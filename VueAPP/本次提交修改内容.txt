@@ -8,5 +8,5 @@ interface ResponseData {
 async function login(usernameInput: string, password: string) {
     try {
       const response :ResponseData= await request.post('/login', { usernameInput, password });
-        if (response.code === 200 && response.msg === 'success') {//response现在是后端返回，http的state等已经统一处理
+        if (response.code === 1 && response.msg === 'success') {//response现在是后端返回，http的state等已经统一处理
 	……………………
