@@ -25,7 +25,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
 
-        String url = req.getRequestURI().toString();
+        String url = req.getRequestURI();
         log.info("已拦截请求的url: {}", url);
 
         //登录操作, 直接放行

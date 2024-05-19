@@ -25,10 +25,10 @@ import java.util.Map;
 public class CourseSchedulerImpl implements CourseScheduler {
 
     /***********************************************************************************
-     * 前面这一大段都是用来从配置类中读取常量的, 不用看
+     * 前面这一大段都是用来从配置类中读取常量的
      */
 
-    private final SchedulerConfig schedulerConfig;
+    private final SchedulerConfig schedulerConfig;  //scheduler配置类, 用于从配置文件中读取配置信息
     @Autowired
     public CourseSchedulerImpl(SchedulerConfig schedulerConfig){    //配置类, 用于读取配置文件中的内容, 并转交给业务类
         this.schedulerConfig = schedulerConfig;

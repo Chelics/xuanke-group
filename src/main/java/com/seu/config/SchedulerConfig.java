@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Scheduler配置类
+ * 用于从scheduler-config.yml配置文件中获取排课相关的各种信息
+ */
 @Slf4j
 @Getter
 @Setter

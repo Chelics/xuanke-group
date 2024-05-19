@@ -4,7 +4,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-
+/**
+ * 安全配置类
+ * 用于密码的加密和验证
+ */
 @Component
 @Configuration
 public class SecurityConfig {
@@ -28,7 +31,7 @@ public class SecurityConfig {
     }
 
     /**
-     * 校验明文和加密后的密码
+     * 验证明文和加密后的密码
      * @param rawPassword
      * @param encodedPassword
      * @return
