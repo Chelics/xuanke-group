@@ -2,26 +2,31 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import request from '@/util/request';
-
+interface ResponseData {
+  code: number;
+  msg: string;
+  data: any;
+}
 export const useAuthStore = defineStore('auth', () => {
   const token = ref('1');//测试,非空数据。只要没有连接后端数据，不会触发更新令牌
-  const username = ref('0');//测试，0学生，1老师，2教务
-  const userRole=ref('student');//测试，实际调整角色在这里。
+  const username = ref('0');//测试，0开头学生，1开头老师，2开头教务
+  const userRole=ref('teacher');//测试，实际调整角色在这里。
 
-  async function login(username: string, password: string) {
+  async function login(usernameInput: string, password: string) {
     try {
-      const response = await request.post('/login', { username, password });
-      if (response.status === 200 && response.data.code===1&&response.data.msg==='success') {//应该是这么写，没调过，不确定
-        token.value = response.data.data.token;//大概吧。response.data是整个后端返回。code，msg，data，找data的token属性
-        username = response.data.username;
+      const response :ResponseData= await request.post('/login', { usernameInput, password });
+      //应该是这么写，没调过，基本是对的
+        if (response.code === 200 && response.msg === 'success') { // 假设成功码为200，与拦截器逻辑匹配
+          token.value = response.data.token; //此处response为直接后端code，msg，data，找data的token属性。原生response.data是整个后端返回，包装已经拆除。
+        username.value = usernameInput;
         //确定用户角色
-        if(username.startsWith('0')){
+        if(username.value.startsWith('0')){
           userRole.value='student';
         }
-        if(username.startsWith('1')){
+        if(username.value.startsWith('1')){
           userRole.value='teacher';
         }
-        if(username.startsWith('2')){
+        if(username.value.startsWith('2')){
           userRole.value='staff';
         }
       } else {
