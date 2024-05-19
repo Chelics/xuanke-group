@@ -39,6 +39,7 @@ com/seu/service/impl/LoginServiceImpl.java:22
 # 问题: 如何判断当前所属的选课阶段可以选课
 当前判断依据: 根据阶段名称是否含有subString("-开放选课")或subString("退改补")判断
 
+<<<<<<< HEAD
 # JWT令牌说明
 [学习视频: JWT令牌](https://www.bilibili.com/video/BV1m84y1w7Tb?p=161&vd_source=844f7d302dc747984d15b12d2308da11)
 ## JWT令牌的三部分:
@@ -141,3 +142,8 @@ com/seu/service/impl/LoginServiceImpl.java:22
 |5| 下午8-10  |
 |6| 晚上11-12 |
 |7| 晚上11-13 |
+=======
+#问题：自动分配算法
+
+#问题：前端课表如何呈现(json格式见接口文档)
+>>>>>>> deaf9a05ae932250df0c112ec1261c939249a434

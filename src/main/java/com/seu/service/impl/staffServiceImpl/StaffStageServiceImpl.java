@@ -1,8 +1,8 @@
-package com.seu.service.impl;
+package com.seu.service.impl.staffServiceImpl;
 
 import com.seu.mapper.StageMapper;
 import com.seu.pojo.Stage;
-import com.seu.service.StaffStageService;
+import com.seu.service.staffService.StaffStageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

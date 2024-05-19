@@ -20,6 +20,11 @@ public interface TeacherMapper {
     })
     Teacher getByUsername(String username);
 
+    /**
+     * 批量根据教师ID获取姓名
+     * @param ids
+     * @return
+     */
     //@Select("select * from teacher where id in (#{teacherIdArray})")
     List<String> getNamesByIds(@Param("ids")List<Integer> ids);
 

@@ -1,4 +1,4 @@
-package com.seu.service;
+package com.seu.service.staffService;
 
 import com.seu.exception.AllocateFailureException;
 import com.seu.pojo.FullCheckingCourse;
