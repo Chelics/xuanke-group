@@ -1,7 +1,7 @@
 package com.seu.service.impl;
 
 import com.seu.config.SchedulerConfig;
-import com.seu.exception.AllocateFailureException;
+import com.seu.exception.AllocateCourseException;
 import com.seu.exception.EntityNotFoundException;
 import com.seu.exception.InvalidInputException;
 import com.seu.mapper.*;
@@ -70,7 +70,7 @@ public class CourseSchedulerImpl implements CourseScheduler {
      * @param courseIds 课程ID列表
      * @return 分配结果
      */
-    public List<Integer> allocateMultipleCourses(List<Integer> courseIds) throws AllocateFailureException {
+    public List<Integer> allocateMultipleCourses(List<Integer> courseIds) throws AllocateCourseException {
         List<Integer> successfulCourses = new ArrayList<>();    //用于存储分配成功的课程列表, 暂时没有用处, 之后需求变更可能会用到
         List<Integer> failedCourses = new ArrayList<>();    //分配失败的课程列表
 
@@ -79,7 +79,7 @@ public class CourseSchedulerImpl implements CourseScheduler {
                 allocateTimeAndRoom(courseId);      //对单个课程进行排课
                 log.info("分配时间和教室成功: " + courseId);
                 successfulCourses.add(courseId);    //成功
-            } catch (EntityNotFoundException | InvalidInputException | AllocateFailureException e) {    //失败
+            } catch (EntityNotFoundException | InvalidInputException | AllocateCourseException e) {    //失败
                 log.error("分配时间或教室失败: " + courseId +e.getMessage());
                 failedCourses.add(courseId);
             }
@@ -92,10 +92,10 @@ public class CourseSchedulerImpl implements CourseScheduler {
      * @param id
      * @throws EntityNotFoundException
      * @throws InvalidInputException
-     * @throws AllocateFailureException
+     * @throws AllocateCourseException
      */
     @Override
-    public synchronized void allocateTimeAndRoom(Integer id) throws EntityNotFoundException, InvalidInputException, AllocateFailureException {
+    public synchronized void allocateTimeAndRoom(Integer id) throws EntityNotFoundException, InvalidInputException, AllocateCourseException {
 
         //调取待分配课程
         CheckingCourse checkingCourse = checkingMapper.getById(id);
@@ -117,10 +117,10 @@ public class CourseSchedulerImpl implements CourseScheduler {
      * @return
      * @throws EntityNotFoundException
      * @throws InvalidInputException
-     * @throws AllocateFailureException
+     * @throws AllocateCourseException
      */
     @Override
-    public short[] classifyTime(Integer id, CheckingCourse checkingCourse) throws EntityNotFoundException, InvalidInputException, AllocateFailureException {
+    public short[] classifyTime(Integer id, CheckingCourse checkingCourse) throws EntityNotFoundException, InvalidInputException, AllocateCourseException {
 
         if (checkingCourse == null) {
             throw new EntityNotFoundException("未找到待分配课程");
@@ -145,9 +145,9 @@ public class CourseSchedulerImpl implements CourseScheduler {
      * @param listChoices
      * @param checkingCourse
      * @return
-     * @throws AllocateFailureException
+     * @throws AllocateCourseException
      */
-    private short[] searchFreeTime(int rangeChoice, Integer[] listChoices, CheckingCourse checkingCourse) throws AllocateFailureException {
+    private short[] searchFreeTime(int rangeChoice, Integer[] listChoices, CheckingCourse checkingCourse) throws AllocateCourseException {
 
         final short NULL_TIME = getNullTime();      //-1
         final short[][] WEEK_RANGE = getWeekRange();    //[[1, 111], [112, 167]]
@@ -178,7 +178,7 @@ public class CourseSchedulerImpl implements CourseScheduler {
                 }
             }
             if(NULL_TIME == timeList[i]){   //没选上
-                throw new AllocateFailureException("没有空闲的上课时间可供分配");
+                throw new AllocateCourseException("没有空闲的上课时间可供分配");
             }
         }
 
@@ -217,10 +217,10 @@ public class CourseSchedulerImpl implements CourseScheduler {
      * @param times
      * @param checkingCourse
      * @return
-     * @throws AllocateFailureException
+     * @throws AllocateCourseException
      */
     @Override
-    public Integer getFreeRoom(Integer id, short[] times, CheckingCourse checkingCourse) throws AllocateFailureException {
+    public Integer getFreeRoom(Integer id, short[] times, CheckingCourse checkingCourse) throws AllocateCourseException {
         //每次将一座教学楼中符合容量所有教室全都读进来, 没找到再读下一座楼
         for(int buildingCode = 1; buildingCode < 9; buildingCode++){
             String building = "教" + buildingCode;
@@ -236,7 +236,7 @@ public class CourseSchedulerImpl implements CourseScheduler {
             }
         }
         //遍历完还没找到
-        throw new AllocateFailureException("未找到空闲的教室!");
+        throw new AllocateCourseException("未找到空闲的教室!");
     }
 
     /**
@@ -245,7 +245,7 @@ public class CourseSchedulerImpl implements CourseScheduler {
      * @param times
      * @param roomId
      */
-    private void putInStorage(CheckingCourse checkingCourse, short[] times, Integer roomId) throws AllocateFailureException {
+    private void putInStorage(CheckingCourse checkingCourse, short[] times, Integer roomId) throws AllocateCourseException {
         Course course = new Course(null, checkingCourse.getCourseName(), checkingCourse.getType(),
                 checkingCourse.getCourseNumber(), roomId, checkingCourse.getCourseHour(), checkingCourse.getCourseStorage(),
                 (short) 1, (short) 16, times[0], times[1], times[2], checkingCourse.getFaculty(), checkingCourse.getCredit());
@@ -256,7 +256,7 @@ public class CourseSchedulerImpl implements CourseScheduler {
         log.info("新增courseId: " + courseId);
 
         if(courseId == null){
-            throw new AllocateFailureException("数据库course表写入失败");
+            throw new AllocateCourseException("数据库course表写入失败");
         }
 
         //插入course_teacher表

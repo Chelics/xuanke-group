@@ -1,7 +1,7 @@
 package com.seu.service.impl.studentServiceImpl;
 
 import com.seu.exception.GlobalExceptionHandler;
-import com.seu.exception.SelectCourseFailureException;
+import com.seu.exception.SelectCourseException;
 import com.seu.mapper.CourseMapper;
 import com.seu.mapper.CourseStudentMapper;
 import com.seu.mapper.StageMapper;
@@ -15,6 +15,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -54,7 +55,7 @@ public class SelectCourseServiceImpl implements SelectCourseService {
      */
     @Override
     //@Retryable(value = { SQLException.class }, maxAttempts = 3, backoff = @Backoff(delay = 1000))
-    public boolean selectCourse(Integer courseId, Integer studentId) throws SelectCourseFailureException {
+    public boolean selectCourse(Integer courseId, Integer studentId) throws SelectCourseException {
 
         FullCourse fullCourse = courseMapper.getCourseById(courseId);
 
@@ -75,7 +76,7 @@ public class SelectCourseServiceImpl implements SelectCourseService {
                 checkStorage(courseId, fullCourse);
                 //将课程-学生加入数据库
                 insertSelectedCourse(courseId, studentId);
-            } catch (SelectCourseFailureException ex){
+            } catch (SelectCourseException ex){
                 //由于Runnable对象不能抛出异常, 这里直接构造了一个全局异常处理器对象返回异常响应
                 //这样不是很好, 但是我还不会更好的处理方式
                 GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
@@ -96,22 +97,22 @@ public class SelectCourseServiceImpl implements SelectCourseService {
      * @param studentId
      * @return
      */
-    private void checkInput(FullCourse fullCourse, Integer studentId) throws SelectCourseFailureException {
+    private void checkInput(FullCourse fullCourse, Integer studentId) throws SelectCourseException {
 
         //判断是否处在可以选课的阶段
         checkStage();
 
         if (fullCourse == null) {
-            throw new SelectCourseFailureException("课程不存在");
+            throw new SelectCourseException("课程不存在", HttpStatus.BAD_REQUEST);
         }
 
         Student student = studentMapper.getStudentById(studentId);
         if(student == null){
-            throw new SelectCourseFailureException("学生不存在: " + studentId);
+            throw new SelectCourseException("学生不存在: " + studentId, HttpStatus.BAD_REQUEST);
         }
 
         if (hasTimeConflicts(studentId, fullCourse)){
-            throw new SelectCourseFailureException("课程已选或与其它已选课程存在时间冲突");
+            throw new SelectCourseException("课程已选或与其它已选课程存在时间冲突", HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -137,12 +138,12 @@ public class SelectCourseServiceImpl implements SelectCourseService {
      * 检查是否处在可以选课的阶段
      * @return
      */
-    private void checkStage() throws SelectCourseFailureException {
+    private void checkStage() throws SelectCourseException {
         LocalDateTime now = LocalDateTime.now();
         Stage stage = stageMapper.getCurrStage(now);
 
         if(stage == null){
-            throw new SelectCourseFailureException("未知的选课阶段: " + now);
+            throw new SelectCourseException("未知的选课阶段: " + now, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         String stageName = stage.getStageName();
@@ -151,11 +152,11 @@ public class SelectCourseServiceImpl implements SelectCourseService {
         }
 
         if (stageName.contains("未开放")) {
-            throw new SelectCourseFailureException("选课未开始");
+            throw new SelectCourseException("选课未开始", HttpStatus.BAD_REQUEST);
         }else if(stageName.contains("结束")){
-            throw new SelectCourseFailureException("选课已结束");
+            throw new SelectCourseException("选课已结束", HttpStatus.BAD_REQUEST);
         }else{
-            throw new SelectCourseFailureException("未知的选课阶段: " + stageName);
+            throw new SelectCourseException("未知的选课阶段: " + stageName, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -163,13 +164,13 @@ public class SelectCourseServiceImpl implements SelectCourseService {
      * 检查课程容量是否已满
      * @param courseId
      * @param fullCourse
-     * @throws SelectCourseFailureException
+     * @throws SelectCourseException
      */
-    private void checkStorage(Integer courseId, FullCourse fullCourse) throws SelectCourseFailureException {
+    private void checkStorage(Integer courseId, FullCourse fullCourse) throws SelectCourseException {
         Integer studentsCountForCourse = courseStudentMapper.getStudentCountForCourse(courseId);
         int count = (studentsCountForCourse == null) ? 0 : studentsCountForCourse;
         if (count >= fullCourse.getCourseStorage()) {
-            throw new SelectCourseFailureException("课程已满: " + courseId);
+            throw new SelectCourseException("课程已满: " + courseId, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -177,11 +178,11 @@ public class SelectCourseServiceImpl implements SelectCourseService {
      * 向关联表中插入记录
      * @param courseId
      * @param studentId
-     * @throws SelectCourseFailureException
+     * @throws SelectCourseException
      */
-    private void insertSelectedCourse(Integer courseId, Integer studentId) throws SelectCourseFailureException {
+    private void insertSelectedCourse(Integer courseId, Integer studentId) throws SelectCourseException {
         if(courseStudentMapper.selectCourse(courseId, studentId) <= 0){
-            throw new SelectCourseFailureException("数据库操作失败: 学生id: " + studentId + "课程id: " + courseId);
+            throw new SelectCourseException("数据库操作失败: 学生id: " + studentId + "课程id: " + courseId, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

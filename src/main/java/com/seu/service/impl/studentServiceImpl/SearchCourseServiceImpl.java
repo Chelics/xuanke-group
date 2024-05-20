@@ -35,7 +35,6 @@ public class SearchCourseServiceImpl implements SearchCourseService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public List<FullCourse> searchCoursesByKeyWord(String keyWord) {
-        //课程名, 课程编号, 学院的搜索结果
 
         //教师名的搜索结果
         List<Integer> teacherIdsList = teacherMapper.searchByName(keyWord);
@@ -44,6 +43,7 @@ public class SearchCourseServiceImpl implements SearchCourseService {
         //教室名的搜索结果
         List<Integer> idsSearchedByRooms = searchByRoom(keyWord);
 
+        //再加上课程名, 课程编号, 学院, 一起去数据库中查
         List<FullCourse> fullCourseList = courseMapper.searchCoursesByKeyWord(keyWord, idsSearchedByTeacher, idsSearchedByRooms);
         courseService.getFullsByBasics(fullCourseList);
         return fullCourseList;
@@ -59,8 +59,8 @@ public class SearchCourseServiceImpl implements SearchCourseService {
         Matcher matcherBuilding = PATTERN_BUILDING.matcher(keyWord);
         Matcher matcherRoom = PATTERN_ROOM.matcher(keyWord);
 
-        String buildingCode = new String();
-        String roomNum = new String();
+        String buildingCode = "";
+        String roomNum = "";
 
         if(matcherBuildingRoom.matches()){  //输入"教1-101时
             buildingCode = keyWord.substring(0, 1);

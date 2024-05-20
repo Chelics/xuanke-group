@@ -1,9 +1,8 @@
 package com.seu.service.staffService;
 
-import com.seu.exception.AllocateFailureException;
+import com.seu.exception.AllocateCourseException;
 import com.seu.pojo.FullCheckingCourse;
 import com.seu.pojo.PageBean;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public interface StaffCheckingService {
      * 通过请求
      * @param ids
      */
-    void pass(List<Integer> ids) throws AllocateFailureException;
+    void pass(List<Integer> ids) throws AllocateCourseException;
 
     /**
      * 通过ID查询
