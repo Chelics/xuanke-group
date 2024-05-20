@@ -38,8 +38,8 @@ public class GlobalExceptionHandler {
      * @param ex
      * @return
      */
-    @ExceptionHandler(SelectCourseFailureException.class)
-    public ResponseEntity<String> ex(SelectCourseFailureException ex){
+    @ExceptionHandler(SelectCourseException.class)
+    public ResponseEntity<String> ex(SelectCourseException ex){
         log.warn("捕获到选课失败异常", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
@@ -52,18 +52,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> ex(EntityNotFoundException ex){
         log.error("捕获到空查询结果异常", ex);
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * 退课失败异常
-     * @param ex
-     * @return
-     */
-    @ExceptionHandler(DropCourseFailureException.class)
-    public ResponseEntity<String> ex(DropCourseFailureException ex){
-        log.error("捕获到退课失败异常", ex);
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -93,8 +82,8 @@ public class GlobalExceptionHandler {
      * @param ex
      * @return
      */
-    @ExceptionHandler(AllocateFailureException.class)
-    public ResponseEntity<Object> handlerAllocateFailureException(AllocateFailureException ex) {
+    @ExceptionHandler(AllocateCourseException.class)
+    public ResponseEntity<Object> handlerAllocateFailureException(AllocateCourseException ex) {
         log.warn("捕获到自动排课异常", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

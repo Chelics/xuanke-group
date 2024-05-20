@@ -1,6 +1,6 @@
 package com.seu.service.studentService;
 
-import com.seu.exception.SelectCourseFailureException;
+import com.seu.exception.SelectCourseException;
 
 public interface SelectCourseService {
     /**
@@ -9,5 +9,5 @@ public interface SelectCourseService {
      * @param studentId
      * @return
      */
-    boolean selectCourse(Integer courseId, Integer studentId) throws SelectCourseFailureException;
+    boolean selectCourse(Integer courseId, Integer studentId) throws SelectCourseException;
 }

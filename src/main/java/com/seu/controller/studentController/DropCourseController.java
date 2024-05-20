@@ -1,7 +1,6 @@
 package com.seu.controller.studentController;
 
 import com.seu.dto.request.CourseSelection;
-import com.seu.exception.DropCourseFailureException;
 import com.seu.exception.InvalidInputException;
 import com.seu.pojo.Result;
 import com.seu.service.impl.studentServiceImpl.DropCourseServiceImpl;
@@ -24,10 +23,9 @@ public class DropCourseController {
      * @param courseSelection
      * @return
      * @throws InvalidInputException
-     * @throws DropCourseFailureException
      */
     @PostMapping
-    public Result dropCourse(@RequestBody CourseSelection courseSelection) throws InvalidInputException, DropCourseFailureException {
+    public Result dropCourse(@RequestBody CourseSelection courseSelection) throws InvalidInputException {
         Integer courseId = courseSelection.getCourseId();
         Integer studentId = courseSelection.getStudentId();
 
@@ -40,6 +38,7 @@ public class DropCourseController {
         studentDropCourse.dropCourse(courseId, studentId);
 
         log.info("学生退课成功 " + studentId + " 退选: " + courseId);
+
         return Result.success("退课成功!");
     }
 }
