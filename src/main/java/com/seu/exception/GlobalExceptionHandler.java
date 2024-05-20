@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     /**
      * 全局异常处理
      * @param ex
@@ -28,7 +29,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(InvalidInputException.class)
     public ResponseEntity<String> ex(InvalidInputException ex){
-        log.error("捕获到错误请求异常: ", ex);
+        log.warn("捕获到错误请求异常: ", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -39,7 +40,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(SelectCourseFailureException.class)
     public ResponseEntity<String> ex(SelectCourseFailureException ex){
-        log.error("捕获到选课失败异常", ex);
+        log.warn("捕获到选课失败异常", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -83,7 +84,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UserNotLoggedInException.class)
     public ResponseEntity<String> handleUserNotLoginException(UserNotLoggedInException ex){
-        log.error("捕获到登录校验异常", ex);
+        log.warn("捕获到登录校验异常", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
@@ -94,7 +95,19 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AllocateFailureException.class)
     public ResponseEntity<Object> handlerAllocateFailureException(AllocateFailureException ex) {
-        log.error("捕获到自动排课异常", ex);
+        log.warn("捕获到自动排课异常", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    /**
+     * 登录异常
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(LoginException.class)
+    public ResponseEntity<Object> handleLoginException(LoginException ex){
+        log.warn("捕获到用户登录异常: ", ex);
+        return new ResponseEntity<>(ex.getMessage(), ex.getStatus());
+    }
+
 }

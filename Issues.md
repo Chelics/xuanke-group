@@ -39,10 +39,22 @@ com/seu/service/impl/LoginServiceImpl.java:22
 # 问题: 如何判断当前所属的选课阶段可以选课
 当前判断依据: 根据阶段名称是否含有subString("-开放选课")或subString("退改补")判断
 
+
 # 问题：前端课表如何呈现(json格式见接口文档)
+
+# SpringBoot版本说明
+SpringBoot版本已从2.6.13升级到3.2.5, pom.xml文件中的各项依赖也均有不同程度的版本更新
+
+
+项目中有关升级带来的兼容性问题已全部解决, 项目已经能够正常运行
+
+由于SpringBoot3.0需要JDK17作为最低版本, JDK版本已由JDK8升级为JDK17, 若本地没有JDK17以上的JDK版本可能无法运行
+
+maven版本可能有所升级(一个可能的版本是3.2.5), 在3.9.6的maven版本下能够正常运行
 
 # JWT令牌说明
 [学习视频: JWT令牌](https://www.bilibili.com/video/BV1m84y1w7Tb?p=161&vd_source=844f7d302dc747984d15b12d2308da11)
+
 ## JWT令牌的三部分:
 - Head: 只有alg: "HS256", base64编码, 任何拿到令牌的人都能解
 - Payload: 如下, base64编码, 任何拿到令牌的人都能解

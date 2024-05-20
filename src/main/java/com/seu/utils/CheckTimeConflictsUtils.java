@@ -101,5 +101,35 @@ public class CheckTimeConflictsUtils {
 
         return false;
     }
+
+    /**
+     * 检查一组课程和一门课程是否冲突
+     * @param courseList
+     * @param fullCourse
+     * @return true表示冲突
+     */
+    public static boolean checkCoursesAndCourse(List<FullCourse> courseList, FullCourse fullCourse){
+        for(FullCourse course : courseList){
+            if(checkCourseAndCourse(course, fullCourse)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 检查一组课程和一组课程是否冲突
+     * @param courseList1
+     * @param courseList2
+     * @return true表示冲突
+     */
+    public static boolean checkCoursesAndCourses(List<FullCourse> courseList1, List<FullCourse> courseList2){
+        for(FullCourse course1 : courseList1){
+            if(checkCoursesAndCourse(courseList2, course1)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

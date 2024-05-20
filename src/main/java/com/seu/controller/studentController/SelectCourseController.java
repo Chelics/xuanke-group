@@ -35,7 +35,6 @@ public class SelectCourseController {
         if(courseId == null || courseId < 0 || studentId == null || studentId < 0) {
             throw new InvalidInputException("选课失败: 非法的课程id或学生id");
         }
-
         log.info("学生选课: " + studentId + " 选: " + courseId);
 
         if(studentSelectCourseService.selectCourse(courseId, studentId)){
