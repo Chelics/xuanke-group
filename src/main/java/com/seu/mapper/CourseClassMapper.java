@@ -29,4 +29,12 @@ public interface CourseClassMapper {
      */
     @Insert("INSERT INTO course_class(course_id, class_id) VALUES(#{courseId}, #{classId}) ON DUPLICATE KEY UPDATE course_id = VALUES(course_id), class_id = VALUES(class_id)")
     int insertCourseClass(@Param("courseId")Integer courseId, @Param("classId")Integer classId);
+
+    /**
+     * 根据班级id获取课程id列表
+     * @param classId
+     * @return
+     */
+    @Select("SELECT course_id FROM course_class WHERE class_id=#{classId}")
+    List<Integer> getCoursesByClassId(@Param("classId")Integer classId);
 }
