@@ -74,4 +74,5 @@ public interface CourseMapper {
      */
     @Select("SELECT * FROM course WHERE type IN (1, 2)")
     List<FullCourse> getUniversalCourses();
+
 }
