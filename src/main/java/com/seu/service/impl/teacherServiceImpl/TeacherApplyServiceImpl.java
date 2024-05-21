@@ -2,10 +2,14 @@ package com.seu.service.impl.teacherServiceImpl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.seu.dto.response.ClassList;
+import com.seu.dto.response.TeacherList;
 import com.seu.mapper.*;
 import com.seu.pojo.CheckingCourse;
 import com.seu.pojo.FullCheckingCourse;
+import com.seu.pojo.MyClass;
 import com.seu.pojo.PageBean;
+import com.seu.pojo.Users.Teacher;
 import com.seu.service.teacherService.TeacherApplyService;
 import com.seu.utils.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,5 +62,20 @@ public class TeacherApplyServiceImpl implements TeacherApplyService {
         PageBean pageBean=new PageBean(p.getResult(),p.getTotal());
 
         return pageBean;
+    }
+
+    @Override
+    public TeacherList getByteacherName(String teacherName) {
+
+        List<com.seu.dto.response.Teacher> teacherList=teacherMapper.getByName(teacherName);
+        TeacherList list=new TeacherList(teacherList);
+        return  list;
+    }
+
+    @Override
+    public ClassList getByclassName(String className) {
+        List<MyClass> classes=classMapper.getByName(className);
+        ClassList classList=new ClassList(classes);
+        return classList;
     }
 }
