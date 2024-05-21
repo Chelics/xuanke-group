@@ -45,11 +45,18 @@
             <optional>true</optional>
         </dependency>
         <!--pageHelper分页插件依赖-->
+<!--        <dependency>-->
+<!--            <groupId>com.github.pagehelper</groupId>-->
+<!--            <artifactId>pagehelper-spring-boot-starter</artifactId>-->
+<!--            <version>1.4.2</version>-->
+<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.4.2</version>
+            <version>2.0.0</version>
         </dependency>
+
         <!--        华为云obs依赖-->
         <!-- https://mvnrepository.com/artifact/com.huaweicloud/esdk-obs-java -->
         <dependency>

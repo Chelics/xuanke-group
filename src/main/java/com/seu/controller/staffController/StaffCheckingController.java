@@ -3,6 +3,7 @@ package com.seu.controller.staffController;
 
 import com.seu.exception.AllocateCourseException;
 import com.seu.dto.request.CheckingChoice;
+import com.seu.exception.EntityNotFoundException;
 import com.seu.pojo.FullCheckingCourse;
 import com.seu.pojo.PageBean;
 import com.seu.pojo.Result;
