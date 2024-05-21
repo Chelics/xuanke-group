@@ -1,7 +1,6 @@
 package com.seu.service.impl.studentServiceImpl;
 
 import com.seu.exception.EntityNotFoundException;
-import com.seu.exception.GlobalExceptionHandler;
 import com.seu.exception.SelectCourseException;
 import com.seu.mapper.CourseMapper;
 import com.seu.mapper.CourseStudentMapper;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -40,10 +40,10 @@ public class SelectCourseServiceImpl implements SelectCourseService {
     @Autowired
     CheckStageService checkStageService;
 
-    //哈希表, 为每个课程id储存锁
+    //锁哈希表, 为每个课程id储存锁
     private final ConcurrentHashMap<Integer, Lock> lockMap = new ConcurrentHashMap<>();
 
-    //哈希表, 为每个课程id创建消息队列
+    //消息队列哈希表, 为每个课程id创建消息队列
     private final ConcurrentHashMap<Integer, BlockingQueue<Runnable>> courseQueues = new ConcurrentHashMap<>();
 
     //线程池, 大小为10, 线程池会自动处理线程的分配和任务的执行
@@ -64,6 +64,10 @@ public class SelectCourseServiceImpl implements SelectCourseService {
         //输入检查 & 时间冲突检查
         checkInput(fullCourse, studentId);
 
+        //boolean result = false;
+        //由于lambda表达式不支持对非final变量修改, 将上面注释掉的语句改为下面这行, 意思不变
+        AtomicBoolean result = new AtomicBoolean(false);    //AtomicBoolean是一个原子类, 可以在lambda表达式内部安全地修改它
+
         //如果courseQueues中没有courseId对应的消息队列, 创建一个新的队列
         //该操作是一个原子操作, 不需要额外同步
         //offer()将一个新的任务lambda表达式的形式添加到队列中, 这个任务将在未来由一个线程执行
@@ -77,12 +81,11 @@ public class SelectCourseServiceImpl implements SelectCourseService {
                 //检查课程是否已满
                 checkStorage(courseId, fullCourse);
                 //将课程-学生加入数据库
+                //注意: 在入库时发生异常会返回课程人数已满的响应信息, 由于目前看来不会发生入库时的异常, 故没有处理
                 insertSelectedCourse(courseId, studentId);
+                result.set(true);
             } catch (SelectCourseException ex){
-                //由于Runnable对象不能抛出异常, 这里直接构造了一个全局异常处理器对象返回异常响应
-                //这样不是很好, 但是我还不会更好的处理方式
-                GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
-                globalExceptionHandler.ex(ex);
+                log.warn(studentId + "选课失败, 课程人数已满: " + courseId);
             } finally{
                 lockMap.get(courseId).unlock(); //释放锁
             }
@@ -90,7 +93,7 @@ public class SelectCourseServiceImpl implements SelectCourseService {
 
         processQueue(courseId);
 
-        return true;
+        return result.get();
     }
 
     /**

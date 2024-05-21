@@ -43,7 +43,7 @@ public class SelectCourseController {
             log.info("选课成功: " + studentId + " 选: " + courseId);
             return Result.success("选课成功");
         }else{
-            throw new SelectCourseException("未知原因", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new SelectCourseException("课程人数已满", HttpStatus.FORBIDDEN);
         }
     }
 }
