@@ -1,6 +1,7 @@
 package com.seu.service.staffService;
 
 import com.seu.exception.AllocateFailureException;
+import com.seu.exception.EntityNotFoundException;
 import com.seu.pojo.FullCheckingCourse;
 import com.seu.pojo.PageBean;
 import org.springframework.stereotype.Service;

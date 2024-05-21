@@ -10,6 +10,7 @@ import com.seu.service.teacherService.TeacherApplyService;
 import com.seu.utils.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,7 +33,7 @@ public class TeacherApplyServiceImpl implements TeacherApplyService {
         checkingMapper.add(applyingCourse);
     }
 
-
+    @Transactional(rollbackFor = {Exception.class})
     @Override
     public PageBean page(Integer id,Integer page, Integer pageSize,Short status){
         //此id为教师id
