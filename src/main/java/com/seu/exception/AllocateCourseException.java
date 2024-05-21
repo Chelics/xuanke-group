@@ -5,9 +5,9 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class AllocateFailureException extends Exception{
+public class AllocateCourseException extends Exception{
     private List<Integer> failedCourses;
-    public AllocateFailureException(String msg){
+    public AllocateCourseException(String msg){
         super("分配课程失败: " + msg);
     }
 }

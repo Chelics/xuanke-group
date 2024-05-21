@@ -1,6 +1,6 @@
 package com.seu.service.impl.studentServiceImpl;
 
-import com.seu.exception.DropCourseFailureException;
+import com.seu.exception.InvalidInputException;
 import com.seu.mapper.CourseStudentMapper;
 import com.seu.service.studentService.DropCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +18,11 @@ public class DropCourseServiceImpl implements DropCourseService {
      * @return
      */
     @Override
-    public boolean dropCourse(Integer courseId, Integer studentId) throws DropCourseFailureException {
-        //退课
-        int result = courseStudentMapper.deleteByStudentIdAndCourseId(courseId, studentId);
-
-        if(result > 0){
+    public boolean dropCourse(Integer courseId, Integer studentId) throws InvalidInputException {
+        if(courseStudentMapper.deleteByStudentIdAndCourseId(courseId, studentId) > 0){
             return true;
         }else{
-            throw new DropCourseFailureException("未选择该课程");
+            throw new InvalidInputException("未选择该课程");
         }
     }
 }

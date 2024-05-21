@@ -1,7 +1,7 @@
 package com.seu.controller.staffController;
 
 
-import com.seu.exception.AllocateFailureException;
+import com.seu.exception.AllocateCourseException;
 import com.seu.dto.request.CheckingChoice;
 import com.seu.exception.EntityNotFoundException;
 import com.seu.pojo.FullCheckingCourse;
@@ -37,7 +37,7 @@ public class StaffCheckingController {
      * @return
      */
     @PutMapping
-    public Result choose(@RequestBody CheckingChoice choice) throws AllocateFailureException {
+    public Result choose(@RequestBody CheckingChoice choice) throws AllocateCourseException {
         Integer status=choice.getStatus();
         List<Integer> ids=choice.getIds();
         if(status==2){//通过

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class GetAllCoursesController {
     @Autowired
     GetAllCoursesServiceImpl getAllCourseService;
-
     /**
      * 获取所有课程信息
      * @return
