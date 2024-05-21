@@ -67,4 +67,11 @@ public interface CourseMapper {
      * @return
      */
     int insertCourse(Course course);
+
+    /**
+     * 获取通选课
+     * @return
+     */
+    @Select("SELECT * FROM course WHERE type IN (1, 2)")
+    List<FullCourse> getUniversalCourses();
 }

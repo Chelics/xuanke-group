@@ -1,7 +1,6 @@
 package com.seu.controller.studentController;
 
 import com.seu.exception.InvalidInputException;
-import com.seu.exception.UserNotLoggedInException;
 import com.seu.pojo.Result;
 import com.seu.service.studentService.SelectedCourseService;
 import io.jsonwebtoken.Claims;
@@ -25,10 +24,9 @@ public class SelectedCoursesController {
      * @param claims
      * @return
      * @throws InvalidInputException
-     * @throws UserNotLoggedInException
      */
     @GetMapping
-    public Result getSelectedCourses(@RequestAttribute Claims claims) throws InvalidInputException, UserNotLoggedInException {
+    public Result getSelectedCourses(@RequestAttribute Claims claims) throws InvalidInputException {
 
         // 从claims中获取studentId
         String studentIdStr = claims.get("id").toString();
