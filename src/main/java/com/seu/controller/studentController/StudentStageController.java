@@ -18,6 +18,13 @@ public class StudentStageController {
     @Autowired
     StudentStageServiceImpl getStageService;
 
+    /**
+     * 根据阶段id获取阶段信息
+     * @param id
+     * @return
+     * @throws InvalidInputException
+     * @throws EntityNotFoundException
+     */
     @GetMapping
     public Result getStage(@RequestParam Integer id) throws InvalidInputException, EntityNotFoundException {
         log.info("获取阶段信息");

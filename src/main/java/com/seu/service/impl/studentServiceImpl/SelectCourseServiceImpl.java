@@ -102,7 +102,7 @@ public class SelectCourseServiceImpl implements SelectCourseService {
 
         for(Integer courId : selectedCourseIds){
             Course course = courseMapper.getCourseById(courId);
-            if(CheckTimeConflictsUtils.checkTimeConflicts(course, fullCourse)){
+            if(CheckTimeConflictsUtils.checkCourseAndCourse(course, fullCourse)){
                 return true;
             }
         }

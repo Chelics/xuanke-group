@@ -15,6 +15,10 @@ public class GetAllCoursesController {
     @Autowired
     GetAllCoursesServiceImpl getAllCourseService;
 
+    /**
+     * 获取所有课程信息
+     * @return
+     */
     @GetMapping
     public Result getAllCourses(){
         return Result.success(getAllCourseService.getAllCourse());

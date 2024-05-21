@@ -1,0 +1,12 @@
+5.19    12：00 修改axios包装，调用response.data
+使用例
+interface ResponseData {
+  code: number;
+  msg: string;
+  data: any;
+}
+async function login(usernameInput: string, password: string) {
+    try {
+      const response :ResponseData= await request.post('/login', { usernameInput, password });
+        if (response.code === 1 && response.msg === 'success') {//response现在是后端返回，http的state等已经统一处理
+	……………………

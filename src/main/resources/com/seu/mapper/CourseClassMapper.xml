@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seu.mapper.CourseClassMapper">
+    <select id="getCourseIdsByClassIds" resultType="Integer">
+        <choose>
+            <when test="classIds != null and classIds.size() > 0">
+                select course_id from course_class
+                where class_id in
+                <foreach collection="classIds" item="classId" separator="," open="(" close=")">
+                    #{classId}
+                </foreach>
+            </when>
+            <otherwise>
+                select course_id from course_teacher where 1=0
+            </otherwise>
+        </choose>
+    </select>
+</mapper>

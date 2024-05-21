@@ -17,6 +17,12 @@ public class SearchCourseController {
     @Autowired
     SearchCourseServiceImpl searchCourseServiceImpl;
 
+    /**
+     * 根据关键词搜索课程
+     * @param keyWord
+     * @return
+     * @throws InvalidInputException
+     */
     @GetMapping
     public Result searchCoursesByKeyWord(@RequestParam String keyWord) throws InvalidInputException {
 
