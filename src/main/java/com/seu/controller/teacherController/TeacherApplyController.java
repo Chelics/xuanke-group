@@ -1,5 +1,7 @@
 package com.seu.controller.teacherController;
 
+import com.seu.dto.response.ClassList;
+import com.seu.dto.response.TeacherList;
 import com.seu.pojo.CheckingCourse;
 import com.seu.pojo.PageBean;
 import com.seu.pojo.Result;
@@ -18,22 +20,25 @@ public class TeacherApplyController {
     private TeacherApplyService teacherApplyService;
 
     /**
-     * 根据教师名查询教师
+     * 根据教师名模糊查询教师
      * @return
      */
-    @GetMapping("/teachers/{teacherName}")
-    public Result getByteacherName(){
-       // Teacher teacher=teacherApplyService.get
-        return null;
+    @GetMapping("/teachers")
+    public Result getByteacherName(String teacherName){
+        log.info("模糊查询教师,参数:{}",teacherName);
+        TeacherList teacherList=teacherApplyService.getByteacherName(teacherName);
+        return Result.success(teacherList);
     }
 
     /**
-     * 根据教师名查询教师
+     * 根据班级名模糊查询班级
      * @return
      */
-    @GetMapping("/classes/{className}")
-    public Result getByclassName(){
-        return null;
+    @GetMapping("/classes")
+    public Result getByclassName(String className){
+        log.info("模糊查询班级,参数:{}",className);
+        ClassList classList=teacherApplyService.getByclassName(className);
+        return  Result.success(classList);
     }
 
     /**

@@ -11,5 +11,12 @@
             #{id}
         </foreach>
     </select>
+<!--    模糊查询-->
+    <select id="getByName" resultType="com.seu.dto.response.Teacher">
+        select id,username,teacher_name from teacher
+        <where>
+        <if test="teacherName!=null and teacherName!=''">teacher_name like concat('%', #{teacherName}, '%')</if>
+        </where>
+    </select>
 
 </mapper>
