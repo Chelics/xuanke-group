@@ -51,6 +51,9 @@ public class LoginController {
             log.warn("用户名或密码为空: " + request.getRemoteAddr());
             throw new InvalidInputException("用户名或密码不能为空");
         }
+        if(username.length() != 9 || password.length() < 6 || password.length() > 20){
+            throw new InvalidInputException("用户名或密码错误");
+        }
 
         //转到业务层验证
         User user = loginService.checkCredentials(username, password);

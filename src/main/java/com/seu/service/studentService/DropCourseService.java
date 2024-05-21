@@ -1,6 +1,8 @@
 package com.seu.service.studentService;
 
+import com.seu.exception.EntityNotFoundException;
 import com.seu.exception.InvalidInputException;
+import com.seu.exception.SelectCourseException;
 
 public interface DropCourseService {
     /**
@@ -9,5 +11,5 @@ public interface DropCourseService {
      * @param studentId
      * @return
      */
-    boolean dropCourse(Integer courseId, Integer studentId) throws InvalidInputException;
+    boolean dropCourse(Integer courseId, Integer studentId) throws InvalidInputException, EntityNotFoundException, SelectCourseException;
 }

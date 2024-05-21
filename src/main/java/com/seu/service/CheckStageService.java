@@ -1,5 +1,8 @@
-package com.seu.service.studentService;
+package com.seu.service;
+
+import com.seu.exception.EntityNotFoundException;
+import com.seu.exception.SelectCourseException;
 
 public interface CheckStageService {
-    boolean checkStage();
+    void checkStage() throws SelectCourseException, EntityNotFoundException;
 }

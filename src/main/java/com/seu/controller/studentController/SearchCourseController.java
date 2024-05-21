@@ -29,6 +29,9 @@ public class SearchCourseController {
         if(keyWord == null || keyWord.trim().isEmpty()){
             throw new InvalidInputException("搜索关键词不能为空!");
         }
+        if(keyWord.length() > 20){
+            throw new InvalidInputException("搜索关键词超出最大字数限制!");
+        }
 
         log.info("搜索课程关键词: " + keyWord);
         return Result.success(searchCourseServiceImpl.searchCoursesByKeyWord(keyWord));

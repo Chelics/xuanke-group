@@ -1,6 +1,7 @@
 package com.seu.controller.studentController;
 
 import com.seu.dto.request.CourseSelection;
+import com.seu.exception.EntityNotFoundException;
 import com.seu.exception.InvalidInputException;
 import com.seu.exception.SelectCourseException;
 import com.seu.pojo.Result;
@@ -28,7 +29,7 @@ public class SelectCourseController {
      * @throws SelectCourseException
      */
     @PostMapping
-    public Result selectCourse(@RequestBody CourseSelection courseSelection) throws InvalidInputException, SelectCourseException {
+    public Result selectCourse(@RequestBody CourseSelection courseSelection) throws InvalidInputException, SelectCourseException, EntityNotFoundException {
         Integer courseId = courseSelection.getCourseId();
         Integer studentId = courseSelection.getStudentId();
 
