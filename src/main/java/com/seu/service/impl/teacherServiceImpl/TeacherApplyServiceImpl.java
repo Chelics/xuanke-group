@@ -35,6 +35,7 @@ public class TeacherApplyServiceImpl implements TeacherApplyService {
 
     @Override
     public PageBean page(Integer id,Integer page, Integer pageSize,Short status){
+        //此id为教师id
         //1. 设置分页参数
         PageHelper.startPage(page,pageSize);
         //2. 执行查询

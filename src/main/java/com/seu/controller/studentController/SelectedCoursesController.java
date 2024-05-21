@@ -30,7 +30,7 @@ public class SelectedCoursesController {
 
         // 从claims中获取studentId
         String studentIdStr = claims.get("id").toString();
-git
+
         // 将studentIdStr转换为整数
         Integer studentId;
         try {
