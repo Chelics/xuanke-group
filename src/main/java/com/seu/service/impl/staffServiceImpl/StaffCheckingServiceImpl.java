@@ -3,8 +3,7 @@ package com.seu.service.impl.staffServiceImpl;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.seu.exception.AllocateFailureException;
-import com.seu.exception.EntityNotFoundException;
+import com.seu.exception.AllocateCourseException;
 import com.seu.mapper.CheckingMapper;
 import com.seu.mapper.ClassMapper;
 import com.seu.mapper.TeacherMapper;
@@ -64,7 +63,7 @@ public class StaffCheckingServiceImpl implements StaffCheckingService {
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
-    public void pass(List<Integer> ids) throws AllocateFailureException {
+    public void pass(List<Integer> ids) throws AllocateCourseException {
         checkingMapper.pass(ids);
 
         //自动分配时间和教室

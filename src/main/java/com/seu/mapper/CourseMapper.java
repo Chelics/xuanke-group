@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,6 +24,8 @@ public interface CourseMapper {
 
     /**
      * 根据id查询课程
+     * @param id
+     * @return
      */
     @Select("select * from course where id=#{id}")
     FullCourse getCourseById(Integer id);

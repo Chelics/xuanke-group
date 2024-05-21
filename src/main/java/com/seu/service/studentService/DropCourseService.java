@@ -1,6 +1,6 @@
 package com.seu.service.studentService;
 
-import com.seu.exception.DropCourseFailureException;
+import com.seu.exception.InvalidInputException;
 
 public interface DropCourseService {
     /**
@@ -9,5 +9,5 @@ public interface DropCourseService {
      * @param studentId
      * @return
      */
-    boolean dropCourse(Integer courseId, Integer studentId) throws DropCourseFailureException;
+    boolean dropCourse(Integer courseId, Integer studentId) throws InvalidInputException;
 }

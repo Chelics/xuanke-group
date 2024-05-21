@@ -1,25 +1,32 @@
 package com.seu.service.impl.studentServiceImpl;
 
-import com.seu.exception.SelectCourseFailureException;
+import com.seu.exception.GlobalExceptionHandler;
+import com.seu.exception.SelectCourseException;
 import com.seu.mapper.CourseMapper;
 import com.seu.mapper.CourseStudentMapper;
 import com.seu.mapper.StageMapper;
 import com.seu.mapper.StudentMapper;
-import com.seu.pojo.Course;
 import com.seu.pojo.FullCourse;
 import com.seu.pojo.Stage;
 import com.seu.pojo.Users.Student;
 import com.seu.service.studentService.SelectCourseService;
 import com.seu.utils.CheckTimeConflictsUtils;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 @Service
+@Slf4j
 public class SelectCourseServiceImpl implements SelectCourseService {
 
     @Autowired
@@ -31,34 +38,57 @@ public class SelectCourseServiceImpl implements SelectCourseService {
     @Autowired
     StageMapper stageMapper;
 
+    //哈希表, 为每个课程id储存锁
+    private final ConcurrentHashMap<Integer, Lock> lockMap = new ConcurrentHashMap<>();
+
+    //哈希表, 为每个课程id创建消息队列
+    private final ConcurrentHashMap<Integer, BlockingQueue<Runnable>> courseQueues = new ConcurrentHashMap<>();
+
+    //线程池, 大小为10, 线程池会自动处理线程的分配和任务的执行
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+
     /**
      * 学生选课
      * @param courseId
      * @param studentId
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     //@Retryable(value = { SQLException.class }, maxAttempts = 3, backoff = @Backoff(delay = 1000))
-    public synchronized boolean selectCourse(Integer courseId, Integer studentId) throws SelectCourseFailureException {
+    public boolean selectCourse(Integer courseId, Integer studentId) throws SelectCourseException {
 
         FullCourse fullCourse = courseMapper.getCourseById(courseId);
 
         //输入检查 & 时间冲突检查
         checkInput(fullCourse, studentId);
 
-        //课程未满
-        Integer studentsCountForCourse = courseStudentMapper.getStudentCountForCourse(courseId);
-        int count = (studentsCountForCourse == null) ? 0 : studentsCountForCourse;
-        if (count >= fullCourse.getCourseStorage()) {
-            throw new SelectCourseFailureException("课程已满");
-        }
+        //如果courseQueues中没有courseId对应的消息队列, 创建一个新的队列
+        //该操作是一个原子操作, 不需要额外同步
+        //offer()将一个新的任务lambda表达式的形式添加到队列中, 这个任务将在未来由一个线程执行
+        courseQueues.computeIfAbsent(courseId, k -> new LinkedBlockingQueue<>()).offer(() -> {
 
-        if(courseStudentMapper.selectCourse(courseId, studentId) > 0){
-            return true;
-        }else{
-            throw new SelectCourseFailureException("数据库操作失败");
-        }
+            //获取对应courseId的锁, 如果锁被占用, 等待直到锁被释放
+            Lock lock = lockMap.computeIfAbsent(courseId, k -> new ReentrantLock());
+            lock.lock();    //加锁
+
+            try {
+                //检查课程是否已满
+                checkStorage(courseId, fullCourse);
+                //将课程-学生加入数据库
+                insertSelectedCourse(courseId, studentId);
+            } catch (SelectCourseException ex){
+                //由于Runnable对象不能抛出异常, 这里直接构造了一个全局异常处理器对象返回异常响应
+                //这样不是很好, 但是我还不会更好的处理方式
+                GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
+                globalExceptionHandler.ex(ex);
+            } finally{
+                lockMap.get(courseId).unlock(); //释放锁
+            }
+        });
+
+        processQueue(courseId);
+
+        return true;
     }
 
     /**
@@ -67,22 +97,22 @@ public class SelectCourseServiceImpl implements SelectCourseService {
      * @param studentId
      * @return
      */
-    private void checkInput(FullCourse fullCourse, Integer studentId) throws SelectCourseFailureException {
+    private void checkInput(FullCourse fullCourse, Integer studentId) throws SelectCourseException {
 
         //判断是否处在可以选课的阶段
         checkStage();
 
         if (fullCourse == null) {
-            throw new SelectCourseFailureException("课程不存在");
+            throw new SelectCourseException("课程不存在", HttpStatus.BAD_REQUEST);
         }
 
         Student student = studentMapper.getStudentById(studentId);
         if(student == null){
-            throw new SelectCourseFailureException("学生不存在");
+            throw new SelectCourseException("学生不存在: " + studentId, HttpStatus.BAD_REQUEST);
         }
 
         if (hasTimeConflicts(studentId, fullCourse)){
-            throw new SelectCourseFailureException("课程已选或与其它已选课程存在时间冲突");
+            throw new SelectCourseException("课程已选或与其它已选课程存在时间冲突", HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -100,25 +130,20 @@ public class SelectCourseServiceImpl implements SelectCourseService {
             return false;
         }
 
-        for(Integer courId : selectedCourseIds){
-            Course course = courseMapper.getCourseById(courId);
-            if(CheckTimeConflictsUtils.checkCourseAndCourse(course, fullCourse)){
-                return true;
-            }
-        }
-        return false;
+        List<FullCourse> courseList = courseMapper.getCoursesByIds(selectedCourseIds);
+        return CheckTimeConflictsUtils.checkCoursesAndCourse(courseList, fullCourse);
     }
 
     /**
      * 检查是否处在可以选课的阶段
      * @return
      */
-    private void checkStage() throws SelectCourseFailureException {
+    private void checkStage() throws SelectCourseException {
         LocalDateTime now = LocalDateTime.now();
         Stage stage = stageMapper.getCurrStage(now);
 
         if(stage == null){
-            throw new SelectCourseFailureException("未知的选课阶段");
+            throw new SelectCourseException("未知的选课阶段: " + now, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         String stageName = stage.getStageName();
@@ -127,11 +152,95 @@ public class SelectCourseServiceImpl implements SelectCourseService {
         }
 
         if (stageName.contains("未开放")) {
-            throw new SelectCourseFailureException("选课未开始");
+            throw new SelectCourseException("选课未开始", HttpStatus.BAD_REQUEST);
         }else if(stageName.contains("结束")){
-            throw new SelectCourseFailureException("选课已结束");
+            throw new SelectCourseException("选课已结束", HttpStatus.BAD_REQUEST);
         }else{
-            throw new SelectCourseFailureException("未知的选课阶段");
+            throw new SelectCourseException("未知的选课阶段: " + stageName, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * 检查课程容量是否已满
+     * @param courseId
+     * @param fullCourse
+     * @throws SelectCourseException
+     */
+    private void checkStorage(Integer courseId, FullCourse fullCourse) throws SelectCourseException {
+        Integer studentsCountForCourse = courseStudentMapper.getStudentCountForCourse(courseId);
+        int count = (studentsCountForCourse == null) ? 0 : studentsCountForCourse;
+        if (count >= fullCourse.getCourseStorage()) {
+            throw new SelectCourseException("课程已满: " + courseId, HttpStatus.FORBIDDEN);
+        }
+    }
+
+    /**
+     * 向关联表中插入记录
+     * @param courseId
+     * @param studentId
+     * @throws SelectCourseException
+     */
+    private void insertSelectedCourse(Integer courseId, Integer studentId) throws SelectCourseException {
+        if(courseStudentMapper.selectCourse(courseId, studentId) <= 0){
+            throw new SelectCourseException("数据库操作失败: 学生id: " + studentId + "课程id: " + courseId, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 创建守护线程
+     */
+    @PostConstruct
+    private void createDaemonThread(){
+        // 创建线程
+        Thread daemonThread = new Thread(() -> {
+            while (true) {
+                for (Integer id : courseQueues.keySet()) {  //遍历courseQueue中每个courseId对应的队列
+                    processQueue(id); // 处理队列中的任务
+                }
+                try {
+                    Thread.sleep(1000); // 每秒检查一次
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // 恢复中断状态
+                    break; // 如果线程被中断，退出循环
+                }
+            }
+        });
+        daemonThread.setDaemon(true); // 设置为守护线程
+        daemonThread.start(); // 启动线程
+    }
+
+    /**
+     * 处理消息队列
+     * @param courseId
+     */
+    private void processQueue(Integer courseId) {
+        BlockingQueue<Runnable> queue = courseQueues.get(courseId);
+
+        if (queue != null) {    //若队列不为空
+            Runnable task;
+            while ((task = queue.poll()) != null) { //从队列头部取出任务
+                executorService.submit(task);   //将取出的任务交给线程池执行
+            }
+        }
+    }
+
+    /**
+     * 关闭线程池
+     */
+    @PreDestroy
+    public void shutdownThreadPool() {
+        try {
+            log.info("尝试关闭线程池...");
+            executorService.shutdown();
+            if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                log.warn("线程池没有在指定时间内关闭，正在尝试立即关闭...");
+                List<Runnable> droppedTasks = executorService.shutdownNow();
+                log.warn("关闭线程池后，有 " + droppedTasks.size() + " 个未执行的任务");
+            }
+        } catch (InterruptedException e) {
+            log.error("关闭线程池时被中断", e);
+            Thread.currentThread().interrupt();
+        }
+    }
+
 }
