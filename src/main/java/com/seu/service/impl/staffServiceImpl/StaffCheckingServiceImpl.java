@@ -2,11 +2,13 @@ package com.seu.service.impl.staffServiceImpl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.seu.exception.AllocateFailureException;
 import com.seu.mapper.CheckingMapper;
 import com.seu.mapper.ClassMapper;
 import com.seu.mapper.TeacherMapper;
 import com.seu.pojo.FullCheckingCourse;
 import com.seu.pojo.PageBean;
+import com.seu.service.impl.CourseSchedulerImpl;
 import com.seu.service.staffService.StaffCheckingService;
 import com.seu.utils.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class StaffCheckingServiceImpl implements StaffCheckingService {
     private TeacherMapper teacherMapper;
     @Autowired
     private ClassMapper classMapper;
+    @Autowired
+    private CourseSchedulerImpl scheduler;
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
@@ -55,12 +59,13 @@ public class StaffCheckingServiceImpl implements StaffCheckingService {
         checkingMapper.reject(ids);
     }
 
+    @Transactional
     @Override
-    public void pass(List<Integer> ids) {
+    public void pass(List<Integer> ids) throws AllocateFailureException {
         checkingMapper.pass(ids);
 
         //自动分配时间和教室
-
+        scheduler.allocateMultipleCourses(ids);
     }
 
     @Transactional(rollbackFor = {Exception.class})

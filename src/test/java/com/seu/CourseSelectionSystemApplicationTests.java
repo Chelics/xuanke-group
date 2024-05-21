@@ -44,6 +44,7 @@ public class CourseSelectionSystemApplicationTests {
     public void testParseJwt(){
         Claims claims = Jwts.parser()
                 .setSigningKey("SEUxuanke")
+                .build()
                 .parseClaimsJws("eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoi5byg5LiJIiwiaWQiOjEwMDg2LCJleHAiOjE3MTU1MTQxMTN9.ZsZA7TFYWV3FlenqKAs0GxKrAaLJBLk5gJEEFUPoCpU")
                 .getBody();
         System.out.println(claims);
@@ -75,31 +76,32 @@ public class CourseSelectionSystemApplicationTests {
      */
     @Test
     public void testGetFriendlyTime(){
-        int time = 113;
-        int week = time / 8;
-        int Num = time % 8;
-        int danshuang = week / 7;
-        int day = (week + 7) % 7;
+        for(int time = 0; time < 168; time++){
+            int week = time / 8;
+            int Num = time % 8;
+            int danshuang = week / 7;
+            int day = (week + 7) % 7;
 
-        String danshuangString = new String();
-        if(danshuang == 0) danshuangString = "单周";
-        else if(danshuang == 1) danshuangString = "双周";
-        else danshuangString = "单双周";
+            String danshuangString = new String();
+            if(danshuang == 0) danshuangString = "单周";
+            else if(danshuang == 1) danshuangString = "双周";
+            else danshuangString = "单双周";
 
-        String jie = new String();
-        switch(Num){
-            case 0: jie = "1-2"; break;
-            case 1: jie = "3-4"; break;
-            case 2: jie = "3-5";break;
-            case 3: jie = "6-7";break;
-            case 4: jie = "8-9";break;
-            case 5: jie = "8-10";break;
-            case 6: jie = "11-12";break;
-            case 7: jie = "11-13";break;
-            default: jie = "节数错误";
+            String jie = new String();
+            switch(Num){
+                case 0: jie = "1-2"; break;
+                case 1: jie = "3-4"; break;
+                case 2: jie = "3-5";break;
+                case 3: jie = "6-7";break;
+                case 4: jie = "8-9";break;
+                case 5: jie = "8-10";break;
+                case 6: jie = "11-12";break;
+                case 7: jie = "11-13";break;
+                default: jie = "节数错误";
+            }
+            System.out.print(time + "对应: ");
+            System.out.println(danshuangString + "周" + (day + 1) + "第" + jie + "节");
         }
 
-        System.out.println(danshuangString + "周" + (day + 1) + "第" + jie + "节");
     }
-
 }

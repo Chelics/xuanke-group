@@ -19,6 +19,13 @@ public class DropCourseController {
     @Autowired
     DropCourseServiceImpl studentDropCourse;
 
+    /**
+     * 退课
+     * @param courseSelection
+     * @return
+     * @throws InvalidInputException
+     * @throws DropCourseFailureException
+     */
     @PostMapping
     public Result dropCourse(@RequestBody CourseSelection courseSelection) throws InvalidInputException, DropCourseFailureException {
         Integer courseId = courseSelection.getCourseId();

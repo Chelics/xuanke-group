@@ -20,6 +20,15 @@ public interface RoomMapper {
     //@Select("select * from room")
     List<Room> list(@Param("building")String building, @Param("roomName")String roomName, @Param("begin")Short storageBegin, @Param("end")Short storageEnd);
 
+    /**
+     * 分页获取列表数据, 但是只要id
+     * @param building
+     * @param roomName
+     * @param storageBegin
+     * @param storageEnd
+     * @return
+     */
+    List<Integer> idList(@Param("building")String building, @Param("roomName")String roomName, @Param("begin")Short storageBegin, @Param("end")Short storageEnd);
 
 
     /**

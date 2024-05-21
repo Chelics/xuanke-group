@@ -1,11 +1,14 @@
 package com.seu.controller;
 
+import com.seu.config.JwtConfig;
 import com.seu.dto.request.LoginData;
 import com.seu.pojo.Result;
 import com.seu.pojo.Users.User;
 import com.seu.service.LoginService;
 import com.seu.utils.JwtUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,13 +23,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/login")
 public class LoginController {
-    private final LoginService loginService;
-
-    //构造函数注入保持final
-    public LoginController(LoginService loginService) {
-        this.loginService = loginService;
-    }
-
+    @Autowired
+    LoginService loginService;
+    @Autowired
+    JwtConfig jwtConfig;
     /**
      * 登录验证
      * @param request
@@ -54,7 +53,7 @@ public class LoginController {
             claims.put("username", user.getUsername());
             claims.put("name", user.getName());
 
-            String jwt = JwtUtils.generateJwt(claims);  //缺陷: 此处如果user为学生, jwt中不包含classId
+            String jwt = JwtUtils.generateJwt(claims, jwtConfig);  //缺陷: 此处如果user为学生, jwt中不包含classId
             return ResponseEntity.ok(Result.success(jwt));
         }
 
