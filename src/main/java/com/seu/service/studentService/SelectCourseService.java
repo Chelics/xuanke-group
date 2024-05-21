@@ -1,5 +1,6 @@
 package com.seu.service.studentService;
 
+import com.seu.exception.EntityNotFoundException;
 import com.seu.exception.SelectCourseException;
 
 public interface SelectCourseService {
@@ -9,5 +10,5 @@ public interface SelectCourseService {
      * @param studentId
      * @return
      */
-    boolean selectCourse(Integer courseId, Integer studentId) throws SelectCourseException;
+    boolean selectCourse(Integer courseId, Integer studentId) throws SelectCourseException, EntityNotFoundException;
 }

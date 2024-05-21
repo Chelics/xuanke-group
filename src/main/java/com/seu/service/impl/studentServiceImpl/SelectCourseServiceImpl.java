@@ -1,5 +1,6 @@
 package com.seu.service.impl.studentServiceImpl;
 
+import com.seu.exception.EntityNotFoundException;
 import com.seu.exception.GlobalExceptionHandler;
 import com.seu.exception.SelectCourseException;
 import com.seu.mapper.CourseMapper;
@@ -7,8 +8,8 @@ import com.seu.mapper.CourseStudentMapper;
 import com.seu.mapper.StageMapper;
 import com.seu.mapper.StudentMapper;
 import com.seu.pojo.FullCourse;
-import com.seu.pojo.Stage;
 import com.seu.pojo.Users.Student;
+import com.seu.service.CheckStageService;
 import com.seu.service.studentService.SelectCourseService;
 import com.seu.utils.CheckTimeConflictsUtils;
 import jakarta.annotation.PostConstruct;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
@@ -37,6 +37,8 @@ public class SelectCourseServiceImpl implements SelectCourseService {
     CourseStudentMapper courseStudentMapper;
     @Autowired
     StageMapper stageMapper;
+    @Autowired
+    CheckStageService checkStageService;
 
     //哈希表, 为每个课程id储存锁
     private final ConcurrentHashMap<Integer, Lock> lockMap = new ConcurrentHashMap<>();
@@ -55,7 +57,7 @@ public class SelectCourseServiceImpl implements SelectCourseService {
      */
     @Override
     //@Retryable(value = { SQLException.class }, maxAttempts = 3, backoff = @Backoff(delay = 1000))
-    public boolean selectCourse(Integer courseId, Integer studentId) throws SelectCourseException {
+    public boolean selectCourse(Integer courseId, Integer studentId) throws SelectCourseException, EntityNotFoundException {
 
         FullCourse fullCourse = courseMapper.getCourseById(courseId);
 
@@ -97,10 +99,10 @@ public class SelectCourseServiceImpl implements SelectCourseService {
      * @param studentId
      * @return
      */
-    private void checkInput(FullCourse fullCourse, Integer studentId) throws SelectCourseException {
+    private void checkInput(FullCourse fullCourse, Integer studentId) throws SelectCourseException, EntityNotFoundException {
 
         //判断是否处在可以选课的阶段
-        checkStage();
+        checkStageService.checkStage();
 
         if (fullCourse == null) {
             throw new SelectCourseException("课程不存在", HttpStatus.BAD_REQUEST);
@@ -132,32 +134,6 @@ public class SelectCourseServiceImpl implements SelectCourseService {
 
         List<FullCourse> courseList = courseMapper.getCoursesByIds(selectedCourseIds);
         return CheckTimeConflictsUtils.checkCoursesAndCourse(courseList, fullCourse);
-    }
-
-    /**
-     * 检查是否处在可以选课的阶段
-     * @return
-     */
-    private void checkStage() throws SelectCourseException {
-        LocalDateTime now = LocalDateTime.now();
-        Stage stage = stageMapper.getCurrStage(now);
-
-        if(stage == null){
-            throw new SelectCourseException("未知的选课阶段: " + now, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        String stageName = stage.getStageName();
-        if(stageName.contains("-开放选课") || stageName.contains("退改补")){
-            return;
-        }
-
-        if (stageName.contains("未开放")) {
-            throw new SelectCourseException("选课未开始", HttpStatus.BAD_REQUEST);
-        }else if(stageName.contains("结束")){
-            throw new SelectCourseException("选课已结束", HttpStatus.BAD_REQUEST);
-        }else{
-            throw new SelectCourseException("未知的选课阶段: " + stageName, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     /**

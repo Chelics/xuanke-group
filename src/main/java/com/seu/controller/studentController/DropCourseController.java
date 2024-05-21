@@ -1,7 +1,9 @@
 package com.seu.controller.studentController;
 
 import com.seu.dto.request.CourseSelection;
+import com.seu.exception.EntityNotFoundException;
 import com.seu.exception.InvalidInputException;
+import com.seu.exception.SelectCourseException;
 import com.seu.pojo.Result;
 import com.seu.service.impl.studentServiceImpl.DropCourseServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ public class DropCourseController {
      * @throws InvalidInputException
      */
     @PostMapping
-    public Result dropCourse(@RequestBody CourseSelection courseSelection) throws InvalidInputException {
+    public Result dropCourse(@RequestBody CourseSelection courseSelection) throws InvalidInputException, EntityNotFoundException, SelectCourseException {
         Integer courseId = courseSelection.getCourseId();
         Integer studentId = courseSelection.getStudentId();
 
