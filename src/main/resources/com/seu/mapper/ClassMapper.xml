@@ -11,5 +11,12 @@
             #{id}
         </foreach>
     </select>
+<!--    模糊查询-->
+    <select id="getByName" resultType="com.seu.pojo.MyClass">
+        select * from class
+        <where>
+        <if test="className!=null and className!=''">class_name like concat('%', #{className}, '%')</if>
+        </where>
+    </select>
 
 </mapper>
