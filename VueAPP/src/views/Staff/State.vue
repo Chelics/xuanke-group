@@ -8,11 +8,15 @@
       <el-table-column prop="endTime" label="结束时间"></el-table-column>
     </el-table>
     <div v-else>加载中...</div>
+    <el-button type="primary" @click="updateState(stages[0]),updateState(stages[1]),updateState(stages[2]),updateName(stages[2].stageName)" v-if="stages.length > 0">
+    保存修改
+  </el-button>
   </div>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import request from '@/util/request';
+import { updateName, updateState } from '@/api/Stuff';
 interface ResponseData {
   code: number;
   msg: string;

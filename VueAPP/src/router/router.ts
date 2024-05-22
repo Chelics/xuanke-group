@@ -14,6 +14,8 @@ import Classroom from "@/views/Staff/Classroom.vue"
 import AdminAudit from "@/views/Staff/StaffAudit.vue"
 
 import { useAuthStore } from '@/stores/auth';
+import HtmlTable from "@/testview/htmlTable.vue"
+import StaffAudit from "@/views/Staff/StaffAudit.vue"
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -25,15 +27,24 @@ const router = createRouter({
         {
             path: '/login',
             name: 'login',
-            component: Login
+            component: Login,
+            meta:{
+                showNav: true
+              }
         },
         {
             path: '/register',
-            component: Register
+            component: Register,
+            meta:{
+                showNav: true
+              }
         },
         {
             path: '/forget-password',
-            component: ForgetPassword
+            component: ForgetPassword,
+            meta:{
+                showNav: true
+              }
         },
         //学生部分路由
         {
@@ -97,11 +108,15 @@ const router = createRouter({
                 },
                 {
                     path: '/staff/audit',
-                    component: AdminAudit,
+                    component: StaffAudit,
                     props: true,
                     meta: { requiresAuth: true, role: 'staff' },
                 }
             ]
+        },
+        {
+            path:'/test',
+            component:HtmlTable,
         },
         {
             path: '/:pathMatch(.*)*',

@@ -10,3 +10,6 @@ async function login(usernameInput: string, password: string) {
       const response :ResponseData= await request.post('/login', { usernameInput, password });
         if (response.code === 1 && response.msg === 'success') {//response现在是后端返回，http的state等已经统一处理
 	……………………
+
+5.22
+课表已经完成，学生，老师查看课程完成。
