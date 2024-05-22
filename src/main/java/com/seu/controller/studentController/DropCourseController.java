@@ -6,12 +6,10 @@ import com.seu.exception.InvalidInputException;
 import com.seu.exception.SelectCourseException;
 import com.seu.pojo.Result;
 import com.seu.service.impl.studentServiceImpl.DropCourseServiceImpl;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -27,11 +25,22 @@ public class DropCourseController {
      * @throws InvalidInputException
      */
     @PostMapping
-    public Result dropCourse(@RequestBody CourseSelection courseSelection) throws InvalidInputException, EntityNotFoundException, SelectCourseException {
-        Integer courseId = courseSelection.getCourseId();
-        Integer studentId = courseSelection.getStudentId();
+    public Result dropCourse(@RequestBody CourseSelection courseSelection, @RequestAttribute Claims claims) throws InvalidInputException, EntityNotFoundException, SelectCourseException {
 
-        if(courseId == null || courseId < 0|| studentId == null || studentId < 0){
+        // 从claims中获取studentId
+        String studentIdStr = claims.get("id").toString();
+
+        // 将studentIdStr转换为整数
+        Integer studentId;
+        try {
+            studentId = Integer.parseInt(studentIdStr);
+        } catch (NumberFormatException e) {
+            throw new InvalidInputException("获取失败: 非法的学生id");
+        }
+
+        Integer courseId = courseSelection.getCourseId();
+
+        if(courseId == null || courseId < 0|| studentId < 0){
             throw new InvalidInputException("课程或学生id错误");
         }
 
