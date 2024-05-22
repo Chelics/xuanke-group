@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -23,7 +24,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     @Autowired
     JwtConfig jwtConfig;
     @Override
-    public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest req, @NotNull HttpServletResponse resp, Object handler) throws Exception {
 
         String url = req.getRequestURI();
         log.info("已拦截请求的url: {}", url);

@@ -99,4 +99,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), ex.getStatus());
     }
 
+    @ExceptionHandler(SelectCourseRuntimeException.class)
+    public ResponseEntity<Object> handleSelectCourseRuntimeException(SelectCourseRuntimeException ex){
+        log.warn("捕获到选课失败异常: ", ex);
+        return new ResponseEntity<>(ex.getMessage(), ex.getStatus());
+    }
+
 }

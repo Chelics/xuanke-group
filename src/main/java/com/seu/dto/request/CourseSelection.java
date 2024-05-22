@@ -13,5 +13,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CourseSelection {
     private Integer courseId;
-    private Integer studentId;
 }
