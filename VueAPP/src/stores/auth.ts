@@ -5,8 +5,8 @@ import request from '@/util/request';
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref('1');//测试,非空数据。只要没有连接后端数据，不会触发更新令牌
-  const username = ref('0');//测试，0学生，1老师，2教务
-  const userRole=ref('student');//测试，实际调整角色在这里。
+  const username = ref('1');//测试，0学生，1老师，2教务
+  const userRole=ref('teacher');//测试，实际调整角色在这里。
 
   async function login(username: string, password: string) {
     try {
