@@ -1,3 +1,5 @@
+
+
 <template>
     <el-container style="height: 100vh;">
       <el-aside width="200px" style="background-color: #f5f7fa;">
@@ -18,10 +20,10 @@
         </el-submenu>
         <el-submenu v-if="authStore.userRole === 'teacher'" :default-active="$route.path">
           <el-menu-item index="/teacher/teacher-schedule">
-            <span>老师课表</span>
+            <span>教师课表</span>
           </el-menu-item>
           <el-menu-item index="/teacher/teacher-courses">
-            <span>老师课程管理</span>
+            <span>教师课程管理</span>
           </el-menu-item>
         </el-submenu>
         <el-submenu v-if="authStore.userRole === 'staff'" :default-active="$route.path">
@@ -41,6 +43,7 @@
         <router-view />
       </el-main>
     </el-container>
+
   </template>
   
   <script setup lang="ts">
