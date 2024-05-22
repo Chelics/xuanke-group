@@ -3,7 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]  // 路径映射，相对于baseUrl
-    }
+    },
+    "strictNullChecks": false
   },
 
   "files": [],
