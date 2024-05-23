@@ -44,9 +44,6 @@ public class GetAllCoursesServiceImpl implements GetAllCoursesService {
         }
 
         List<Integer> courseIds = courseClassMapper.getCoursesByClassId(classId);
-        if(courseIds == null){
-            throw new EntityNotFoundException("未查询到所属班级的课程信息");
-        }
         List<FullCourse> courseList = courseMapper.getCoursesByIds(courseIds);
 
         //添加通选课到课程列表
