@@ -1,6 +1,7 @@
 package com.seu.interceptor;
 
 import com.seu.config.JwtConfig;
+import com.seu.exception.InvalidInputException;
 import com.seu.exception.UserNotLoggedInException;
 import com.seu.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
@@ -47,6 +48,16 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         //存储claims为请求属性
         req.setAttribute("claims", claims);
+        //存储id为请求属性
+        Integer userId = Integer.parseInt(claims.get("id").toString());
+        try {
+            req.setAttribute("userId", userId);
+            if(userId < 0){
+                throw new InvalidInputException("非法的用户id");
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidInputException("非法的用户id");
+        }
 
         //放行
         log.info("放行");

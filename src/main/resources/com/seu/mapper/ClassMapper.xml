@@ -6,10 +6,17 @@
     <!--    批量查询-->
     <select id="getNamesByIds" resultType="java.lang.String">
         select class_name from class
-        where id in
-        <foreach collection="ids" item="id" separator="," open="(" close=")">
-            #{id}
-        </foreach>
+        <where>
+            <choose>
+                <when test="ids != null and !ids.isEmpty()">
+                    id in
+                    <foreach collection="ids" item="id" separator="," open="(" close=")">
+                        #{id}
+                    </foreach>
+                </when>
+                <otherwise>1=0</otherwise>
+            </choose>
+        </where>
     </select>
 <!--    模糊查询-->
     <select id="getByName" resultType="com.seu.pojo.MyClass">

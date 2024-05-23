@@ -52,18 +52,21 @@ public class SelectCourseServiceImpl implements SelectCourseService {
         FullCourse fullCourse = courseMapper.getCourseById(courseId);
 
         //输入检查 & 时间冲突检查
-        checkInput(fullCourse, studentId);
+        validateInput(fullCourse, studentId);
 
         Lock lock = lockMap.computeIfAbsent(courseId, k -> new ReentrantLock());
         lock.lock();
-        //检查课程容量是否已满
-        checkStorage(courseId, fullCourse);
+        try {
+            //检查课程容量是否已满
+            checkStorage(courseId, fullCourse);
+            log.info("已完成课程容量检查, 课程容量未满");
+            //向关联表中插入记录
+            insertSelectedCourse(courseId, studentId);
+        } finally {
+            lock.unlock();
+        }
 
-        //向关联表中插入记录
-        insertSelectedCourse(courseId, studentId);
-
-        lock.unlock();
-
+        log.info("学生{}成功选课{}, 成功向数据库中插入数据", studentId, courseId);
         return true;
     }
 
@@ -73,24 +76,28 @@ public class SelectCourseServiceImpl implements SelectCourseService {
      * @param studentId
      * @return
      */
-    private void checkInput(FullCourse fullCourse, Integer studentId) throws SelectCourseException, EntityNotFoundException {
+    private void validateInput(FullCourse fullCourse, Integer studentId) throws SelectCourseException, EntityNotFoundException {
 
         //判断是否处在可以选课的阶段
         checkStageService.checkStage();
+        log.info("当前选课阶段可以选课");
 
         if (fullCourse == null) {
+            log.warn("未找到id对应的课程");
             throw new SelectCourseException("课程不存在", HttpStatus.BAD_REQUEST);
         }
-
+        log.info("已找到id对应的课程");
         Student student = studentMapper.getStudentById(studentId);
         if(student == null){
+            log.warn("未找到id对应的学生");
             throw new SelectCourseException("学生不存在: " + studentId, HttpStatus.BAD_REQUEST);
         }
-
+        log.info("已找到id对应的学生");
         if (hasTimeConflicts(studentId, fullCourse)){
-            log.info("检查到课程时间冲突: {}", fullCourse.getCourseName());
+            log.warn("检查到课程时间冲突: {}", fullCourse.getCourseName());
             throw new SelectCourseException("课程已选或与其它已选课程存在时间冲突", HttpStatus.BAD_REQUEST);
         }
+        log.info("没有检查到课程时间冲突");
 
     }
 
@@ -121,7 +128,7 @@ public class SelectCourseServiceImpl implements SelectCourseService {
         Integer studentsCountForCourse = courseStudentMapper.getStudentCountForCourse(courseId);
         int count = (studentsCountForCourse == null) ? 0 : studentsCountForCourse;
         if (count >= fullCourse.getCourseStorage()) {
-            throw new SelectCourseException("课程已满: " + courseId, HttpStatus.FORBIDDEN);
+            throw new SelectCourseException("课程容量已满", HttpStatus.FORBIDDEN);
         }
     }
 
