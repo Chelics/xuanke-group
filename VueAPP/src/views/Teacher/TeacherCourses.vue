@@ -1,233 +1,389 @@
-<script lang="ts" setup>
+<script setup>
+import { ref } from 'vue';
+import { reactive } from 'vue';
 
-import { ElButton, ElMessage } from 'element-plus';
-import { reactive } from 'vue'
 
-const formInline = reactive({
-  num: '',
-  name: '',
-  state: '',
-})
-
-const onSubmit = () => {
-  console.log('submit!')
+import { courseGetAllService, courseSearchStatusService } from '@/api/Teacher';
+const dataList = ref([])
+const getAllCourse = async function () {
+    let result = await courseGetAllService();
+    dataList.value = result.data.rows;
+    //console.log('get the list')
 }
 
-const tableData = ref([
-  {
-    courseNum: 'EDS45444',
-    courseName: '操作系统',
-    term: '2022-2023 秋季学期',
-    capacity: '189',
-    roomId: 'J1-102',
-    state: '待审核',
-  },{
-    courseNum: 'SEU99017',
-    courseName: '数据结构',
-    term: '2022-2023 秋季学期',
-    capacity: '19',
-    roomId: 'J6-102',
-    state: '已通过',
-  }
-])
+getAllCourse();
 
-
-import { ref } from 'vue'
-
-
-const pageNum = ref(4)//当前有效页
+//分页数据模型
+const pageNum = ref(1)//当前有效页
 const pageSize = ref(10)//每页的数据条数
 const totalLine = ref(50)//总数据条数
 const small = ref(false)
 const background = ref(false)
 const disabled = ref(false)
 
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`)
-  ApplyedCourseList()
+const handleSizeChange = (val) => {
+    console.log(`${val} items per page`)
+    pageSize.value = val; // 更新每页数据条数
+    ApplyedCourseList(); // 根据新的每页数据条数获取数据
 }
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`)
-  ApplyedCourseList()
+const handleCurrentChange = (val) => {
+    console.log(`current page: ${val}`)
+    pageNum.value = val; // 更新当前页码
+    ApplyedCourseList(); // 根据新的当前页码获取数据
+}
+
+
+const searchConditions = reactive({
+    status: '',
+    page: '',//分页查询的页码
+    pageSize: ''//每页记录数
+})
+
+//处理用户搜索
+const state = ref()//搜索时选中的状态
+const search = async function () {
+    let params = {
+        pageNum: pageNum,
+        pageSize: pageSize,
+        state: state.value ? state.value : null
+        //state: searchConditions.status ? searchConditions.status : null
+    }
+    let result = await courseSearchStatusService(params);
+    //渲染视图
+    totalLine.value = result.data.total;
+    dataList.value = result.data.rows;
+    console.log('Search button clicked!');
 }
 
 
-//课程列表
-import { ApplyedCourseListService } from '@/api/Teacher';
-const ApplyedCourseList = async () => {
-  let result = await ApplyedCourseListService();
-  tableData.value = result.data;
-}
-
-//控制添加课程弹窗
+//列表里“查看详情”按钮
+const detailedRow = ref({})
 const dialogVisible = ref(false)
+const handleDetailClick = (curRow) => {
+    console.log('click');
+    detailedRow.value = curRow;
+    dialogVisible.value = true;
+    console.log(detailedRow.value);
+}
+
+
 //添加课程数据模型
 const courseModel = ref({
-  courseNum: '',
-  courseName: '',
-  term: '',
-  capacity: ''
+    courseNumber: '',
+    courseName: '',
+    storage: '',
+    courseHour: '',
+    term: '',
+    type: '',
+    faculty: '',
+    teacherIds: '',
+    classeIdss: '',
+    credit: ''
 })
-//添加表单校验
+const blurredSearchModel = ref({
+    teacherName: '',
+    className: ''
+})
+
+//添加申请输入校验
 const rules = {
-  courseNum: [
-    { required: true, message: '请输入课程编号', trigger: 'blur' },
-  ],
-  courseName: [
-    { required: true, message: '请输入课程名称', trigger: 'blur' },
-  ],
-  term: [
-    { required: true, message: '请输入授课学期', trigger: 'blur' },
-  ],
-  capacity: [
-    { required: true, message: '请输入课容量', trigger: 'blur' },
-  ]
+    courseNum: [
+        { required: true, message: '请输入课程编号', trigger: 'blur' },
+    ],
+    courseName: [
+        { required: true, message: '请输入课程名称', trigger: 'blur' },
+    ],
+    capacity: [
+        { required: true, message: '请输入课容量', trigger: 'blur' },
+    ],
+    courseHour: [
+        { required: true, message: '请输入课时数', trigger: 'blur' },
+    ],
+    type: [
+        { required: true, message: '请输入课程类别', trigger: 'blur' },
+    ],
+    faculty: [
+        { required: true, message: '请输入开课学院', trigger: 'blur' },
+    ],
+    teachers: [
+        { required: true, message: '请输入授课教师ID', trigger: 'blur' },
+    ],
+    classes: [
+        { required: true, message: '请输入上课班级ID', trigger: 'blur' },
+    ],
+    credit: [
+        { required: true, message: '请输入课程学分', trigger: 'blur' },
+    ],
 }
 
 
-//列表查询
-const searchId = ref('')
-const searchName = ref('')
-const searchState = ref('')
 
-import { ApplyedCourseSearchService } from '@/api/Teacher';
-const courseSearchList = async () => {
-  let params = {
-    pageNum: pageNum.value,
-    pageSize: pageSize.value,
-    searchId: searchId.value ? searchId.value : null,
-    searchName: searchName.value ? searchName : null,
-    searchState: searchState.value ? searchState : null
-  }
-
-  let result = await ApplyedCourseSearchService(params);
-
-  totalLine.value = result.data.total;
-  tableData.value = result.data.items;
-
+import { teacherIDsGetService, classIDsGetService, courseAddService } from '@/api/Teacher';
+//教师模糊查询
+const teacherSearchResultList = ref([])
+const handleTeacherSearch = async function () {
+    let params = {
+        //blurredTeacher:blurredSearchModel.value.teacherName?blurredSearchModel.value.teacherName:null
+        blurredTeacher: '张'
+    }
+    let result = await teacherIDsGetService(params);
+    //渲染视图
+    teacherSearchResultList.value = result.data.teacherList;
+    //console.log('Search teacher button clicked!');
 }
-//courseSearchList();
+handleTeacherSearch();
 
-//调用接口，新增申请课程
-import { ApplyedCourseAddService } from '@/api/Teacher';
+const classSearchResultList = ref([])
+const handleClassSearch = async function () {
+    let params = {
+        //blurredClass: blurredSearchModel.value.className?blurredSearchModel.value.className : null
+        blurredClass: '711'
+    }
+    let result = await classIDsGetService(params);
+    //渲染视图
+    classSearchResultList.value = result.data.classList;
+    //console.log('Search teacher button clicked!');
+}
+
+
+//添加课程
 const addCourse = async () => {
-  //调用接口
-  let result = await ApplyedCourseAddService(courseModel.value);
-  //ElMessage.success(result.msg?result.msg:'添加成功')
+    let result = await courseAddService(courseModel.value);
+    ElMessage.success(result.msg == "success" ? result.msg : '添加成功');
+}
 
-  //刷新列表（重新调用获取课表的函数
-  ApplyedCourseList();
-  dialogVisible.value = false;
 
+//抽屉
+import { ElDrawer, ElMessage, ElMessageBox } from 'element-plus'
+
+let timer
+const dialog = ref(false)
+const loading = ref(false)
+
+
+
+const onClick = () => {
+    addCourse();
+    loading.value = true
+    setTimeout(() => {
+        loading.value = false
+        dialog.value = false
+    }, 400)
+}
+
+const handleApplyCourseClose = (done) => {
+    if (loading.value) {
+        return
+    }
+    ElMessageBox.confirm('确认提交吗?')
+        .then(() => {
+            loading.value = true
+            timer = setTimeout(() => {
+                done()
+                // 动画关闭需要一定的时间
+                setTimeout(() => {
+                    loading.value = false
+                }, 400)
+            }, 2000)
+        })
+        .catch(() => {
+            // catch error
+        })
+}
+
+const cancelForm = () => {
+    loading.value = false
+    dialog.value = false
+    clearTimeout(timer)
 }
 
 </script>
 
 
 
-
-
-
 <template>
-  <el-card>
-    <div class="card-header">
-      <span>课程管理</span>
-      <el-button type="primary" @click='dialogVisible = true'>申请课程</el-button>
-    </div>
+    <el-card style="max-width: 1200px">
+        <div class="card-header">
+            <span>课程管理</span>
+            <el-button type="primary" @click="dialog = true">申请课程</el-button>
+        </div>
 
-    <div>
-      <hr>
-    </div>
+        <div>
+            <hr>
+        </div>
 
-
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
-      <el-form-item label="课程编号">
-        <el-input v-model="formInline.num" placeholder="课程编号" clearable />
-      </el-form-item>
-
-      <el-form-item label="课程名称">
-        <el-input v-model="formInline.name" placeholder="课程名称" clearable />
-      </el-form-item>
-
-      <el-form-item label="审核状态">
-        <el-select v-model="formInline.state" placeholder="审核状态" style="width: 120px" clearable>
-          <el-option label="待审核" value="0" />
-          <el-option label="已通过" value="1" />
-          <el-option label="已驳回" value="2" />
-        </el-select>
-      </el-form-item>
+        <el-form :inline="true" :model="searchConditions" class="demo-form-inline">
+            <!-- <el-form-item label="">
+          <el-input v-model="formInline.user" placeholder="Approved by" clearable />
+        </el-form-item> -->
+            <el-form-item label="审核状态">
+                <el-select v-model="searchConditions.status" placeholder="审核状态" clearable>
+                    <el-option label="待审核" value="1" />
+                    <el-option label="已通过" value="2" />
+                    <el-option label="已驳回" value="3" />
+                </el-select>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="search">查询</el-button>
+            </el-form-item>
+        </el-form>
 
 
-      <el-form-item>
-        <el-button type="primary" @click="ApplyedCourseSearchService">搜索</el-button>
-      </el-form-item>
-    </el-form>
+        <!-- 列表展示 -->
+        <el-table :data="dataList" style="width: 100%">
+            <el-table-column prop="courseNumber" label="课程编号" width="180" />
+            <el-table-column prop="courseName" label="课程名称" />
+            <el-table-column prop="courseStatus" label="审核状态" />
+            <el-table-column prop="courseStorage" label="课容量" />
+            <el-table-column prop="courseHour" label="课时数" />
+            <el-table-column prop="teachers" label="授课教师" />
+            <el-table-column label="操作">
+                <template #default="{ row }">
+                    <el-button link type="primary" size="small" @click="handleDetailClick(row)">
+                        详情
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+
+        <!-- 详情浮窗 -->
+        <el-dialog v-model="dialogVisible" title="课程申请" width="30%">
+            <el-form :model="detailedRow.value" label-width="100px" style="padding-right:30px">
+                <el-form-item label="课程编号" prop="courseNum">
+                    <span>{{ detailedRow.courseNumber }}</span>
+                </el-form-item>
+                <el-form-item label="课程名称" prop="courseName">
+                    <span>{{ detailedRow.courseName }}</span>
+                </el-form-item>
+                <el-form-item label="课容量" prop="capacity">
+                    <span>{{ detailedRow.courseStorage }}</span>
+                </el-form-item>
+                <el-form-item label="课时数" prop="courseHour">
+                    <span>{{ detailedRow.courseHour }}</span>
+                </el-form-item>
+                <el-form-item label="课程类别" prop="type">
+                    <span>{{ detailedRow.type }}</span>
+                </el-form-item>
+                <el-form-item label="开课单位" prop="faculty">
+                    <span>{{ detailedRow.faculty }}</span>
+                </el-form-item>
+                <el-form-item label="授课教师" prop="teachers">
+                    <span>{{ detailedRow.teachers }}</span>
+                </el-form-item>
+                <el-form-item label="上课班级" prop="classes">
+                    <span>{{ detailedRow.classes }}</span>
+                </el-form-item>
+                <el-form-item label="课程学分" prop="credit">
+                    <span>{{ detailedRow.credit }}</span>
+                </el-form-item>
+                <el-form-item label="审核状态" prop="status">
+                    <span>{{ detailedRow.courseStatus }}</span>
+                </el-form-item>
+                <el-form-item label="提交时间" prop="committime">
+                    <span>{{ detailedRow.commitTime }}</span>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
 
 
-    <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="courseNum" label="课程编号" width="180" />
-      <el-table-column prop="courseName" label="课程名称" />
-      <el-table-column prop="term" label="授课学期" />
-      <el-table-column prop="capacity" label="课容量" />
-      <el-table-column prop="roomId" label="上课地点" />
-      <el-table-column prop="state" label="课程状态" />
-      <el-table-column label="操作" />
-    </el-table>
 
 
-    <el-dialog v-model="dialogVisible" title="课程申请" width="30%">
-      <el-form :model="courseModel" :rules="rules" label-width="100px" style="padding-right:30px">
-        <el-form-item label="课程编号" prop="courseNum">
-          <el-input v-model="courseModel.courseNum" minlength="1" maxlength="10"></el-input>
-        </el-form-item>
-        <el-form-item label="课程名称" prop="courseName">
-          <el-input v-model="courseModel.courseName" minlength="1" maxlength="10"></el-input>
-        </el-form-item>
-        <el-form-item label="授课学期" prop="term">
-          <el-input v-model="courseModel.term" minlength="1" maxlength="10"></el-input>
-        </el-form-item>
-        <el-form-item label="课容量" prop="capacity">
-          <el-input v-model="courseModel.capacity" minlength="1" maxlength="10"></el-input>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="addCourse">确认</el-button>
-        </span>
-      </template>
-    </el-dialog>
 
+        <!-- 课程申请抽屉 -->
+        <el-drawer v-model="dialog" title="课程信息填写" :before-close="handleApplyCourseClose" direction="ltr"
+            class="demo-drawer">
+            <div class="demo-drawer__content">
+                <el-form :model="courseModel" :rules="rules">
+                    <el-form-item label="课程编号" :label-width="formLabelWidth" prop="courseNum">
+                        <el-input v-model="courseModel.courseNum" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课程名称" :label-width="formLabelWidth" prop="courseName">
+                        <el-input v-model="courseModel.courseName" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课容量" :label-width="formLabelWidth" prop="capacity">
+                        <el-input v-model="courseModel.capacity" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课时数" :label-width="formLabelWidth" prop="courseHour">
+                        <el-input v-model="courseModel.courseHour" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课程类别" :label-width="formLabelWidth" prop="type">
+                        <el-input v-model="courseModel.type" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="开课单位" :label-width="formLabelWidth" prop="faculty">
+                        <el-input v-model="courseModel.faculty" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="教师ID" :label-width="formLabelWidth" prop="teachers">
+                        <el-input v-model="courseModel.teachers" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="班级ID" :label-width="formLabelWidth" prop="classes">
+                        <el-input v-model="courseModel.classess" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课程学分" :label-width="formLabelWidth" prop="credit">
+                        <el-input v-model="courseModel.credit" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                </el-form>
+                <el-form :model="blurredSearchModel" label-width="100px" style="padding-right:30px">
+                    <el-form-item label="快捷搜索教师" prop="teacherName">
+                        <el-input v-model="blurredSearchModel.teacherName" @input="handleTeacherSearch"
+                            placeholder="输入教师名以模糊搜索"></el-input>
+                        <el-select v-model="teacherSearchResultList" placeholder="请选择搜索结果">
+                            <el-option v-for="item in teacherSearchResultList" :key="item.id" :label="item.id"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="快捷搜索班级" prop="className">
+                        <el-input v-model="blurredSearchModel.classeName" @input="handleClassSearch"
+                            placeholder="输入班级名以模糊搜索"></el-input>
+                        <el-select v-model="classSearchResultList" placeholder="请选择搜索结果">
+                            <el-option v-for="item in classSearchResultList" :key="item.id" :label="item.id"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <div class="demo-drawer__footer">
+                    <el-button @click="cancelForm">取消</el-button>
+                    <el-button type="primary" :loading="loading" @click="onClick">
+                        {{ loading ? '提交中...' : '提交' }}
+                    </el-button>
+                </div>
+            </div>
+        </el-drawer>
 
-    <div class="el-p">
-      <div class="demonstration"></div>
-      <el-pagination
-      v-model:current-page="pageNum"
-      v-model:page-size="pageSize"
-      :page-sizes="[1, 10, 15, 20]"
-      :small="small"
-      :disabled="disabled"
-      :background="background"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="60"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+        <!-- 分页条 -->
+        <div class="el-p">
+            <div class="demonstration"></div>
+            <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize" :page-sizes="[1, 10, 15, 20]"
+                :small="small" :disabled="disabled" :background="background"
+                layout="total, sizes, prev, pager, next, jumper" :total="60" @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" />
 
-    </div>
-  </el-card>
+        </div>
+    </el-card>
 </template>
 
+<style>
+.demo-form-inline .el-input {
+    --el-input-width: 220px;
+}
 
-<style scoped>
+.demo-form-inline .el-select {
+    --el-select-width: 220px;
+}
+
 .el-p {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .card-header {
-  display: flex;
-  justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-with-select .el-input-group__prepend {
+    background-color: var(--el-fill-color-blank);
 }
 </style>
