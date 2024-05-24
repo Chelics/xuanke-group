@@ -6,16 +6,26 @@
     <!--    批量查询-->
     <select id="getNamesByIds" resultType="java.lang.String">
         select teacher_name from teacher
-        where id in
-        <foreach collection="ids" item="id" separator="," open="(" close=")">
-            #{id}
-        </foreach>
+        <where>
+            <choose>
+                <when test="ids != null and !ids.isEmpty()">
+                    id in
+                    <foreach collection="ids" item="id" separator="," open="(" close=")">
+                        #{id}
+                    </foreach>
+                </when>
+                <otherwise>1=0</otherwise>
+            </choose>
+        </where>
     </select>
 <!--    模糊查询-->
     <select id="getByName" resultType="com.seu.dto.response.Teacher">
         select id,username,teacher_name from teacher
         <where>
-        <if test="teacherName!=null and teacherName!=''">teacher_name like concat('%', #{teacherName}, '%')</if>
+            <choose>
+                <when test="teacherName!=null and teacherName!=''">teacher_name like concat('%', #{teacherName}, '%')</when>
+                <otherwise>1=0</otherwise>
+            </choose>
         </where>
     </select>
 

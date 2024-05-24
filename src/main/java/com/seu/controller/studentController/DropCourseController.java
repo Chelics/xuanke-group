@@ -6,7 +6,6 @@ import com.seu.exception.InvalidInputException;
 import com.seu.exception.SelectCourseException;
 import com.seu.pojo.Result;
 import com.seu.service.impl.studentServiceImpl.DropCourseServiceImpl;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,19 +24,9 @@ public class DropCourseController {
      * @throws InvalidInputException
      */
     @PostMapping
-    public Result dropCourse(@RequestBody CourseSelection courseSelection, @RequestAttribute Claims claims) throws InvalidInputException, EntityNotFoundException, SelectCourseException {
+    public Result dropCourse(@RequestBody CourseSelection courseSelection, @RequestAttribute Integer userId) throws InvalidInputException, EntityNotFoundException, SelectCourseException {
 
-        // 从claims中获取studentId
-        String studentIdStr = claims.get("id").toString();
-
-        // 将studentIdStr转换为整数
-        Integer studentId;
-        try {
-            studentId = Integer.parseInt(studentIdStr);
-        } catch (NumberFormatException e) {
-            throw new InvalidInputException("获取失败: 非法的学生id");
-        }
-
+        Integer studentId = userId;
         Integer courseId = courseSelection.getCourseId();
 
         if(courseId == null || courseId < 0|| studentId < 0){
