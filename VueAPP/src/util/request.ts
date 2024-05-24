@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
 //import {pinia} from 'main'
 import { ElMessage } from 'element-plus'; // 或者使用其他UI库的消息提示组件
+import router from '@/router/router'
 
 
 // 创建axios实例
@@ -55,7 +56,6 @@ service.interceptors.response.use(
       //originalRequest._retry = true;
 
       try {
-        ElMessage.error('请先登录')
         // 这里假设有一个refreshToken的API，需要根据实际情况调整
         //暂不实现
       } catch (refreshError) {
@@ -70,6 +70,5 @@ const authStore = useAuthStore();
     ElMessage.error(error.message || '网络错误');
     return Promise.reject(error);
   }
-);
-
+)
 export default service;

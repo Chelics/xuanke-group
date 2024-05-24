@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
  * 用于转换ID数组为,分隔的String或反之
  */
 public class IdUtils {
-    public static String listToString(List<Integer> idsList) {
+    /*public static String listToString(List<Integer> idsList) {
         return idsList.stream()
                 .map(Object::toString)
                 .collect(Collectors.joining(","));
-    }
+    }*/
 
     public static List<Integer> stringToList(String idsString) {
         String[] idsArray = idsString.split(",");
