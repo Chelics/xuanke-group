@@ -20,5 +20,19 @@ public interface StudentMapper {
             @Result(property = "name", column = "student_name"),
             @Result(property = "classId", column = "class_id")
     })
-    Student getByUsername(String username);
+    Student getStudentByUsername(String username);
+
+    /**
+     * 根据id查询学生
+     * @param id
+     * @return
+     */
+    @Select("SELECT * FROM student WHERE id=#{id}")
+    @Results({
+            @Result(property = "name", column = "student_name"),
+            @Result(property = "password", column = "student_password"),
+            @Result(property = "classId", column = "class_id")
+    })
+    Student getStudentById(Integer id);
+
 }

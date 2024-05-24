@@ -13,7 +13,8 @@ module.exports = {
   },
   rules:{
     "vue/multi-word-component-names": ["error",{
-      "ignores": ["Classroom","Login","Register","Sidebar","State"]  //在这个数组中加入需要忽略的组件名
+      "ignores": ["Classroom","Login","Register","Sidebar","State"],
+       //在这个数组中加入需要忽略的组件名
    }]
   }
 }

@@ -1,0 +1,27 @@
+scheduler:
+  maxTimeNumber: 167
+  timeModulo: 21
+  nullTime: -1
+  courseNumsOneDay: 8
+  weekRange:
+    - [ 1, 111 ]
+    - [ 112, 167 ]
+  timeList:
+    - [ 0, 1, 3, 4, 6 ]
+    - [ 2, 5, 7 ]
+  timeClassificationMap:
+    '16': [ 0 ]
+    '24': [ 1 ]
+    '32': [ 0 ]
+    '48': [ 1 ]
+    '64': [ 0, 0 ]
+    '80': [ 1, 0 ]
+    '96': [ 0, 0, 0 ]
+## timeList二维数组解释
+# 区分每次上课上几节, 节次编码对8取模, 在timeList[0]中表示上2节, 在timeList[1]中表示上三节
+
+## timeClassificationMap哈希表解释:
+# key是课时数, 后面的数组是用来选timeList的
+# 例如: 16课时数, 8 * 2 = 16, 每周上一次, 每次上两节, 选一次timeList[0]
+#      48课时数, 16 * 3 = 48, 每周上一次, 每次上三节, 选一次timeList[1]
+#      80课时数, 16 * 5 = 80, 每周上两次, 一次三节一次两节, 选一次timeList[1]和一次timeList[0]

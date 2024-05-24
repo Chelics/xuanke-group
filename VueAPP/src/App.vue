@@ -2,6 +2,7 @@
 
 <template>
     <el-container style="height: 100vh;">
+      <navigation v-if="!$route.meta.showNav"></navigation>
       <el-aside width="200px" style="background-color: #f5f7fa;">
         <el-menu
           background-color="#f5f7fa"
@@ -49,6 +50,7 @@
   <script setup lang="ts">
   //这个是主跳转路由，页面没有美化
   import { useAuthStore } from '../src/stores/auth';//大概不会报错了
+
   const authStore = useAuthStore();
   </script>
   

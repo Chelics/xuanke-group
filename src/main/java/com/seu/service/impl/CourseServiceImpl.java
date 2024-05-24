@@ -48,6 +48,18 @@ public class CourseServiceImpl implements CourseService {
         fullCourse.setTeachers(teachers);
         fullCourse.setClasses(classes);
         fullCourse.setRoomName(roomName);
+
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
+    public void getFullsByBasics(List<FullCourse> fullCourses){
+        if(fullCourses == null || fullCourses.isEmpty()){
+            return;
+        }
+        for(FullCourse fullCourse : fullCourses){
+            getFullByBasic(fullCourse);
+        }
     }
 
 }

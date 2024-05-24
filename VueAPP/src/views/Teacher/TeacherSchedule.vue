@@ -1,10 +1,7 @@
 <template>
     <h1>TeacherSchedule</h1>
+    <htmlTable url="/teacher/courseTable"></htmlTable>
 </template>
-
-var app = new Vue({
-    el: '#app',
-    data: {
-      message: 'Hello, Vue!'
-    }
-  })
+<script setup lang="ts">
+import htmlTable from '@/testview/htmlTable.vue';
+</script>
