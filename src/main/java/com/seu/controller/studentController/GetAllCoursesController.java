@@ -4,7 +4,6 @@ import com.seu.exception.EntityNotFoundException;
 import com.seu.exception.InvalidInputException;
 import com.seu.pojo.Result;
 import com.seu.service.impl.studentServiceImpl.GetAllCoursesServiceImpl;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,18 +22,7 @@ public class GetAllCoursesController {
      * @return
      */
     @GetMapping
-    public Result getAllCourses(@RequestAttribute Claims claims) throws InvalidInputException, EntityNotFoundException {
-
-        Integer studentId;
-
-        try {
-            studentId = Integer.parseInt(claims.get("id").toString());
-        } catch (NumberFormatException e) {
-            throw new InvalidInputException("非法的学生id");
-        }
-        if(studentId < 0){
-            throw new InvalidInputException("非法的学生id");
-        }
-        return Result.success(getAllCourseService.getAllCourse(studentId));
+    public Result getAllCourses(@RequestAttribute Integer userId) throws InvalidInputException, EntityNotFoundException {
+        return Result.success(getAllCourseService.getAllCourse(userId));
     }
 }
