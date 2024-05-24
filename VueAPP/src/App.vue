@@ -1,5 +1,3 @@
-
-
 <template>
     <el-container style="height: 100vh;">
       <navigation v-if="!$route.meta.showNav"></navigation>

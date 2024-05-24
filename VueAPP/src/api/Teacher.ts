@@ -1,17 +1,44 @@
-import request from '@/util/request'
+import axios from 'axios';
 
-
-//已申请课程列表
-export const ApplyedCourseListService = ()=>{
-    return request.get('/teacher/course')
+export async function courseGetAllService(){
+    return await axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009/')
+    //return axios.get('https:localhost:8080/teacher/apply')
+    .then(result=>{
+        return result.data;
+    }).catch(err=>{
+        console.log(err);
+    });
 }
 
-//新增申请课程
-export const ApplyedCourseAddService = (courseAddData:any)=>{
-    return request.post('/teacher/apply',courseAddData)
+export async function courseSearchStatusService(conditions){
+   //return axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009',{params:{...conditions.value}})
+   return axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009?status=1',{params:{...conditions.value}})
+    .then(result=>{
+        return result.data;
+    }).catch(err=>{
+        console.log(err);
+    })
 }
 
-//查询
-export const ApplyedCourseSearchService = (params:any)=>{
-    return request.get('/teacher/search',{params:params})
+export async function teacherIDsGetService(teacherName) {
+    return axios.get('https://mock.apifox.com/m1/4461960-4108146-default/teacher/teachers',{params:{...teacherName.value}})
+    .then(result=>{
+        return result.data;
+    }).catch(err=>{
+        console.log(err);
+    })
 }
+
+
+export async function classIDsGetService(className) {
+    return axios.get('https://mock.apifox.com/m1/4461960-4108146-default/teacher/classes',{params:{...className.value}})
+    .then(result=>{
+        return result.data;
+    }).catch(err=>{
+        console.log(err);
+    })
+}
+
+export const courseAddService = (courseData=>{
+    return axios.post('https://mock.apifox.com/m2/4461960-4108146-default/175216824',courseData);
+})
