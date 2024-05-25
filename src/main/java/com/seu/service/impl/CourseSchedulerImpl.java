@@ -40,7 +40,7 @@ public class CourseSchedulerImpl implements CourseScheduler {
         return schedulerConfig.getNullTime();
     }
 
-    public short[][] getWeekRange() {   //[[1, 111], [112, 167]]节次编码范围, 隔周上课选第一组, 每周上课选第二组
+    public short[][] getWeekRange() {   //[[0, 111], [112, 167]]节次编码范围, 隔周上课选第一组, 每周上课选第二组
         return schedulerConfig.getWeekRange();
     }
 
@@ -70,7 +70,7 @@ public class CourseSchedulerImpl implements CourseScheduler {
      * @param courseIds 课程ID列表
      * @return 分配结果
      */
-    public List<Integer> allocateMultipleCourses(List<Integer> courseIds) throws AllocateCourseException {
+    public List<Integer> allocateMultipleCourses(List<Integer> courseIds) {
         List<Integer> successfulCourses = new ArrayList<>();    //用于存储分配成功的课程列表, 暂时没有用处, 之后需求变更可能会用到
         List<Integer> failedCourses = new ArrayList<>();    //分配失败的课程列表
 
@@ -150,7 +150,7 @@ public class CourseSchedulerImpl implements CourseScheduler {
     private short[] searchFreeTime(int rangeChoice, Integer[] listChoices, CheckingCourse checkingCourse) throws AllocateCourseException {
 
         final short NULL_TIME = getNullTime();      //-1
-        final short[][] WEEK_RANGE = getWeekRange();    //[[1, 111], [112, 167]]
+        final short[][] WEEK_RANGE = getWeekRange();    //[[0, 111], [112, 167]]
         final short[][] COURSE_NUMS = getTimeList();    //[[0, 1, 3, 4, 6], [2, 5, 7]]
         final short COUR_NUMS_ONE_DAY = getCourseNumsOneDay();  //8
 
@@ -158,21 +158,23 @@ public class CourseSchedulerImpl implements CourseScheduler {
 
         for (int i = 0; i < listChoices.length; i++) {  //listChoices的长度表示每周上几次课, 上几次就要选几次
 
-            for(short time = WEEK_RANGE[rangeChoice][0]; time <= WEEK_RANGE[rangeChoice][1]; time++){   //在隔周/每周范围内遍历所有时间
-                if(Arrays.binarySearch(COURSE_NUMS[listChoices[i]], (short) (time % COUR_NUMS_ONE_DAY)) >= 0){ //找到符合课时数的时间(2节/3节)
-                    if( !isClassFree(time, checkingCourse) && !isTeacherFree(time, checkingCourse)){    //班级和教师都空闲
+            for(short day = 0; day < COUR_NUMS_ONE_DAY; day++) {
+                for (short time = (short)(WEEK_RANGE[rangeChoice][0] + day); time <= WEEK_RANGE[rangeChoice][1]; time+=8) {   //在隔周/每周范围内遍历所有时间
+                    if (Arrays.binarySearch(COURSE_NUMS[listChoices[i]], (short) (time % COUR_NUMS_ONE_DAY)) >= 0) { //找到符合课时数的时间(2节/3节)
+                        if (!isClassFree(time, checkingCourse) && !isTeacherFree(time, checkingCourse)) {    //班级和教师都空闲
 
-                        //检查是不是刚才已经被自己选了
-                        boolean isTimeAlreadyAssigned = false;
-                        for (short assignedTime : timeList) {
-                            if (assignedTime == time) {     // timeList中已存在该时间
-                                isTimeAlreadyAssigned = true;
+                            //检查是不是刚才已经被自己选了
+                            boolean isTimeAlreadyAssigned = false;
+                            for (short assignedTime : timeList) {
+                                if (assignedTime == time) {     // timeList中已存在该时间
+                                    isTimeAlreadyAssigned = true;
+                                    break;
+                                }
+                            }
+                            if (!isTimeAlreadyAssigned) {
+                                timeList[i] = time;     //选择该时间
                                 break;
                             }
-                        }
-                        if (!isTimeAlreadyAssigned) {
-                            timeList[i] = time;     //选择该时间
-                            break;
                         }
                     }
                 }
