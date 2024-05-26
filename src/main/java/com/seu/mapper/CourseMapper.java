@@ -1,14 +1,11 @@
 package com.seu.mapper;
 
+import com.seu.dto.response.FullFullCourse;
 import com.seu.pojo.Course;
 import com.seu.pojo.FullCourse;
-import com.seu.pojo.Stage;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -57,7 +54,7 @@ public interface CourseMapper {
      * @param keyWord
      * @return
      */
-    List<FullCourse> searchCoursesByKeyWord(@Param("keyWord") String keyWord,
+    List<FullFullCourse> searchCoursesByKeyWord(@Param("keyWord") String keyWord,
                                             @Param("idsSearchedByTeacher")List<Integer> idsSearchedByTeacher,
                                             @Param("idsSearchedByRoom")List<Integer> idsSearchedByRoom);
 
@@ -73,6 +70,12 @@ public interface CourseMapper {
      * @return
      */
     @Select("SELECT * FROM course WHERE type IN (1, 2)")
-    List<FullCourse> getUniversalCourses();
+    List<FullFullCourse> getUniversalCourses();
 
+    /**
+     * 根据id列表查询课程列表
+     * @param ids
+     * @return
+     */
+    List<FullFullCourse> getCoursesByIdss(@Param("ids") List<Integer> ids);
 }

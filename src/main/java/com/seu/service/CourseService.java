@@ -17,5 +17,5 @@ public interface CourseService {
      * 为列表中的所有课程补全完整信息
      * @param fullCourses
      */
-    void getFullsByBasics(List<FullCourse> fullCourses);
+    void getFullsByBasics(List<? extends FullCourse> fullCourses);
 }

@@ -1,10 +1,11 @@
 package com.seu.service.impl.studentServiceImpl;
 
+import com.seu.dto.response.FullFullCourse;
 import com.seu.exception.EntityNotFoundException;
 import com.seu.mapper.CourseClassMapper;
 import com.seu.mapper.CourseMapper;
+import com.seu.mapper.CourseStudentMapper;
 import com.seu.mapper.StudentMapper;
-import com.seu.pojo.FullCourse;
 import com.seu.pojo.Users.Student;
 import com.seu.service.impl.CourseServiceImpl;
 import com.seu.service.studentService.GetAllCoursesService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class GetAllCoursesServiceImpl implements GetAllCoursesService {
@@ -25,6 +27,8 @@ public class GetAllCoursesServiceImpl implements GetAllCoursesService {
     StudentMapper studentMapper;
     @Autowired
     CourseClassMapper courseClassMapper;
+    @Autowired
+    CourseStudentMapper courseStudentMapper;
 
     /**
      * 获取所有课程
@@ -32,7 +36,7 @@ public class GetAllCoursesServiceImpl implements GetAllCoursesService {
      */
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     @Override
-    public List<FullCourse> getAllCourse(Integer studentId) throws EntityNotFoundException {
+    public List<FullFullCourse> getAllCourse(Integer studentId) throws EntityNotFoundException {
 
         Student student = studentMapper.getStudentById(studentId);
         if(student == null){
@@ -44,12 +48,12 @@ public class GetAllCoursesServiceImpl implements GetAllCoursesService {
         }
 
         List<Integer> courseIds = courseClassMapper.getCoursesByClassId(classId);
-        List<FullCourse> courseList = courseMapper.getCoursesByIds(courseIds);
+        List<FullFullCourse> courseList = courseMapper.getCoursesByIdss(courseIds);
 
         //添加通选课到课程列表
-        List<FullCourse> universalCourseList = courseMapper.getUniversalCourses();
+        List<FullFullCourse> universalCourseList = courseMapper.getUniversalCourses();
         if(universalCourseList != null && !universalCourseList.isEmpty()){
-            List<FullCourse> nonDuplicateUniversalCourses = universalCourseList.stream()
+            List<FullFullCourse> nonDuplicateUniversalCourses = universalCourseList.stream()
                     .filter(uc -> !courseList.contains(uc))
                     .toList();
 
@@ -57,6 +61,11 @@ public class GetAllCoursesServiceImpl implements GetAllCoursesService {
         }
 
         courseService.getFullsByBasics(courseList);
+
+        for(FullFullCourse course : courseList){
+            Integer studentNum = courseStudentMapper.getStudentCountForCourse(course.getId());
+            course.setStudentsNum(Objects.requireNonNullElse(studentNum, 0));
+        }
         return courseList;
     }
 }
