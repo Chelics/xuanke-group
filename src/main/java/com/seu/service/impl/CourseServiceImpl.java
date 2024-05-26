@@ -1,6 +1,5 @@
 package com.seu.service.impl;
 
-import com.seu.dto.response.FullFullCourse;
 import com.seu.mapper.*;
 import com.seu.pojo.FullCourse;
 import com.seu.service.CourseService;

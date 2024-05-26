@@ -250,7 +250,7 @@ public class CourseSchedulerImpl implements CourseScheduler {
     private void putInStorage(CheckingCourse checkingCourse, short[] times, Integer roomId) throws AllocateCourseException {
         Course course = new Course(null, checkingCourse.getCourseName(), checkingCourse.getType(),
                 checkingCourse.getCourseNumber(), roomId, checkingCourse.getCourseHour(), checkingCourse.getCourseStorage(),
-                (short) 1, (short) 16, times[0], times[1], times[2], checkingCourse.getFaculty(), checkingCourse.getCredit());
+                (short) 1, (short) 16, times[0], times[1], times[2], checkingCourse.getFaculty(), checkingCourse.getCredit(), 0);
 
         //插入course表
         courseMapper.insertCourse(course);

@@ -1,11 +1,11 @@
 package com.seu.mapper;
 
-import com.seu.dto.response.FullFullCourse;
 import com.seu.pojo.Course;
 import com.seu.pojo.FullCourse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public interface CourseMapper {
      * @param keyWord
      * @return
      */
-    List<FullFullCourse> searchCoursesByKeyWord(@Param("keyWord") String keyWord,
+    List<FullCourse> searchCoursesByKeyWord(@Param("keyWord") String keyWord,
                                             @Param("idsSearchedByTeacher")List<Integer> idsSearchedByTeacher,
                                             @Param("idsSearchedByRoom")List<Integer> idsSearchedByRoom);
 
@@ -70,12 +70,19 @@ public interface CourseMapper {
      * @return
      */
     @Select("SELECT * FROM course WHERE type IN (1, 2)")
-    List<FullFullCourse> getUniversalCourses();
+    List<FullCourse> getUniversalCourses();
 
     /**
-     * 根据id列表查询课程列表
-     * @param ids
-     * @return
+     * 更新已选人数+1
+     * @param courseId
      */
-    List<FullFullCourse> getCoursesByIdss(@Param("ids") List<Integer> ids);
+    @Update("UPDATE course SET student_num = student_num + 1 WHERE id = #{id}")
+    void incrementStudentNum(@Param("id") int courseId);
+
+    /**
+     * 更新已选人数-1
+     * @param courseId
+     */
+    @Update("UPDATE course SET student_num = student_num - 1 WHERE id = #{id}")
+    void decrementStudentNum(@Param("id") int courseId);
 }

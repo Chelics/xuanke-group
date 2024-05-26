@@ -1,6 +1,6 @@
 package com.seu.service.studentService;
 
-import com.seu.dto.response.FullFullCourse;
+import com.seu.pojo.FullCourse;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ public interface SelectedCourseService {
      * @param studentId
      * @return
      */
-    List<FullFullCourse> getSelectedCourse(Integer studentId);
+    List<FullCourse> getSelectedCourse(Integer studentId);
 }

@@ -22,4 +22,5 @@ public class Course {
     private Short time3;
     private String faculty;//学院
     private Short credit;//学分
+    private Integer studentNum;//已选人数
 }
