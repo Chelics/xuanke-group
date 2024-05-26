@@ -90,25 +90,4 @@
         ON DUPLICATE KEY UPDATE
         id = LAST_INSERT_ID(id)
     </insert>
-
-    <!--根据id查询课程    批量查询-->
-    <select id="getCoursesByIdss" resultType="com.seu.dto.response.FullFullCourse">
-
-        <choose>
-            <when test="ids != null and ids.size() > 0">
-                select * from course
-                where id in
-                <foreach collection="ids" item="id" separator="," open="(" close=")">
-                    #{id}
-                </foreach>
-            </when>
-            <otherwise>
-                select * from course where 1=0
-            </otherwise>
-        </choose>
-
-    </select>
-
-
-
 </mapper>

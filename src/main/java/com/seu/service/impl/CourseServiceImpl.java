@@ -1,6 +1,5 @@
 package com.seu.service.impl;
 
-import com.seu.dto.response.FullFullCourse;
 import com.seu.mapper.*;
 import com.seu.pojo.FullCourse;
 import com.seu.service.CourseService;
@@ -53,7 +52,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
-    public void getFullsByBasics(List<? extends FullCourse> fullCourses) {
+    public void getFullsByBasics(List<FullCourse> fullCourses) {
         if (fullCourses == null || fullCourses.isEmpty()) {
             return;
         }

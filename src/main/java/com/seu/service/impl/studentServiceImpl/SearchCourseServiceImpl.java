@@ -1,7 +1,7 @@
 package com.seu.service.impl.studentServiceImpl;
 
-import com.seu.dto.response.FullFullCourse;
 import com.seu.mapper.*;
+import com.seu.pojo.FullCourse;
 import com.seu.service.impl.CourseServiceImpl;
 import com.seu.service.studentService.SearchCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +33,7 @@ public class SearchCourseServiceImpl implements SearchCourseService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<FullFullCourse> searchCoursesByKeyWord(String keyWord) {
+    public List<FullCourse> searchCoursesByKeyWord(String keyWord) {
 
         //教师名的搜索结果
         List<Integer> teacherIdsList = teacherMapper.searchByName(keyWord);
@@ -44,12 +43,9 @@ public class SearchCourseServiceImpl implements SearchCourseService {
         List<Integer> idsSearchedByRooms = searchByRoom(keyWord);
 
         //再加上课程名, 课程编号, 学院, 一起去数据库中查
-        List<FullFullCourse> fullCourseList = courseMapper.searchCoursesByKeyWord(keyWord, idsSearchedByTeacher, idsSearchedByRooms);
+        List<FullCourse> fullCourseList = courseMapper.searchCoursesByKeyWord(keyWord, idsSearchedByTeacher, idsSearchedByRooms);
         courseService.getFullsByBasics(fullCourseList);
-        for(FullFullCourse course : fullCourseList){
-            Integer studentNum = courseStudentMapper.getStudentCountForCourse(course.getId());
-            course.setStudentsNum(Objects.requireNonNullElse(studentNum, 0));
-        }
+
         return fullCourseList;
     }
 

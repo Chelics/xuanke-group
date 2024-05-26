@@ -1,6 +1,6 @@
 package com.seu.service.studentService;
 
-import com.seu.dto.response.FullFullCourse;
+import com.seu.pojo.FullCourse;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ public interface SearchCourseService {
      * @param keyWord
      * @return
      */
-    List<FullFullCourse> searchCoursesByKeyWord(String keyWord);
+    List<FullCourse> searchCoursesByKeyWord(String keyWord);
 }
