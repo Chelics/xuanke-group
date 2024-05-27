@@ -37,6 +37,9 @@
     import { getCourseList } from '@/api/courseList';
     import request from '@/util/request';
     import { ref,onMounted } from 'vue';
+import axios from 'axios';
+import service from '@/util/request';
+import { defineProps } from 'vue';
     const options = [
   {
     value: 0,
@@ -110,10 +113,10 @@
 }
     //定义参数，接收一个字符串，作为查询课程数据的api数据
     interface Props {
-  url: string;
+  myurl: string;
 }
 //对外界暴露的参数接收，按照这个格式传参数
-const props=defineProps<Props>();
+const props =defineProps<Props>();
 // 定义 Course 接口
 interface rawCourse {
   id: number;
@@ -126,54 +129,40 @@ interface rawCourse {
   startWeek: number;
   endWeek: number;
   time1: number;
-  time2: number;
-  time3: number;
+  time2?: number;
+  time3?: number;
   faculty: string;
   credit: number;
   teachers: string[];
   classes: string[];
   roomName: string;
+  //studentNum: number
 }
 
 // 定义 Data 接口，包含 courseList 数组
-interface rawData {
+/* interface rawData {
   courseList: rawCourse[];
-}
+} */
 //rawData:rawData
 // 使用ref创建响应式数据，这里就是多周测试数据
-const rawCourseData = ref<rawData>({
-  courseList: [
-    {
-      id: 1,
-      courseName: "Java",
-      type: 1,
-      courseNumber: "12345678",
-      roomId: 1,
-      courseHour: 48,
-      courseStorage: 50,
-      startWeek: 1,
-      endWeek: 16,
-      time1: 120,
-      time2: 0,
-      time3: 0,
-      faculty: "软件学院",
-      credit: 3,
-      teachers: ["张三", "李四"],
-      classes: ["711221", "711222"],
-      roomName: "教一-111",
-    },
-    // 如果需要，可以继续添加更多测试数据项
-  ],
-});
+let rawCourseData = ref<rawCourse[]>([
+]);
 
 // 在组件挂载后调用异步函数获取数据
-async function getRawCourseData(queryUrl: string = props.url) {
+async function getRawCourseData() {
   try {
-      const response :ResponseData= await request.get(queryUrl)
+    console.log("开始获取")
+    console.log(`/${props.myurl}`)
+    //测试 
+    const response :ResponseData= await service.get("https://mock.apifox.com/m1/4461960-4108146-default/student/course/selected")
+      //const response :ResponseData= await service.get(`${props.myurl}`)
+      //console.log(response)
       if (response.code === 1 && response.msg === 'success'){
-        rawCourseData.value = response.data
+        rawCourseData.value = response.data as rawCourse[]
       }
-      else alert(response)
+      else {
+        alert(response)
+      }
     }
     catch (error) {
         console.error(error);
@@ -182,8 +171,8 @@ async function getRawCourseData(queryUrl: string = props.url) {
       }
 }
 //处理数据,把后端的数据转化为前端方便的形式
-function processRawData(rawCourseData: rawData) {
-  const { courseList } = rawCourseData;
+function processRawData(rawCourseData:rawCourse[]) {
+  let courseList  = rawCourseData;
 
   // 初始化 courseSchedule.data，确保其大小足够
   const dataSize = courseSchedule.weeks.length;
@@ -197,7 +186,9 @@ function processRawData(rawCourseData: rawData) {
     3: [5, 6], 4: [7, 8], 5: [7, 9], // 下午时间段
     6: [10, 11], 7: [10, 12],        // 晚上时间段
   };
-
+  console.log(rawCourseData)
+  console.log("--------------")
+  console.log(courseList)
   // 遍历rawCourseData，处理每一门课程的每一个时间点
   courseList.forEach((rawCourse:rawCourse) => {
     [rawCourse.time1, rawCourse.time2, rawCourse.time3].forEach((time) => {
@@ -207,7 +198,7 @@ function processRawData(rawCourseData: rawData) {
       //const weekIndex = Math.floor(time / 8) - 1; // 周数从0开始
 
       const dayAndType = time / 8;//单双周 + 周几
-
+      console.log(dayAndType)
       let dayIndex: number;
       if (dayAndType < 7) {
         dayIndex = Math.floor( dayAndType); // 单周的星期几
@@ -216,6 +207,8 @@ function processRawData(rawCourseData: rawData) {
       } else {
         dayIndex = Math.floor(dayAndType - 14) ; // 单双周都有的课
       }
+      console.log(dayIndex)
+      console.log(time % 8+"time % 8")
       //weekIndex 0-15 dayIndex0-6
       // 根据时间映射关系找到起始和结束时间段
       const [startPeriod, endPeriod] = periodMapping[Math.ceil(time % 8)];
@@ -227,9 +220,10 @@ function processRawData(rawCourseData: rawData) {
         startPeriod,
         endPeriod,
       };
+      console.log(courseToAdd)
       if(dayAndType<7||dayAndType>=14){
         let weekIndex=rawCourse.startWeek-1
-        if(rawCourse.startWeek%2===1)weekIndex++
+        if(rawCourse.startWeek%2-1===1)weekIndex++
         for(;weekIndex<=rawCourse.endWeek-1;weekIndex+=2){
           if (!courseSchedule.data[weekIndex][dayIndex]) courseSchedule.data[weekIndex][dayIndex] = [];
       courseSchedule.data[weekIndex][dayIndex].push(courseToAdd);
@@ -238,7 +232,7 @@ function processRawData(rawCourseData: rawData) {
 
       if(dayAndType>=7){
         let weekIndex=rawCourse.startWeek-1
-        if(rawCourse.startWeek%2===0)weekIndex++
+        if(rawCourse.startWeek%2-1===0)weekIndex++
         for(;weekIndex<=rawCourse.endWeek-1;weekIndex+=2){
           if (!courseSchedule.data[weekIndex][dayIndex]) courseSchedule.data[weekIndex][dayIndex] = [];
       courseSchedule.data[weekIndex][dayIndex].push(courseToAdd);
@@ -252,8 +246,9 @@ function processRawData(rawCourseData: rawData) {
 //钩子函数，加载数据
 onMounted(async () => {
   try {
+    console.log("检测到token不为空")
     // 获取原始课程数据,取消注释，调用上一个函数并传入参数url
-    await getRawCourseData('url');
+    await getRawCourseData();
     //暂时写测试数据
     
     // 处理数据并更新课程表
@@ -293,10 +288,7 @@ const courseSchedule: {
       // 第1周的课程
       // 每天的课程数组,一天几节课不确定
       [//测试，想删删了吧
-      { course: '数学', teacher: '张老师', location: '101室', startPeriod: 0, endPeriod: 1 },
-          { course: '英语', teacher: '李老师', location: '102室', startPeriod: 2, endPeriod: 4 },
-          { course: '物理', teacher: '王老师', location: '103室', startPeriod: 5, endPeriod: 6 },
-          { course: '化学', teacher: '赵老师', location: '104室', startPeriod: 7, endPeriod: 8 },], // 星期一
+      ], // 星期一
       [], // 星期二
       
     ],
