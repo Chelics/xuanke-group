@@ -5,7 +5,6 @@
 #  mybatis.type-aliases-package=com.itheima.mybatis.entity
 #  # 应用服务 WEB 访问端口
 #  server.port=8080
-
 spring:
   #数据库连接信息
   datasource:
@@ -20,6 +19,7 @@ spring:
   #其它配置文件信息
   config:
     import: classpath:scheduler-config.yml
+
 #Mybatis配置
 mybatis:
   configuration:
