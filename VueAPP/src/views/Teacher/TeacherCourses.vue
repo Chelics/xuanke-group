@@ -24,12 +24,12 @@ const disabled = ref(false)
 const handleSizeChange = (val) => {
     console.log(`${val} items per page`)
     pageSize.value = val; // 更新每页数据条数
-    ApplyedCourseList(); // 根据新的每页数据条数获取数据
+    search(); // 根据新的每页数据条数获取数据
 }
 const handleCurrentChange = (val) => {
     console.log(`current page: ${val}`)
     pageNum.value = val; // 更新当前页码
-    ApplyedCourseList(); // 根据新的当前页码获取数据
+    search(); // 根据新的当前页码获取数据
 }
 
 
@@ -45,14 +45,15 @@ const search = async function () {
     let params = {
         pageNum: pageNum,
         pageSize: pageSize,
-        state: state.value ? state.value : null
-        //state: searchConditions.status ? searchConditions.status : null
+        //state: state.value ? state.value : null
+        state: searchConditions.status ? searchConditions.status : null
     }
     let result = await courseSearchStatusService(params);
     //渲染视图
     totalLine.value = result.data.total;
     dataList.value = result.data.rows;
     console.log('Search button clicked!');
+    console.log(searchConditions.status);
 }
 
 

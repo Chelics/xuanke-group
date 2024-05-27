@@ -12,7 +12,7 @@ export async function courseGetAllService(){
 
 export async function courseSearchStatusService(conditions){
    //return axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009',{params:{...conditions.value}})
-   return axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009?status=1',{params:{...conditions.value}})
+   return axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009?status=${conditions.status}&page=${conditions.page}&pageSize=${conditions.pageSize}',{params:{...conditions.value}})
     .then(result=>{
         return result.data;
     }).catch(err=>{

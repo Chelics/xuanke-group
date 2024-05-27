@@ -27,6 +27,8 @@ service.interceptors.request.use(
 const authStore = useAuthStore();
 const { token } = storeToRefs(authStore);
     if (token.value) {
+      //测试
+      token.value = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoi5byg5LiJIiwiaWQiOjEsInVzZXJuYW1lIjoiMDEyMzQ1Njc4IiwiZXhwIjoxNzE2NTU2ODI2fQ.zR9U_na4juEkqKelURc7O-k9WNk4FU6XcHPJjK3sgAQ"
       config.headers.Authorization = `Bearer ${token.value}`;//这块是AI写的，我没学到这
     }
     return config;
