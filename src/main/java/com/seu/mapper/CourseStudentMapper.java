@@ -24,10 +24,8 @@ public interface CourseStudentMapper {
      * @param courseId
      * @return
      */
-    @Select("SELECT course_id FROM course_student WHERE course_id=#{courseId}")
+    @Select("SELECT COUNT(*) FROM course_student WHERE course_id=#{courseId}")
     Integer getStudentCountForCourse(Integer courseId);
-
-
 
     /**
      * 根据学生id获取课程列表

@@ -15,7 +15,7 @@ public interface CourseScheduler {
      * @return  返回分配失败的课程列表
      * @throws AllocateCourseException
      */
-    public List<Integer> allocateMultipleCourses(List<Integer> courseIds) throws AllocateCourseException;
+    List<Integer> allocateMultipleCourses(List<Integer> courseIds) throws AllocateCourseException;
 
     /**
      * 为课程分配时间和教室

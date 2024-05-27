@@ -22,7 +22,7 @@ public class GetAllCoursesController {
      * @return
      */
     @GetMapping
-    public Result getAllCourses(@RequestAttribute Integer userId) throws InvalidInputException, EntityNotFoundException {
+    public Result getAllCourses(@RequestAttribute Integer userId) throws EntityNotFoundException {
         return Result.success(getAllCourseService.getAllCourse(userId));
     }
 }

@@ -90,9 +90,4 @@
         ON DUPLICATE KEY UPDATE
         id = LAST_INSERT_ID(id)
     </insert>
-
-
-
-
-
 </mapper>

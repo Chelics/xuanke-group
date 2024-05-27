@@ -2,13 +2,10 @@ package com.seu.mapper;
 
 import com.seu.pojo.Course;
 import com.seu.pojo.FullCourse;
-import com.seu.pojo.Stage;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.transaction.annotation.Transactional;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -75,4 +72,17 @@ public interface CourseMapper {
     @Select("SELECT * FROM course WHERE type IN (1, 2)")
     List<FullCourse> getUniversalCourses();
 
+    /**
+     * 更新已选人数+1
+     * @param courseId
+     */
+    @Update("UPDATE course SET student_num = student_num + 1 WHERE id = #{id}")
+    void incrementStudentNum(@Param("id") int courseId);
+
+    /**
+     * 更新已选人数-1
+     * @param courseId
+     */
+    @Update("UPDATE course SET student_num = student_num - 1 WHERE id = #{id}")
+    void decrementStudentNum(@Param("id") int courseId);
 }

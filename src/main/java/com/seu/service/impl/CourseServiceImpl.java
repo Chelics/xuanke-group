@@ -1,7 +1,6 @@
 package com.seu.service.impl;
 
 import com.seu.mapper.*;
-import com.seu.pojo.Course;
 import com.seu.pojo.FullCourse;
 import com.seu.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,13 +52,12 @@ public class CourseServiceImpl implements CourseService {
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
-    public void getFullsByBasics(List<FullCourse> fullCourses){
-        if(fullCourses == null || fullCourses.isEmpty()){
+    public void getFullsByBasics(List<FullCourse> fullCourses) {
+        if (fullCourses == null || fullCourses.isEmpty()) {
             return;
         }
-        for(FullCourse fullCourse : fullCourses){
+        for (FullCourse fullCourse : fullCourses) {
             getFullByBasic(fullCourse);
         }
     }
-
 }

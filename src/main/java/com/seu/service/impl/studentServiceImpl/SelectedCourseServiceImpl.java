@@ -24,6 +24,7 @@ public class SelectedCourseServiceImpl implements SelectedCourseService {
         List<Integer> coursesIdsList = courseStudentMapper.getCourseIdsByStudentId(studentId);
         List<FullCourse> fullCourseList = courseMapper.getCoursesByIds(coursesIdsList);
         courseService.getFullsByBasics(fullCourseList);
+
         return fullCourseList;
     }
 }

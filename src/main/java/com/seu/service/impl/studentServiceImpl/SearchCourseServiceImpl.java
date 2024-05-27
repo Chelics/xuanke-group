@@ -1,9 +1,6 @@
 package com.seu.service.impl.studentServiceImpl;
 
-import com.seu.mapper.CourseMapper;
-import com.seu.mapper.CourseTeacherMapper;
-import com.seu.mapper.RoomMapper;
-import com.seu.mapper.TeacherMapper;
+import com.seu.mapper.*;
 import com.seu.pojo.FullCourse;
 import com.seu.service.impl.CourseServiceImpl;
 import com.seu.service.studentService.SearchCourseService;
@@ -27,6 +24,8 @@ public class SearchCourseServiceImpl implements SearchCourseService {
     CourseTeacherMapper courseTeacherMapper;
     @Autowired
     RoomMapper roomMapper;
+    @Autowired
+    CourseStudentMapper courseStudentMapper;
 
     private static final Pattern PATTERN_BUILDINGROOM = Pattern.compile("教\\d-\\d\\d\\d");
     private static final Pattern PATTERN_BUILDING = Pattern.compile("教\\d");
@@ -46,6 +45,7 @@ public class SearchCourseServiceImpl implements SearchCourseService {
         //再加上课程名, 课程编号, 学院, 一起去数据库中查
         List<FullCourse> fullCourseList = courseMapper.searchCoursesByKeyWord(keyWord, idsSearchedByTeacher, idsSearchedByRooms);
         courseService.getFullsByBasics(fullCourseList);
+
         return fullCourseList;
     }
 

@@ -3,6 +3,7 @@ package com.seu.service.impl.studentServiceImpl;
 import com.seu.exception.EntityNotFoundException;
 import com.seu.mapper.CourseClassMapper;
 import com.seu.mapper.CourseMapper;
+import com.seu.mapper.CourseStudentMapper;
 import com.seu.mapper.StudentMapper;
 import com.seu.pojo.FullCourse;
 import com.seu.pojo.Users.Student;
@@ -25,6 +26,8 @@ public class GetAllCoursesServiceImpl implements GetAllCoursesService {
     StudentMapper studentMapper;
     @Autowired
     CourseClassMapper courseClassMapper;
+    @Autowired
+    CourseStudentMapper courseStudentMapper;
 
     /**
      * 获取所有课程
@@ -57,6 +60,7 @@ public class GetAllCoursesServiceImpl implements GetAllCoursesService {
         }
 
         courseService.getFullsByBasics(courseList);
+
         return courseList;
     }
 }
