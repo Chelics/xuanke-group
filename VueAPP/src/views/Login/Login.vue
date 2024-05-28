@@ -12,13 +12,13 @@ const login = () => {
 
 }
 
-const formData = ref({ username: '', password: '' });
+//const formData = ref({ username: '', password: '' });
 const authStore = useAuthStore();
 const router = useRouter();
 
 async function handleLogin() {//虚假报错（如果有黄线）
   try {
-    await authStore.login(formData.value.username, formData.value.password);
+    await authStore.login(ruleForm.name, ruleForm.pass);
     // 登录成功后，根据需要重定向
     //router.push('/');
     // 根据角色跳转
@@ -35,7 +35,7 @@ async function handleLogin() {//虚假报错（如果有黄线）
       default:
         console.error('Unknown user role');
     }
-  } catch (Error: Error) {
+  } catch (Error: any) {
     // 直接处理已知的错误结构，这里强制 Error 是 Error对象，只有一个Error Message属性
     let errorMessage = Error.errorMessage;
 
@@ -90,6 +90,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
   formEl.validate((valid) => {
     if (valid) {
       console.log('已提交!')
+      handleLogin();
     } else {
       console.log('提交错误!')
     }

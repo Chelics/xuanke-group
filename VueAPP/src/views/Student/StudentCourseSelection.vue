@@ -13,6 +13,7 @@
       <el-input placeholder="搜索课程" v-model="searchKeyword" style="width: 400px;" />
       <el-button @click="executeSearch">搜索</el-button>
     </div>
+<<<<<<< HEAD
     <el-collapse v-model="expandedPanels" accordion>
       <el-collapse-item v-for="(group) in groupWithNonEmptyTimes" :key="group.prefix" :name="`${group.prefix}_panel`"
         :class="{ 'is-selected-title': groupHasSelectedCourse(group) }">
@@ -28,6 +29,41 @@
             <!-- 添加课程编号显示，并在选中时应用红色 -->
             <p :style="{ color: isSelected(course.courNumber) ? '#409eff' : '' }">[{{ course.courNumber }}] {{
               course.courseName }}
+=======
+      <el-collapse v-model="expandedPanels" accordion >
+    <el-collapse-item
+      v-for="(group) in groupWithNonEmptyTimes"
+      :key="group.prefix"
+      
+      :name="`${group.prefix}_panel`"
+      :class="{ 'is-selected-title': groupHasSelectedCourse(group) }"
+
+    >
+    <template #title>
+      <span :class="{ 'selected-tag': groupHasSelectedCourse(group) }">
+        {{ getFormattedTitle(group) }}
+        <span v-if="groupHasSelectedCourse(group)">已选</span>
+      </span>
+    </template>
+      <div class="course-details">
+        <div
+          v-for="course in group.courses"
+          :key="course.id"
+          class="course-box"
+          :class="{ 'is-selected': isSelected(course.courNumber) }"
+          
+        >
+          <!-- 添加课程编号显示，并在选中时应用红色 -->
+          <p :style="{ color: isSelected(course.courNumber) ? 'red' : '' }">[{{ course.courNumber }}] {{ course.courseName }}</p>
+          <p>教师: {{ course.teachers?.join(', ') }}</p>
+          <p>教室: {{ course.roomName }}</p>
+          <p>已选人数：{{ course.studentNum }}</p>
+          <p>课程容量: {{ course.courseStorage }}</p>
+          <p>时间:</p>
+          <template v-if="course.nonEmptyTimes.length">
+            <p v-for="time in course.nonEmptyTimes" :key="time">
+              {{ formatTime(time, course.startWeek, course.endWeek) }}
+>>>>>>> 61389cdf2ec86dde8da644b4fa3eb7057e83c5f1
             </p>
             <p>教师: {{ course.teachers?.join(', ') }}</p>
             <p>教室: {{ course.roomName }}</p>
@@ -43,6 +79,7 @@
 
             <slot name="courseExtra" :course="course"></slot>
 
+<<<<<<< HEAD
             <!-- 修改按钮显示逻辑 -->
             <template v-if="isSelectedForUnselection(course)">
               <el-button type="danger" size="small" @click="selectCourse(course.id, course.courNumber)" :style="{ width: '80px' }">退课</el-button>
@@ -67,10 +104,61 @@ import { defineComponent, ref, computed } from 'vue';
 import { ElCollapse, ElCollapseItem, ElButton } from 'element-plus';
 import { watch, onMounted } from 'vue';
 import { debounce } from 'lodash'; // 引入lodash的防抖函数，用于优化搜索体验
+=======
+          <!-- 修改按钮显示逻辑 -->
+          <template v-if="isSelectedForUnselection(course)">
+            <el-button type="danger" size="small" @click="selectCourse(course.id, course.courNumber)">退课</el-button>
+          </template>
+          <template v-else>
+            <el-button 
+      :type="course.studentNum < course.courseStorage ? 'primary' : 'danger'"
+      :disabled="course.studentNum >= course.courseStorage"
+      size="small" @click="selectCourse(course.id, course.courNumber)">
+      {{ course.studentNum < course.courseStorage ? '选课' : '已满' }}
+    </el-button>
+          </template>
+        </div>
+      </div>
+    </el-collapse-item>
+  </el-collapse>
+    </div>
+  </template>
+  
+  <script setup lang="ts">
+  import { defineComponent, ref, computed } from 'vue';
+  import { ElCollapse, ElCollapseItem, ElButton } from 'element-plus';
+  import { watch, onMounted } from 'vue';
+>>>>>>> 61389cdf2ec86dde8da644b4fa3eb7057e83c5f1
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import service from '@/util/request';
 //import { request } from 'node_modules/axios/index.cjs';
+<<<<<<< HEAD
+=======
+  
+  interface FullCourse {
+    id: number;
+    courseName: string;
+    type: number;
+    courNumber: string;
+    roomId?: string;
+    courseHour: number;
+    courseStorage: number;
+    startWeek: number;
+    endWeek: number;
+    time1: number;
+    time2?: number;
+    time3?: number;
+    faculty: string;
+    credit: number;
+    teachers?: string[];
+    classes?: string[];
+    roomName?: string;
+    studentNum: number;
+  }
+  
+  const categories = [
+>>>>>>> 61389cdf2ec86dde8da644b4fa3eb7057e83c5f1
 
 interface FullCourse {
   id: number;
@@ -276,7 +364,7 @@ function selectCourse(courseId: number, courNumber: string) {
      }
      selectCourse(); */
   }
-  console.log(`操作了课程ID: ${courseId}, 状态: ${isSelected(courNumber) ? '退课' : '选课'}`);
+  console.log(`操作了课程ID: ${courseId}, 状态: ${isSelected(courNumber) ? '退课' : '选课'} }`);
 }
 
 
@@ -289,6 +377,7 @@ interface ResponseData {
 onMounted(async () => {
   //实际使用
   //courses=await getCourse();
+<<<<<<< HEAD
   courses.value = [
     {
       id: 1,
@@ -379,6 +468,98 @@ onMounted(async () => {
     },
     // 更多课程...
   ];
+=======
+  courses.value=[
+  {
+    id: 1,
+    courseName: '高等数学',
+    type: 1, // 专业课
+    courNumber: 'SX0101',
+    roomId: 'R0101',
+    courseHour: 48,
+    courseStorage: 50,
+    startWeek: 1,
+    endWeek: 16,
+    time1: 0,
+    teachers: ['张三', '李四'],
+    faculty: '数学系',
+    credit: 4,
+    roomName: '教学楼A101',
+    studentNum: 50,
+  },
+  {
+    id: 2,
+    courseName: '篮球基础',
+    type: 2, // 体育课
+    courNumber: 'TY0101',
+    roomId: 'G001',
+    courseHour: 32,
+    courseStorage: 30,
+    startWeek: 3,
+    endWeek: 15,
+    time1:3,
+    teachers: ['王五'],
+    faculty: '体育学院',
+    credit: 2,
+    roomName: '体育馆B场',
+    studentNum: 20
+  },
+  {
+    id: 3,
+    courseName: '西方哲学史',
+    type: 3, // 通选课
+    courNumber: 'TX0101',
+    roomId: 'L0203',
+    courseHour: 32,
+    courseStorage: 70,
+    startWeek: 2,
+    endWeek: 16,
+    time1:4,
+    teachers: ['赵六'],
+    faculty: '文学院',
+    credit: 2,
+    roomName: '图书馆报告厅',
+    studentNum:20
+  },
+  // 同一课程编号，不同详细信息的示例
+  {
+    id: 4,
+    courseName: '高等数学',
+    type: 1,
+    courNumber: 'SX0102',
+    roomId: 'R0102',
+    courseHour: 48,
+    courseStorage: 90,
+    startWeek: 1,
+    endWeek: 16,
+    time1:8,
+    teachers: ['钱七', '孙八'],
+    faculty: '数学系',
+    credit: 4,
+    roomName: '教学楼A102',
+    studentNum :20
+  },
+  {
+    id: 5,
+    courseName: '线性代数',
+    type: 1,
+    courNumber: 'SX0202',
+    roomId: 'R0102',
+    courseHour: 48,
+    courseStorage: 90,
+    startWeek: 1,
+    endWeek: 16,
+    time1:8,
+    time2:120,
+    teachers: ['钱七', '孙八'],
+    faculty: '数学系',
+    credit: 4,
+    roomName: '教学楼A102',
+    studentNum :20
+  },
+  // 更多课程...
+];
+>>>>>>> 61389cdf2ec86dde8da644b4fa3eb7057e83c5f1
 
 });
 //获取所有课程信息
@@ -403,6 +584,7 @@ const searchCoursesApi = async () => {
   // return await fetchSearchResults(keyword);
   const response: ResponseData =
   {
+<<<<<<< HEAD
     code: 1,
     msg: '',
     data: [{
@@ -421,6 +603,27 @@ const searchCoursesApi = async () => {
       credit: 4,
       roomName: '教学楼A102',
     },]
+=======
+    code:1,
+    msg:'',
+    data:[{
+    id: 4,
+    courseName: '高等数学',
+    type: 1,
+    courNumber: 'SX0102',
+    roomId: 'R0102',
+    courseHour: 48,
+    courseStorage: 90,
+    startWeek: 1,
+    endWeek: 16,
+    time1:8,
+    teachers: ['钱七', '孙八'],
+    faculty: '数学系',
+    credit: 4,
+    roomName: '教学楼A102',
+    studentNum: 50,
+  },]
+>>>>>>> 61389cdf2ec86dde8da644b4fa3eb7057e83c5f1
   }
   return response.data
   /* const response :ResponseData=await axios.get(`/student/course/search/${searchKeyword.value}`);
