@@ -2,7 +2,7 @@
 
 <template>
     <el-container style="height: 100vh;">
-      <navigation v-if="!$route.meta.showNav"></navigation>
+      <navigation v-if="!$route.meta.showNav">
       <el-aside width="200px" style="background-color: #FFFFFF;">
         <div class="logo">
           <img src="./logo.jpg" alt="Logo" />
@@ -50,6 +50,7 @@
         </el-submenu>
         </el-menu>
       </el-aside>
+    </navigation>
       <el-main>
         <router-view />
       </el-main>
@@ -90,7 +91,6 @@
     background-color: #FFFFFF;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加阴影效果，可以根据需求调整阴影的颜色、模糊度和偏移量 */
   }
-  
   
   </style>
 
