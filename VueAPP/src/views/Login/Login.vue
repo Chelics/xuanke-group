@@ -54,7 +54,7 @@ const checkName = (rule: any, value: any, callback: any) => {
     return callback(new Error('请输入用户名'))
   }
   setTimeout(() => {
-    if (!Number.isInteger(value)) {
+    if (!/^[0-9]+$/.test(value)) {
       callback(new Error('请输入正确的用户名'))
     } else {
       callback()
@@ -122,7 +122,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
     <div class="title">选课管理系统</div>
     <el-form ref="ruleFormRef" class="form-container" :model="ruleForm" status-icon :rules="rules" label-width="auto">
       <el-form-item label="用户名" prop="name">
-        <el-input v-model.number="ruleForm.name" />
+        <el-input v-model="ruleForm.name" />
       </el-form-item>
       <el-form-item label="密码" prop="pass">
         <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
