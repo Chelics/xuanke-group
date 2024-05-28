@@ -30,6 +30,16 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         String url = req.getRequestURI();
         log.info("已拦截请求的url: {}", url);
 
+        //处理预请求的代码
+        if (req.getMethod().equals("OPTIONS")) {
+            resp.setHeader("Access-Control-Allow-Origin", "*");//*表示放行所有的源，http://127.0.0.1:5500
+            resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, HEAD, OPTIONS");
+            resp.setHeader("Access-Control-Allow-Headers", "*");
+            resp.setHeader("Access-Control-Allow-Credentials", "true");
+            resp.setStatus(HttpServletResponse.SC_OK);
+            return false;
+        }
+
         //登录操作, 直接放行
         //此操作冗余, 因为LoginCheckInterceptor类已设置不会拦截login
         if(url.contains("login")){

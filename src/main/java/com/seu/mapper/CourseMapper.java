@@ -85,4 +85,12 @@ public interface CourseMapper {
      */
     @Update("UPDATE course SET student_num = student_num - 1 WHERE id = #{id}")
     void decrementStudentNum(@Param("id") int courseId);
+
+    /**
+     * 根据id获取已选人数
+     * @param courseId
+     * @return
+     */
+    @Select("SELECT course.student_num FROM course WHERE id=#{id}")
+    Integer getStudentNumById(@Param("id") Integer courseId);
 }

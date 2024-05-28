@@ -154,8 +154,8 @@ async function getRawCourseData() {
     console.log("开始获取")
     console.log(`/${props.myurl}`)
     //测试 
-    const response :ResponseData= await service.get("https://mock.apifox.com/m1/4461960-4108146-default/student/course/selected")
-      //const response :ResponseData= await service.get(`${props.myurl}`)
+    //const response :ResponseData= await service.get("https://mock.apifox.com/m1/4461960-4108146-default/student/course/selected")
+      const response :ResponseData= await service.get(`${props.myurl}`)
       //console.log(response)
       if (response.code === 1 && response.msg === 'success'){
         rawCourseData.value = response.data as rawCourse[]

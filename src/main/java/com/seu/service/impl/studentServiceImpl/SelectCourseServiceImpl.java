@@ -126,9 +126,8 @@ public class SelectCourseServiceImpl implements SelectCourseService {
      * @throws SelectCourseException
      */
     private void checkStorage(Integer courseId, FullCourse fullCourse) throws SelectCourseException {
-        Integer studentsCountForCourse = courseStudentMapper.getStudentCountForCourse(courseId);
-        int count = (studentsCountForCourse == null) ? 0 : studentsCountForCourse;
-        if (count >= fullCourse.getCourseStorage()) {
+        Integer studentsNum = courseMapper.getStudentNumById(courseId);
+        if (studentsNum >= fullCourse.getCourseStorage()) {
             throw new SelectCourseException("课程容量已满", HttpStatus.FORBIDDEN);
         }
     }
