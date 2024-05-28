@@ -9,7 +9,7 @@ spring:
   #数据库连接信息
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://121.36.199.171:3306/courseselectionsystem
+    url: jdbc:mysql://1.94.119.197:3306/courseselectionsystem
     username: sqlUser
     password: strong_password
   servlet:
