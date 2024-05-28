@@ -9,11 +9,11 @@ import router from '@/router/router'
 
 // 创建axios实例
 const service: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:8080',//测试用
+  //baseURL: 'http://localhost:8080',//测试用
   timeout: 5000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json;charset=utf-8',
-    ...(process.env.NODE_ENV === 'production' ? { 'X-Requested-With': 'XMLHttpRequest' } : {}),
+    //...(process.env.NODE_ENV === 'production' ? { 'X-Requested-With': 'XMLHttpRequest' } : {}),
     'X-Requested-With': 'XMLHttpRequest' 
   },
 });
@@ -29,7 +29,7 @@ const authStore = useAuthStore();
 const { token } = storeToRefs(authStore);
     if (token.value) {
       console.log("检测到token不为空"+token.value)
-      config.headers.Authorization = `${token.value}`;//这块是AI写的，我没学到这
+      config.headers.Authorization = `Bearer ${token.value}`;//这块是AI写的，我没学到这
       console.log("检测到token不为空 实际："+config.headers.Authorization)
     }
     return config;

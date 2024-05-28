@@ -40,12 +40,13 @@
           :key="course.id"
           class="course-box"
           :class="{ 'is-selected': isSelected(course.courNumber) }"
-          @click="selectCourse(course.id, course.courNumber)"
+          
         >
           <!-- 添加课程编号显示，并在选中时应用红色 -->
           <p :style="{ color: isSelected(course.courNumber) ? 'red' : '' }">[{{ course.courNumber }}] {{ course.courseName }}</p>
           <p>教师: {{ course.teachers?.join(', ') }}</p>
           <p>教室: {{ course.roomName }}</p>
+          <p>已选人数：{{ course.studentNum }}</p>
           <p>课程容量: {{ course.courseStorage }}</p>
           <p>时间:</p>
           <template v-if="course.nonEmptyTimes.length">
@@ -59,10 +60,15 @@
 
           <!-- 修改按钮显示逻辑 -->
           <template v-if="isSelectedForUnselection(course)">
-            <el-button type="danger" size="small">退课</el-button>
+            <el-button type="danger" size="small" @click="selectCourse(course.id, course.courNumber)">退课</el-button>
           </template>
           <template v-else>
-            <el-button type="primary" size="small">选课</el-button>
+            <el-button 
+      :type="course.studentNum < course.courseStorage ? 'primary' : 'danger'"
+      :disabled="course.studentNum >= course.courseStorage"
+      size="small" @click="selectCourse(course.id, course.courNumber)">
+      {{ course.studentNum < course.courseStorage ? '选课' : '已满' }}
+    </el-button>
           </template>
         </div>
       </div>
@@ -75,7 +81,6 @@
   import { defineComponent, ref, computed } from 'vue';
   import { ElCollapse, ElCollapseItem, ElButton } from 'element-plus';
   import { watch, onMounted } from 'vue';
-import { debounce } from 'lodash'; // 引入lodash的防抖函数，用于优化搜索体验
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import service from '@/util/request';
@@ -99,6 +104,7 @@ import service from '@/util/request';
     teachers?: string[];
     classes?: string[];
     roomName?: string;
+    studentNum: number;
   }
   
   const categories = [
@@ -284,7 +290,7 @@ function selectCourse(courseId: number, courNumber: string) {
     }
     selectCourse(); */
   }
-  console.log(`操作了课程ID: ${courseId}, 状态: ${isSelected(courNumber) ? '退课' : '选课'}`);
+  console.log(`操作了课程ID: ${courseId}, 状态: ${isSelected(courNumber) ? '退课' : '选课'} }`);
 }
 
 
@@ -313,6 +319,7 @@ onMounted(async() => {
     faculty: '数学系',
     credit: 4,
     roomName: '教学楼A101',
+    studentNum: 50,
   },
   {
     id: 2,
@@ -329,6 +336,7 @@ onMounted(async() => {
     faculty: '体育学院',
     credit: 2,
     roomName: '体育馆B场',
+    studentNum: 20
   },
   {
     id: 3,
@@ -345,6 +353,7 @@ onMounted(async() => {
     faculty: '文学院',
     credit: 2,
     roomName: '图书馆报告厅',
+    studentNum:20
   },
   // 同一课程编号，不同详细信息的示例
   {
@@ -362,6 +371,7 @@ onMounted(async() => {
     faculty: '数学系',
     credit: 4,
     roomName: '教学楼A102',
+    studentNum :20
   },
   {
     id: 5,
@@ -379,6 +389,7 @@ onMounted(async() => {
     faculty: '数学系',
     credit: 4,
     roomName: '教学楼A102',
+    studentNum :20
   },
   // 更多课程...
 ];
@@ -423,6 +434,7 @@ const searchCoursesApi = async () => {
     faculty: '数学系',
     credit: 4,
     roomName: '教学楼A102',
+    studentNum: 50,
   },]
   }
   return response.data
