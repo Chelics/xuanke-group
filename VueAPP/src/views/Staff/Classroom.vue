@@ -189,22 +189,22 @@ let classrooms = ref<Classroom[]>([]);
 // 模拟获取教室信息的异步函数
 async function fetchRooms(): Promise<Classroom[]> {
   // 这里应使用axios等库发出实际请求，例如:
-  // const response = await service.get('/staff/rooms');
+  const response = await service.get('/staff/rooms');
   // 但为了演示，我们模拟数据返回
-  const mockResponse = [
+  /* const mockResponse = [
     { id: 1, building: "教1", roomName: "1-100", roomStorage: 40 },
     { id: 2, building: "教2", roomName: "2-303", roomStorage: 120 },
     // 更多教室数据...
-  ];
-  return mockResponse;
+  ]; */
+  return response.data;
 }
 
 // 模拟根据教室ID获取课程列表的异步函数
 async function fetchCourseListForRoom(roomId: number): Promise<Course[]> {
   // 同样，这里应替换为真实请求，例如:
-   //const response = await service.get(`/staff/rooms/${roomId}`);
+   const response = await service.get(`/staff/rooms/${roomId}`,{params:{id:roomId}});
   // 模拟数据返回
-  const mockCourseList = [
+  /* const mockCourseList = [
   {
         id: 1,
         courseName: "线性代数",
@@ -223,8 +223,8 @@ async function fetchCourseListForRoom(roomId: number): Promise<Course[]> {
         roomName:"教1-1-100"
       }
     // 更多课程数据...
-  ];
-  return mockCourseList;
+  ]; */
+  return response.data;
 }
 
 // 在onMounted钩子中执行数据获取逻辑
@@ -232,6 +232,7 @@ onMounted(async () => {
   try {
     // 获取所有教室信息
     classrooms.value = await fetchRooms();
+    console.log(classrooms.value)
     
     // 遍历教室，并为每个教室获取课程列表
     for (const classroom of classrooms.value) {

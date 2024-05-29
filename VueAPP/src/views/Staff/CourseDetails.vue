@@ -40,7 +40,6 @@
     import { getCourseList } from '@/api/courseList';
     import request from '@/util/request';
     import { ref,onMounted } from 'vue';
-import axios from 'axios';
 import service from '@/util/request';
 import { defineProps } from 'vue';
     const options = [

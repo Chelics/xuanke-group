@@ -4,13 +4,8 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import { ElButton } from 'element-plus';
+import { login } from '@/api/Login';
 
-import { userLoginService } from '@/api/Login';
-
-const login = () => {
-  /////接口service已经定义，在login.ts，，还没有使用
-
-}
 
 //const formData = ref({ username: '', password: '' });
 const authStore = useAuthStore();
@@ -18,7 +13,7 @@ const router = useRouter();
 
 async function handleLogin() {//虚假报错（如果有黄线）
   try {
-    await authStore.login(ruleForm.name, ruleForm.pass);
+    await login(ruleForm.name, ruleForm.pass);
     // 登录成功后，根据需要重定向
     //router.push('/');
     // 根据角色跳转
@@ -54,7 +49,7 @@ const checkName = (rule: any, value: any, callback: any) => {
     return callback(new Error('请输入用户名'))
   }
   setTimeout(() => {
-    if (!Number.isInteger(value)) {
+    if (!/^[0-9]+$/.test(value)) {
       callback(new Error('请输入正确的用户名'))
     } else {
       callback()
@@ -115,7 +110,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
     <el-button type="primary" ref="/student" @click="() => router.push('/student')">我是学生</el-button>
     <el-button type="success" ref="/teacher" @click="() => router.push('/teacher')">我是老师</el-button>
     <el-button type="info" ref="/admin" @click="() => router.push('/staff')">我是教务</el-button>
-  </div> -->
+  </div>-->
 
 
   <div class="container">
@@ -123,7 +118,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
     <div class="title">选课管理系统</div>
     <el-form ref="ruleFormRef" class="form-container" :model="ruleForm" status-icon :rules="rules" label-width="auto">
       <el-form-item label="用户名" prop="name">
-        <el-input v-model.number="ruleForm.name" />
+        <el-input v-model="ruleForm.name" />
       </el-form-item>
       <el-form-item label="密码" prop="pass">
         <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
@@ -136,7 +131,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
         </div>
       </el-form-item>
     </el-form>
-  </div>
+  </div> 
   
 
 

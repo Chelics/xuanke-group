@@ -9,7 +9,7 @@ import router from '@/router/router'
 
 // 创建axios实例
 const service: AxiosInstance = axios.create({
-  //baseURL: 'http://localhost:8080',//测试用
+  baseURL: 'http://1.94.119.197:8080',
   timeout: 5000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json;charset=utf-8',
@@ -23,19 +23,15 @@ const service: AxiosInstance = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
-    console.log("开始检测token")
     // 使用Pinia store
 const authStore = useAuthStore();
-const { token } = storeToRefs(authStore);
-    if (token.value) {
-      console.log("检测到token不为空"+token.value)
-      config.headers.Authorization = `Bearer ${token.value}`;//这块是AI写的，我没学到这
-      console.log("检测到token不为空 实际："+config.headers.Authorization)
+const token = authStore.token;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;//这块是AI写的，我没学到这
     }
     return config;
   },
   (error) => {
-    console.log("token错误")
     return Promise.reject(error);
   }
 );
@@ -44,6 +40,7 @@ const { token } = storeToRefs(authStore);
 service.interceptors.response.use(
   (response: any) => {
     // 未登录回到登录页
+    console.log(response.status)
     if (response.status === 401) {
       return router?.push('/login')
     }
@@ -59,7 +56,6 @@ service.interceptors.response.use(
   },
   (error: any) => {
     console.log("有任何错误")
-    return Promise.reject(error)
   }
 )
 export default service;

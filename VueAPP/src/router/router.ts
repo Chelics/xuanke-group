@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router"
 import Login from "@/views/Login/Login.vue"
-import Register from "@/views/Login/Register.vue"
-import ForgetPassword from "@/views/Login/ForgetPassword.vue"
 
 import StudentSchedule from "@/views/Student/StudentSchedule.vue"
 import StudentCourseSelection from "@/views/Student/StudentCourseSelection.vue"
@@ -11,11 +9,12 @@ import TeacherCourses from "@/views/Teacher/TeacherCourses.vue"
 
 import State from "@/views/Staff/State.vue"
 import Classroom from "@/views/Staff/Classroom.vue"
-import AdminAudit from "@/views/Staff/StaffAudit.vue"
+
 
 import { useAuthStore } from '@/stores/auth';
 import HtmlTable from "@/testview/htmlTable.vue"
 import StaffAudit from "@/views/Staff/StaffAudit.vue"
+import { isLoggedIn } from "@/api/Login"
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -32,20 +31,7 @@ const router = createRouter({
                 showNav: true
               }
         },
-        {
-            path: '/register',
-            component: Register,
-            meta:{
-                showNav: true
-              }
-        },
-        {
-            path: '/forget-password',
-            component: ForgetPassword,
-            meta:{
-                showNav: true
-              }
-        },
+        
         //学生部分路由
         {
             path: '/student',
@@ -128,7 +114,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore();
 
-    if (to.meta.requiresAuth && !authStore.isLoggedIn()) {
+    if (to.meta.requiresAuth && !isLoggedIn()) {
         next({ name: 'login' });
     } else if (to.meta.role && authStore.userRole !== to.meta.role) {
         // 如果角色不匹配，可以提示错误或重定向到相应的主页

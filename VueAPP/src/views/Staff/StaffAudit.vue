@@ -55,6 +55,7 @@
 import { defineComponent, onMounted, ref, computed } from 'vue';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
+import service from '@/util/request';
 interface ResponseData {
   code: number;
   msg: string;
@@ -140,7 +141,7 @@ const getButtonLabel = computed(() => {
 const fetchFilteredCourses = async () => {
   try {
     if (courseIdToFetch.value) {
-      const response :ResponseData= await axios.get(`/staff/checking/${courseIdToFetch.value}`);
+      const response :ResponseData= await service.get(`/staff/checking/${courseIdToFetch.value}`);
       if (response.code !== 1) {
         ElMessage.error('查询课程失败，请检查ID是否正确。');
       }
@@ -149,13 +150,13 @@ const fetchFilteredCourses = async () => {
       // 当查询框为空时，使用searchParams进行查询
       // 注意：这里直接使用testData作为示例数据返回，实际应用中应替换为真实API调用
 
-      /* const response = await axios.get('/staff/checking', {
+      const response = await service.get('/staff/checking', {
             params: searchParams.value,
           }); 
           
-          */
+         
 
-      courses.value = testData;
+      courses.value = response.data;
     }
   } catch (error) {
     console.error('查询失败:', error);
@@ -174,7 +175,7 @@ const handleSelectionChange = (selection: any[]) => {
 
 const batchApprove = async () => {
   try {
-    await axios.put('/staff/checking/batch', {
+    await service.put('/staff/checking/batch', {
       status: 2,
       ids: selectedCourseIds.value,
     });
@@ -188,7 +189,7 @@ const batchApprove = async () => {
 
 const batchReject = async () => {
   try {
-    await axios.put('/staff/checking/batch', {
+    await service.put('/staff/checking/batch', {
       status: 3,
       ids: selectedCourseIds.value,
     });

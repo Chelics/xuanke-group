@@ -2,50 +2,30 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import request from '@/util/request';
+import service from '@/util/request';
 interface ResponseData {
   code: number;
   msg: string;
   data: any;
 }
-export const useAuthStore = defineStore('auth', () => {
-  const token = ref('eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoi5byg5LiJIiwiaWQiOjEsInVzZXJuYW1lIjoiMDEyMzQ1Njc4IiwiZXhwIjoxNzE2ODIzMTk0fQ.pEMF8rPyMiWFk2AlDik1FSRVWwZZ9COyAREom6Y49fE');//测试,非空数据。只要没有连接后端数据，不会触发更新令牌
-  const username = ref('0');//测试，0开头学生，1开头老师，2开头教务
-  const userRole=ref('student');//测试，实际调整角色在这里。
+export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    // 初始化状态
+    token: '', // 测试用的 token，实际应从 API 获取
+    StoUsername: '', // 测试用户名，根据实际逻辑调整
+    userRole: '', // 用户角色，根据实际逻辑调整
+  }),
 
-  async function login(usernameInput: string, password: string) {
-    try {
-      const response :ResponseData= await request.post('/login', { usernameInput, password });
-      //应该是这么写，没调过，基本是对的
-        if (response.code === 1 && response.msg === 'success') { // 假设成功码为200，与拦截器逻辑匹配
-          token.value = response.data.token; //此处response为直接后端code，msg，data，找data的token属性。原生response.data是整个后端返回，包装已经拆除。
-        username.value = usernameInput;
-        //确定用户角色
-        if(username.value.startsWith('0')){
-          userRole.value='student';
-        }
-        if(username.value.startsWith('1')){
-          userRole.value='teacher';
-        }
-        if(username.value.startsWith('2')){
-          userRole.value='staff';
-        }
-      } else {
-        throw new Error('登录失败，请检查您的用户名和密码！');
-      }
-    } catch (error) {
-        console.error('登录请求出现其它错误:', error);
-        //直接处理未知错误 error;
-        alert('登录请求出现其它错误:'+ error)
-      }
-  }
+  // 可以在这里定义 getters、actions 等
 
-  function logout() {
-    token.value = '';
-    username.value = '';
-  }
-  function isLoggedIn() {
-    return token.value.length!==0;
-  }
-
-  return { token, username,userRole, login, logout ,isLoggedIn};
+  // 开启持久化，这里我们对所有状态进行持久化
+  // 如果只需要持久化部分状态，可以使用 paths 选项指定
+  persist: {
+    // 自定义存储的键名，默认为 store 的 id，这里是 'auth'
+    // key: 'authStorage',
+    // 指定存储方式，默认为 localStorage，也可以是 sessionStorage
+    // storage: localStorage,
+    // 指定需要持久化的状态路径数组
+    // paths: ['token', 'StoUsername', 'userRole'],
+  },
 });

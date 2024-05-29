@@ -61,8 +61,12 @@
   <script setup lang="ts">
   //这个是主跳转路由，页面没有美化
   import { useAuthStore } from '../src/stores/auth';//大概不会报错了
-
+  import { watchEffect } from 'vue';
   const authStore = useAuthStore();
+
+
+// 页面刷新，vuex中存储的状态依然存在
+
   </script>
   
   <style scoped>
