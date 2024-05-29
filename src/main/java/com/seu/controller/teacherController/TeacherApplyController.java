@@ -54,8 +54,8 @@ public class TeacherApplyController {
      * 查询未审核/已通过/已驳回状态课程
      * @return
      */
-    @GetMapping("/{status}")
-    public Result page(@RequestAttribute Claims claims, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10")Integer pageSize,@PathVariable Short status){
+    @GetMapping
+    public Result page(@RequestAttribute Claims claims, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10")Integer pageSize,Short status){
 
         log.info("分页查询待审核状态课程,参数:{},{},{}", page, pageSize,status);
         // 从claims中获取teacherId
