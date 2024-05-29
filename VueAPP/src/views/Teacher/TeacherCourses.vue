@@ -1,13 +1,58 @@
 <script setup>
 import { ref } from 'vue';
 import { reactive } from 'vue';
+import qs from 'query-string';
+import service from '@/util/request';
+
+// async function courseGetAllService() {
+//     //return await axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009/')
+//     return service.get('/teacher/apply')
+//         .then(result => {
+//             return result.data;
+//         }).catch(err => {
+//             console.log(err);
+//         });
+// }
+
+// async function teacherIDsGetService(teacherName) {
+//     //return axios.get('https://mock.apifox.com/m1/4461960-4108146-default/teacher/teachers',{params:{...teacherName.value}})
+//     //return service.get('/teacher/teachers',{params:{...teacherName.value}})
+//     console.log('/teacher/teachers?teacherName'+'?'+params);
+//     const params = qs.stringify({ teacherName: 张三}) // a=1&b=2
+//     // return url + '?' + params
+//     return service.get('/teacher/teachers?teacherName'+'?'+params)
+//     .then(result=>{
+//         return result.data;
+//     }).catch(err=>{
+//         console.log(err);
+//     })
+// }
+
+// async function classIDsGetService(className) {
+//     return service.get('/teacher/classes',{params:{...className.value}})
+//     .then(result=>{
+//         return result.data;
+//     }).catch(err=>{
+//         console.log(err);
+//     })
+// }
 
 
-import { courseGetAllService, courseSearchStatusService } from '@/api/Teacher';
+// const courseAddService = (courseData => {
+//     return service.post('/teacher/apply', courseData);
+// })
+
 const dataList = ref([])
 const getAllCourse = async function () {
-    let result = await courseGetAllService();
-    dataList.value = result.data.rows;
+    return service.get('/teacher/apply?status=1&page=1&pageSize=1')
+        .then(result => {
+            //return result.data;
+            dataList.value = result.data.rows;
+        }).catch(err => {
+            console.log(err);
+        });
+    //let result = await courseGetAllService();
+
     //console.log('get the list')
 }
 
@@ -42,18 +87,37 @@ const searchConditions = reactive({
 //处理用户搜索
 const state = ref()//搜索时选中的状态
 const search = async function () {
-    let params = {
-        pageNum: pageNum,
-        pageSize: pageSize,
-        //state: state.value ? state.value : null
-        state: searchConditions.status ? searchConditions.status : null
+    // let params = {
+    //     pageNum: pageNum,
+    //     pageSize: pageSize,
+    //     //state: state.value ? state.value : null
+    //     state: searchConditions.status ? searchConditions.status : null
+    // }
+    // let result = await courseSearchStatusService(params);
+    // //渲染视图
+    // totalLine.value = result.data.total;
+    // dataList.value = result.data.rows;
+    // console.log('Search button clicked!');
+    // console.log(searchConditions.status);
+    console.log(blurredSearchModel.value.teacherName);
+    const params = [];
+    if (searchConditions.status) {
+        params.push(`status=${searchConditions.status}`);
     }
-    let result = await courseSearchStatusService(params);
-    //渲染视图
-    totalLine.value = result.data.total;
-    dataList.value = result.data.rows;
-    console.log('Search button clicked!');
-    console.log(searchConditions.status);
+    params.push(`pageNum=${pageNum.value}`);
+    params.push(`pageSize=${pageSize.value}`);
+
+    const queryString = params.join('&');
+    console.log('/teacher/apply' + '?' + queryString);
+
+    return service.get('/teacher/apply' + '?' + queryString)
+        .then(result => {
+            //return result.data;//渲染视图
+            totalLine.value = result.data.total;
+            dataList.value = result.data.rows;
+        }).catch(err => {
+            console.log(err);
+        })
 }
 
 
@@ -78,7 +142,7 @@ const courseModel = ref({
     type: '',
     faculty: '',
     teacherIds: '',
-    classeIdss: '',
+    classeIds: '',
     credit: ''
 })
 const blurredSearchModel = ref({
@@ -118,39 +182,60 @@ const rules = {
 }
 
 
-
-import { teacherIDsGetService, classIDsGetService, courseAddService } from '@/api/Teacher';
 //教师模糊查询
 const teacherSearchResultList = ref([])
 const handleTeacherSearch = async function () {
-    let params = {
-        //blurredTeacher:blurredSearchModel.value.teacherName?blurredSearchModel.value.teacherName:null
-        blurredTeacher: '张'
-    }
-    let result = await teacherIDsGetService(params);
-    //渲染视图
-    teacherSearchResultList.value = result.data.teacherList;
-    //console.log('Search teacher button clicked!');
+    console.log(blurredSearchModel.value.teacherName);
+    const params = qs.stringify({ teacherName: blurredSearchModel.value.teacherName ? blurredSearchModel.value.teacherName : null })
+    console.log('/teacher/apply/teachers' + '?' + params);
+
+    return service.get('/teacher/apply/teachers' + '?' + params)
+        .then(result => {
+            //return result.data;//渲染视图
+            teacherSearchResultList.value = result.data.teacherList;
+        }).catch(err => {
+            console.log(err);
+        })
+
 }
 handleTeacherSearch();
 
 const classSearchResultList = ref([])
 const handleClassSearch = async function () {
-    let params = {
-        //blurredClass: blurredSearchModel.value.className?blurredSearchModel.value.className : null
-        blurredClass: '711'
-    }
-    let result = await classIDsGetService(params);
+    // let params = {
+    //     //blurredClass: blurredSearchModel.value.className?blurredSearchModel.value.className : null
+    //     blurredClass: '711'
+    // }
+    // let result = await classIDsGetService(params);
+
+    console.log(blurredSearchModel.value.className);
+    const params = qs.stringify({ className: blurredSearchModel.value.className ? blurredSearchModel.value.className : null })
+    console.log('/teacher/apply/classes' + '?' + params);
+
+    return service.get('/teacher/apply/classes' + '?' + params)
+        .then(result => {
+            //return result.data;
+            classSearchResultList.value = result.data.classList;
+        }).catch(err => {
+            console.log(err);
+        })
+
     //渲染视图
-    classSearchResultList.value = result.data.classList;
+
     //console.log('Search teacher button clicked!');
 }
 
 
 //添加课程
 const addCourse = async () => {
-    let result = await courseAddService(courseModel.value);
-    ElMessage.success(result.msg == "success" ? result.msg : '添加成功');
+    try{
+        let reulst = await service.post('/teacher/apply', courseModel);
+        //let result = await courseAddService(courseModel.value);
+        ElMessage.success(result.msg == "success" ? result.msg : '添加成功');
+    }catch(error){
+        ElMessage.error("申请失败！")
+    }
+    
 }
 
 
@@ -317,7 +402,7 @@ const cancelForm = () => {
                         <el-input v-model="courseModel.teachers" minlength="1" maxlength="10"></el-input>
                     </el-form-item>
                     <el-form-item label="班级ID" :label-width="formLabelWidth" prop="classes">
-                        <el-input v-model="courseModel.classess" minlength="1" maxlength="10"></el-input>
+                        <el-input v-model="courseModel.classes" minlength="1" maxlength="10"></el-input>
                     </el-form-item>
                     <el-form-item label="课程学分" :label-width="formLabelWidth" prop="credit">
                         <el-input v-model="courseModel.credit" minlength="1" maxlength="10"></el-input>
@@ -330,6 +415,7 @@ const cancelForm = () => {
                         <el-select v-model="teacherSearchResultList" placeholder="请选择搜索结果">
                             <el-option v-for="item in teacherSearchResultList" :key="item.id" :label="item.id"
                                 :value="item.id">
+                                {{ item.id }} - {{ item.username }} - {{ item.teacherName}}
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -338,7 +424,8 @@ const cancelForm = () => {
                             placeholder="输入班级名以模糊搜索"></el-input>
                         <el-select v-model="classSearchResultList" placeholder="请选择搜索结果">
                             <el-option v-for="item in classSearchResultList" :key="item.id" :label="item.id"
-                                :value="item.id">
+                                :value="item.id"  >
+                                {{ item.id }} - {{ item.className}}
                             </el-option>
                         </el-select>
                     </el-form-item>

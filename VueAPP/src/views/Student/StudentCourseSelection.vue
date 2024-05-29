@@ -1,17 +1,18 @@
 <template>
+  
     <div class="select-course">
       <div class="category-buttons">
         <el-button
           v-for="category in categories"
           :key="category.value"
           :type="selectedCategory === category.value ? 'primary' : 'default'"
-          @click="selectCategory(category.value)"
+          @click="selectCategory(category.value)" :style="{ width: '250px' }"
         >
           {{ category.text }}
         </el-button>
       
       </div>
-      <div v-if="selectedCategory === 3" class="search-container">
+      <div v-if="selectedCategory === 4" class="search-container">
       <el-input
         placeholder="搜索课程"
         v-model="searchKeyword"
@@ -39,11 +40,11 @@
           v-for="course in group.courses"
           :key="course.id"
           class="course-box"
-          :class="{ 'is-selected': isSelected(course.courseNumber) }"
+          :class="{ 'is-selected': isSelected(course.courNumber) }"
           
         >
           <!-- 添加课程编号显示，并在选中时应用红色 -->
-          <p :style="{ color: isSelected(course.courseNumber) ? 'red' : '' }">[{{ course.courseNumber }}] {{ course.courseName }}</p>
+          <p :style="{ color: isSelected(course.courNumber) ? '#409eff' : '' }">[{{ course.courNumber }}] {{ course.courseName }}</p>
           <p>教师: {{ course.teachers?.join(', ') }}</p>
           <p>教室: {{ course.roomName }}</p>
           <p>已选人数：{{ course.studentNum }}</p>
@@ -60,13 +61,13 @@
 
           <!-- 修改按钮显示逻辑 -->
           <template v-if="isSelectedForUnselection(course)">
-            <el-button type="danger" size="small" @click="selectCourse(course.id, course.courseNumber)">退课</el-button>
+            <el-button type="danger" size="small" @click="selectCourse(course.id, course.courNumber)">退课</el-button>
           </template>
           <template v-else>
             <el-button 
       :type="course.studentNum < course.courseStorage ? 'primary' : 'danger'"
       :disabled="course.studentNum >= course.courseStorage"
-      size="small" @click="selectCourse(course.id, course.courseNumber)">
+      size="small" @click="selectCourse(course.id, course.courNumber)">
       {{ course.studentNum < course.courseStorage ? '选课' : '已满' }}
     </el-button>
           </template>
@@ -81,15 +82,17 @@
   import { defineComponent, ref, computed } from 'vue';
   import { ElCollapse, ElCollapseItem, ElButton } from 'element-plus';
   import { watch, onMounted } from 'vue';
+import { debounce } from 'lodash'; // 引入lodash的防抖函数，用于优化搜索体验
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-import  service from '@/util/request';
+import service from '@/util/request';
+//import { request } from 'node_modules/axios/index.cjs';
   
   interface FullCourse {
     id: number;
     courseName: string;
     type: number;
-    courseNumber: string;
+    courNumber: string;
     roomId?: string;
     courseHour: number;
     courseStorage: number;
@@ -108,10 +111,10 @@ import  service from '@/util/request';
   
   const categories = [
 
-    { value: 0, text: '专业课' },
-    { value: 1, text: '体育课' },
-    { value: 2, text: '通选课' },
-    {value:3,text:'全部课程'},
+    { value: 1, text: '专业课' },
+    { value: 2, text: '体育课' },
+    { value: 3, text: '通选课' },
+    {value:4,text:'全部课程'},
   ];
 let courses=ref<FullCourse[]>([]);
       const selectedCategory = ref(categories[0].value);
@@ -121,10 +124,9 @@ let courses=ref<FullCourse[]>([]);
       });
       // 修改filteredGroups计算属性以支持"全部"分类下的搜索
 const filteredGroups = computed(() => {
-  if (selectedCategory.value === 3) {
+  if (selectedCategory.value === 4) {
     // 如果是"全部"分类且有搜索结果，使用搜索结果
-    if (searchedCourses.value!==undefined) {
-      console.log("搜索结果"+searchedCourses.value)
+    if (searchedCourses.value.length) {
       return groupCoursesByPrefix(searchedCourses.value);
     } else {
       // 没有搜索结果时显示全部课程
@@ -181,7 +183,7 @@ const groupWithNonEmptyTimes = computed(() => {
     ...group,
     courses: group.courses.map(course => ({
       ...course,
-      nonEmptyTimes: [course.time1, course.time2, course.time3].filter(time => time !== null) as number[]
+      nonEmptyTimes: [course.time1, course.time2, course.time3].filter(time => time !== undefined) as number[]
     })),
   }));
 });
@@ -190,8 +192,7 @@ const groupWithNonEmptyTimes = computed(() => {
   //分类显示
       function groupCoursesByPrefix(courses: FullCourse[]): { prefix: string; commonInfo: Omit<FullCourse, 'courses'>; courses: FullCourse[] }[] {
   return courses.reduce((groups: any[], course: FullCourse) => {
-
-    const prefix = course.courseNumber.slice(0, 6);
+    const prefix = course.courNumber.slice(0, 4);
     const existingGroupIndex = groups.findIndex(g => g.prefix === prefix && g.commonInfo.type === course.type);
 
     if (existingGroupIndex !== -1) {
@@ -212,16 +213,16 @@ function selectCategory(category: number) {
   // 如果需要，可以在这里重置expandedPanels，以便每次切换类别时折叠面板都关闭
 }
   
-      const selected = ref<string[]>([]); // 新增：用于存储已选课程的 courseNumber
-      // 新增方法：判断课程是否被选中,需要已选课程列表
-function isSelected(courseNumber: string): boolean {
-  return selected.value.includes(courseNumber);
+      const selected = ref<string[]>([]); // 新增：用于存储已选课程的 courNumber
+      // 新增方法：判断课程是否被选中
+function isSelected(courNumber: string): boolean {
+  return selected.value.includes(courNumber);
 }
 
 // 定义分组（Group）的结构，包含一组具有相同前缀的课程
 interface GroupInfo {
   prefix: string; // 课程编号的前缀部分
-  commonInfo: Pick<FullCourse, 'courseName' | 'courseNumber'>; // 该组课程共有的信息，如课程名和课程编号
+  commonInfo: Pick<FullCourse, 'courseName' | 'courNumber'>; // 该组课程共有的信息，如课程名和课程编号
   courses: FullCourse[]; // 属于该分组的具体课程列表
 }
 // 新增方法：根据课程号是否在已选列表中调整标题显示
@@ -233,41 +234,31 @@ function getFormattedTitle(group :GroupInfo) {
 
 // 新增方法：判断是否应显示退课按钮
 function isSelectedForUnselection(course: FullCourse): boolean {
-  return selected.value.includes(course.courseNumber) && !selected.value.includes(course.courseNumber + '_' + course.id);
+  return selected.value.includes(course.courNumber) && !selected.value.includes(course.courNumber + '_' + course.id);
 }
-// 新增方法：检查课程组内是否有课程被选中，
+// 新增方法：检查课程组内是否有课程被选中
 const groupHasSelectedCourse = (group :GroupInfo) => {
-  return group.courses.some(course => isSelected(course.courseNumber));
+  return group.courses.some(course => isSelected(course.courNumber));
 };
-
-function findIdByCourNumber(courses: FullCourse[], courseNumber: string): number | undefined {
-  for (const course of courses) {
-    if (course.courseNumber === courseNumber) {
-      return course.id;
-    }
-  }
-  // 如果没有找到匹配的courseNumber，可以返回undefined或者处理错误
-  return undefined;
-}
-// 修改selectCourse函数以处理选课与退课逻辑,需要已选列表
-function selectCourse(courseId: number, courseNumber: string) {
-  if (isSelected(courseNumber)) {
+// 修改selectCourse函数以处理选课与退课逻辑
+function selectCourse(courseId: number, courNumber: string) {
+  if (isSelected(courNumber)) {
     // 退课逻辑，这里假设已经实现了退课操作，实际中可能需要调用后端接口
-    const courseId = findIdByCourNumber(courses.value,courseNumber);
     //测试
-    
-
-      //实际
-    const dropCourse=async()=>{
+    const index = selected.value.findIndex(cn => cn === courNumber);
+    if (index > -1) {
+      selected.value.splice(index, 1);
+    }
+    //实际
+    /* const dropCourse=async()=>{
       try{
-        const response :ResponseData=await service.post(`/student/course/drop`,courseId)
+        const response :ResponseData=await axios.put(`/student/course/drop/${courseId}`)
         if(response.code===1&&response.msg==="success"){
           ElMessage.info("退课成功！")
-          const index = selected.value.findIndex(cn => cn === courseNumber);
+          const index = selected.value.findIndex(cn => cn === courNumber);
             if (index > -1) {
               selected.value.splice(index, 1);
             }
-            selectedCourses.value=await getSelectedCourse();
         }
         else{
           ElMessage.error(response.msg)
@@ -277,27 +268,19 @@ function selectCourse(courseId: number, courseNumber: string) {
         ElMessage.error("退课错误！")
       }
     }
-    dropCourse();
-    
-    
+    dropCourse(); */
   } 
   else {
     // 选课逻辑，这里简单添加到已选数组
     //测试
-    
+    selected.value.push(courNumber);
     //实际
-    const courseId = findIdByCourNumber(courses.value,courseNumber);
-    const selectCourse=async(course_id)=>{
+   /*  const selectCourse=async()=>{
       try{
-        const response :ResponseData=await service.post(`/student/course/select`,
-          
-          course_id
-          
-        );
+        const response :ResponseData=await axios.put(`/student/course/select/${courseId}`)
         if(response.code===1&&response.msg==="success"){
           ElMessage.info("选课成功！")
-          selected.value.push(courseNumber);
-          selectedCourses.value=await getSelectedCourse();
+          selected.value.push(courNumber);
         }
         else{
           ElMessage.error(response.msg)
@@ -307,9 +290,9 @@ function selectCourse(courseId: number, courseNumber: string) {
         ElMessage.error("选课错误！")
       }
     }
-    selectCourse(courseId);
+    selectCourse(); */
   }
-  console.log(`操作了课程ID: ${courseId}, 状态: ${isSelected(courseNumber) ? '退课' : '选课'} }`);
+  console.log(`操作了课程ID: ${courseId}, 状态: ${isSelected(courNumber) ? '退课' : '选课'}`);
 }
 
 
@@ -321,33 +304,103 @@ interface ResponseData {
 }
 onMounted(async() => {
   //实际使用
-  courses.value=await getCourse();
-  executeSearch();
-  //已选
-   selectedCourses.value=await getSelectedCourse();
-   console.log(selectedCourses.value)
-   selectedCourses.value.forEach(course => {
-    selected.value.push(course.courseNumber);
+  //courses=await getCourse();
+  courses.value=[
+  {
+    id: 1,
+    courseName: '高等数学',
+    type: 1, // 专业课
+    courNumber: 'SX0101',
+    roomId: 'R0101',
+    courseHour: 48,
+    courseStorage: 50,
+    startWeek: 1,
+    endWeek: 16,
+    time1: 0,
+    teachers: ['张三', '李四'],
+    faculty: '数学系',
+    credit: 4,
+    roomName: '教学楼A101',
+    studentNum: 50,
+  },
+  {
+    id: 2,
+    courseName: '篮球基础',
+    type: 2, // 体育课
+    courNumber: 'TY0101',
+    roomId: 'G001',
+    courseHour: 32,
+    courseStorage: 30,
+    startWeek: 3,
+    endWeek: 15,
+    time1:3,
+    teachers: ['王五'],
+    faculty: '体育学院',
+    credit: 2,
+    roomName: '体育馆B场',
+    studentNum: 20
+  },
+  {
+    id: 3,
+    courseName: '西方哲学史',
+    type: 3, // 通选课
+    courNumber: 'TX0101',
+    roomId: 'L0203',
+    courseHour: 32,
+    courseStorage: 70,
+    startWeek: 2,
+    endWeek: 16,
+    time1:4,
+    teachers: ['赵六'],
+    faculty: '文学院',
+    credit: 2,
+    roomName: '图书馆报告厅',
+    studentNum:20
+  },
+  // 同一课程编号，不同详细信息的示例
+  {
+    id: 4,
+    courseName: '高等数学',
+    type: 1,
+    courNumber: 'SX0102',
+    roomId: 'R0102',
+    courseHour: 48,
+    courseStorage: 90,
+    startWeek: 1,
+    endWeek: 16,
+    time1:8,
+    teachers: ['钱七', '孙八'],
+    faculty: '数学系',
+    credit: 4,
+    roomName: '教学楼A102',
+    studentNum :20
+  },
+  {
+    id: 5,
+    courseName: '线性代数',
+    type: 1,
+    courNumber: 'SX0202',
+    roomId: 'R0102',
+    courseHour: 48,
+    courseStorage: 90,
+    startWeek: 1,
+    endWeek: 16,
+    time1:8,
+    time2:120,
+    teachers: ['钱七', '孙八'],
+    faculty: '数学系',
+    credit: 4,
+    roomName: '教学楼A102',
+    studentNum :20
+  },
+  // 更多课程...
+];
+
 });
-});
-//获取所有已选课程信息
-const getSelectedCourse=async()=>{
- try{
-  const response :ResponseData=await service.get(`/student/course/selected`);
-  if(response.code===1&&response.msg==="success")
-    return response.data
-  else{
-    ElMessage.error(response.msg)
-  }
- }
- catch(error){
-    ElMessage.error('获取失败，请稍后再试。');
-  }
-}
 //获取所有课程信息
 const getCourse=async()=>{
  try{
-  const response :ResponseData=await service.get(`/student/course/get`);
+  const response :ResponseData=await service.get(`/student/course/get/`);
   if(response.code===1&&response.msg==="success")
     return response.data
   else{
@@ -361,30 +414,49 @@ const getCourse=async()=>{
 //接收已选课程
   // 已经实现的搜索API函数
 const searchCoursesApi = async () => {
-  // 这里应该是调用实际的API逻辑
-  const response :ResponseData=await service.get(`/student/course/search`,
-  {params:{
-    keyWord:searchKeyword.value}});
+  // 这里应该是调用实际的API逻辑，这里仅为示例
+  // 假设返回的是过滤后的课程数组
+  // return await fetchSearchResults(keyword);
+  const response :ResponseData=
+  {
+    code:1,
+    msg:'',
+    data:[{
+    id: 4,
+    courseName: '高等数学',
+    type: 1,
+    courNumber: 'SX0102',
+    roomId: 'R0102',
+    courseHour: 48,
+    courseStorage: 90,
+    startWeek: 1,
+    endWeek: 16,
+    time1:8,
+    teachers: ['钱七', '孙八'],
+    faculty: '数学系',
+    credit: 4,
+    roomName: '教学楼A102',
+  },]
+  }
+  return response.data
+  /* const response :ResponseData=await axios.get(`/student/course/search/${searchKeyword.value}`);
   if(response.code===1&&response.msg==="success")
     return response.data
   else{
-    ElMessage.error(response?.msg );
-  }
+    ElMessage.error(response?.msg || response);
+  } */
 };
 
 // 新增变量
 const searchKeyword = ref<string>(''); // 搜索关键词，类型为字符串
 const searchedCourses = ref<FullCourse[]>([]); // 搜索结果，类型为FullCourse数组
-const selectedCourses=ref<FullCourse[]>([]);//已选结果
+
 // 执行搜索的函数
 async function executeSearch() {
   if (searchKeyword.value) {
-    const response=await searchCoursesApi();
-    searchedCourses.value = response
-;
+    searchedCourses.value = await searchCoursesApi();
   } else {
     // 如果搜索框为空，显示全部课程
-    console.log("显示全部")
     searchedCourses.value = courses.value;
   }
 }
@@ -404,6 +476,7 @@ async function executeSearch() {
   .course-details {
     display: flex;
     flex-wrap: wrap;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   .course-box {
     border: 1px solid #ccc;
@@ -417,7 +490,7 @@ async function executeSearch() {
 }
   
 .selected-tag {
-  color: red;
+  color: #409eff;
   /* font-weight: bold; 可以根据需要调整字体样式 */
   font-size: 1.5em;
 }

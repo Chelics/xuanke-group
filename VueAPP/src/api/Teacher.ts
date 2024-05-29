@@ -1,8 +1,9 @@
-import axios from 'axios';
+import service from '@/util/request';
+
 
 export async function courseGetAllService(){
-    return await axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009/')
-    //return axios.get('https:localhost:8080/teacher/apply')
+    //return await axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009/')
+    return service.get('/teacher/apply')
     .then(result=>{
         return result.data;
     }).catch(err=>{
@@ -12,7 +13,7 @@ export async function courseGetAllService(){
 
 export async function courseSearchStatusService(conditions){
    //return axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009',{params:{...conditions.value}})
-   return axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009?status=${conditions.status}&page=${conditions.page}&pageSize=${conditions.pageSize}',{params:{...conditions.value}})
+   return service.get('/teacher/apply',{params:{...conditions.value}})
     .then(result=>{
         return result.data;
     }).catch(err=>{
@@ -21,7 +22,9 @@ export async function courseSearchStatusService(conditions){
 }
 
 export async function teacherIDsGetService(teacherName) {
-    return axios.get('https://mock.apifox.com/m1/4461960-4108146-default/teacher/teachers',{params:{...teacherName.value}})
+
+    //return axios.get('https://mock.apifox.com/m1/4461960-4108146-default/teacher/teachers',{params:{...teacherName.value}})
+    return service.get('/teacher/teachers',{params:{...teacherName.value}})
     .then(result=>{
         return result.data;
     }).catch(err=>{
@@ -31,7 +34,7 @@ export async function teacherIDsGetService(teacherName) {
 
 
 export async function classIDsGetService(className) {
-    return axios.get('https://mock.apifox.com/m1/4461960-4108146-default/teacher/classes',{params:{...className.value}})
+    return service.get('/teacher/classes',{params:{...className.value}})
     .then(result=>{
         return result.data;
     }).catch(err=>{
@@ -40,5 +43,6 @@ export async function classIDsGetService(className) {
 }
 
 export const courseAddService = (courseData=>{
-    return axios.post('https://mock.apifox.com/m2/4461960-4108146-default/175216824',courseData);
+    //return service.post('https://mock.apifox.com/m2/4461960-4108146-default/175216824',courseData);
+    return service.post('/teacher/apply',courseData);
 })

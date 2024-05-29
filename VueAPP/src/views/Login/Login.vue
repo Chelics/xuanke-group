@@ -110,7 +110,10 @@ const resetForm = (formEl: FormInstance | undefined) => {
     <el-button type="primary" ref="/student" @click="() => router.push('/student')">我是学生</el-button>
     <el-button type="success" ref="/teacher" @click="() => router.push('/teacher')">我是老师</el-button>
     <el-button type="info" ref="/admin" @click="() => router.push('/staff')">我是教务</el-button>
-  </div>-->
+
+  </div> -->
+
+
 
 
   <div class="container">
@@ -131,7 +134,9 @@ const resetForm = (formEl: FormInstance | undefined) => {
         </div>
       </el-form-item>
     </el-form>
-  </div> 
+
+  </div>
+
   
 
 
