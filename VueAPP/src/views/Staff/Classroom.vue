@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted, watchEffect,reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 //import { ClassroomSearchParams } from '@/types'; // 假定 ClassroomSearchParams 已定义
 import service from '@/util/request';
@@ -107,12 +107,9 @@ async function fetchData() {
       ElMessage.error(response.msg || '获取教室列表失败');
     }
     for (const classroom of classrooms.value) {
-    console.log(1)
       const courseList = await fetchCourseListForRoom(classroom.id);
-      console.log(courseList)
       // 将获取到的课程列表赋值给当前教室的courseList属性
       classroom.courseList = courseList.courseList;
-      console.log (classroom)
     }
   } catch (error) {
     console.error('获取教室列表失败:', error);
@@ -144,7 +141,9 @@ interface Course {
 const dialogVisible = ref(false);
   let selectedCourses = ref<Course[]>([]);
   const showCourseDetails = (courses: Course[]) => {
-  selectedCourses.value = courses;
+    selectedCourses.value = [];
+  selectedCourses.value = reactive(courses);
+  console.log(courses)
   dialogVisible.value = true;
 };
 // 模拟根据教室ID获取课程列表的异步函数
@@ -156,12 +155,11 @@ async function fetchCourseListForRoom(roomId: number) {
 }
 onMounted(() => {
   fetchData();
-  console.log(classrooms.value)
   
 });
 
 // 监听searchParams变化，自动触发数据加载
-watchEffect(fetchData);
+//watchEffect(fetchData);
 </script>
 
 <style scoped>
