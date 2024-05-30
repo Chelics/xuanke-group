@@ -226,9 +226,16 @@ interface GroupInfo {
 }
 // 新增方法：根据课程号是否在已选列表中调整标题显示
 function getFormattedTitle(group :GroupInfo) {
+  /* const credit = group.courses[0]?.credit ?? 0;
+  let kong=ref(30);
+  
+  let spaces = '\u00a0'.repeat(kong.value);
+  return `[${group.prefix}] ${group.commonInfo.courseName}${spaces}学分：${credit}`; */
   const credit = group.courses[0]?.credit ?? 0;
-  const spaces = '\u00a0'.repeat(30);
-  return `[${group.prefix}] ${group.commonInfo.courseName}${spaces}学分：${credit}`;
+  // 根据最大长度计算需要的空格数，减去实际字符串长度
+  const spacesCount = 50 - ( group.commonInfo.courseName.length)*3.5;
+  let spaces = '\u00a0'.repeat(spacesCount >= 0 ? spacesCount : 0); // 确保空格数不会为负
+  return `[${group.prefix}] ${group.commonInfo.courseName}${spaces} 学分：${credit}`;
 }
 
 // 新增方法：判断是否应显示退课按钮
@@ -419,9 +426,7 @@ async function executeSearch() {
 .selected-tag {
   color: #409eff;
   /* font-weight: bold; 可以根据需要调整字体样式 */
-  font-size: 1.5em;
 }
-
 
   </style>
 <style>
