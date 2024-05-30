@@ -56,7 +56,6 @@
     </div>
   </div>
 
-  //显示详情部分
   <el-dialog v-model="dialogVisible" title="课程详情" width="600px">
     <el-descriptions :column="2" border>
       <el-descriptions-item label="课程名">{{ currentCourse.courseName }}</el-descriptions-item>

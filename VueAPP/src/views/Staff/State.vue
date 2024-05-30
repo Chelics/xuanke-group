@@ -1,17 +1,17 @@
 <template>
   <div>
-    <h1>Editable Table with Manual Save</h1>
+    <h1>查看选课阶段</h1>
     <el-table
       v-if="stages.length"
       :data="stages"
       style="width: 100%"
     >
-      <el-table-column prop="stageName" label="Stage Name">
+      <el-table-column prop="stageName" label="阶段名称">
         <template #default="scope">
           <el-input v-model="scope.row.stageName" size="small" @change="markRowAsDirty(scope.row)" />
         </template>
       </el-table-column>
-      <el-table-column prop="startTime" label="Start Time">
+      <el-table-column prop="startTime" label="开始时间">
         <template #default="scope">
           <el-date-picker
             v-model="scope.row.startTime"
@@ -21,7 +21,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column prop="endTime" label="End Time">
+      <el-table-column prop="endTime" label="结束时间">
         <template #default="scope">
           <el-date-picker
             v-model="scope.row.endTime"
@@ -33,7 +33,7 @@
       </el-table-column>
     </el-table>
     <div v-else>Loading...</div>
-    <el-button type="primary" @click="saveAllChanges" style="margin-top: 16px;">Save All Changes</el-button>
+    <el-button type="primary" @click="saveAllChanges" style="margin-top: 16px;">保存所有修改</el-button>
   </div>
 </template>
 <script setup lang="ts">
