@@ -151,11 +151,9 @@ let rawCourseData = ref<rawCourse[]>([
 // 在组件挂载后调用异步函数获取数据
 async function getRawCourseData() {
   try {
-    console.log("开始获取")
-    console.log(`/${props.myurl}`)
     //测试 
-    const response :ResponseData= await service.get("https://mock.apifox.com/m1/4461960-4108146-default/student/course/selected")
-      //const response :ResponseData= await service.get(`${props.myurl}`)
+    //const response :ResponseData= await service.get("https://mock.apifox.com/m1/4461960-4108146-default/student/course/selected")
+      const response :ResponseData= await service.get(`${props.myurl}`)
       //console.log(response)
       if (response.code === 1 && response.msg === 'success'){
         rawCourseData.value = response.data as rawCourse[]
@@ -186,9 +184,6 @@ function processRawData(rawCourseData:rawCourse[]) {
     3: [5, 6], 4: [7, 8], 5: [7, 9], // 下午时间段
     6: [10, 11], 7: [10, 12],        // 晚上时间段
   };
-  console.log(rawCourseData)
-  console.log("--------------")
-  console.log(courseList)
   // 遍历rawCourseData，处理每一门课程的每一个时间点
   courseList.forEach((rawCourse:rawCourse) => {
     [rawCourse.time1, rawCourse.time2, rawCourse.time3].forEach((time) => {
@@ -198,7 +193,6 @@ function processRawData(rawCourseData:rawCourse[]) {
       //const weekIndex = Math.floor(time / 8) - 1; // 周数从0开始
 
       const dayAndType = time / 8;//单双周 + 周几
-      console.log(dayAndType)
       let dayIndex: number;
       if (dayAndType < 7) {
         dayIndex = Math.floor( dayAndType); // 单周的星期几
@@ -207,8 +201,6 @@ function processRawData(rawCourseData:rawCourse[]) {
       } else {
         dayIndex = Math.floor(dayAndType - 14) ; // 单双周都有的课
       }
-      console.log(dayIndex)
-      console.log(time % 8+"time % 8")
       //weekIndex 0-15 dayIndex0-6
       // 根据时间映射关系找到起始和结束时间段
       const [startPeriod, endPeriod] = periodMapping[Math.ceil(time % 8)];
@@ -220,7 +212,6 @@ function processRawData(rawCourseData:rawCourse[]) {
         startPeriod,
         endPeriod,
       };
-      console.log(courseToAdd)
       if(dayAndType<7||dayAndType>=14){
         let weekIndex=rawCourse.startWeek-1
         if(rawCourse.startWeek%2-1===1)weekIndex++
@@ -246,7 +237,6 @@ function processRawData(rawCourseData:rawCourse[]) {
 //钩子函数，加载数据
 onMounted(async () => {
   try {
-    console.log("检测到token不为空")
     // 获取原始课程数据,取消注释，调用上一个函数并传入参数url
     await getRawCourseData();
     //暂时写测试数据

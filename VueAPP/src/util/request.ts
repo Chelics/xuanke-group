@@ -40,19 +40,12 @@ const token = authStore.token;
 service.interceptors.response.use(
   (response: any) => {
     // 未登录回到登录页
-    console.log(response.status)
     if (response.status === 401) {
       return router?.push('/login')
     }
-    if (response.status !== 200) {
-      console.log(response)
-      console.log("status错误"+response.status)
-      //ElMessage.error(response.data.msg)
-       return Promise.reject(response.status)
-     } else {
-      console.log("成功返回")
+    
        return response.data
-     }
+     
   },
   (error) => {
     const { response } = error;
@@ -62,7 +55,13 @@ service.interceptors.response.use(
       if (response.status === 401) {
         console.log('未登录，重定向到登录页');
         
-          router.push('/login');}}
+          router.push('/login');
+        }
+          if (response.status !== 200) {
+            //ElMessage.error(response.data.msg)
+             return Promise.reject(response.status)
+           } 
+      }
   }
 )
 export default service;

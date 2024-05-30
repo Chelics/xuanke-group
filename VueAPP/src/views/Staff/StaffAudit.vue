@@ -37,6 +37,12 @@
           <el-table-column prop="commitTime" label="提交时间" width="250">
             <template #default="scope">{{ scope.row.commitTime }}</template>
           </el-table-column>
+          <el-table-column label="操作">
+    <template #default="scope">
+      <el-button type="text" size="small" @click="showCourseDetails(scope.row)">详情</el-button>
+    </template>
+  </el-table-column>
+
         </el-table>
         <el-pagination background layout="prev, pager, next, jumper" :total="courses.total"
           :current-page="searchParams.page" :page-size="searchParams.pageSize" @current-change="handlePageChange" />
@@ -49,6 +55,27 @@
       </section>
     </div>
   </div>
+
+  //显示详情部分
+  <el-dialog v-model="dialogVisible" title="课程详情" width="600px">
+    <el-descriptions :column="2" border>
+      <el-descriptions-item label="课程名">{{ currentCourse.courseName }}</el-descriptions-item>
+      <el-descriptions-item label="类别">{{ getTypeLabel(currentCourse.type) }}</el-descriptions-item>
+      <el-descriptions-item label="课程编号">{{ currentCourse.courseNumber }}</el-descriptions-item>
+      <el-descriptions-item label="课时">{{ currentCourse.courseHour }}课时</el-descriptions-item>
+      <el-descriptions-item label="课程容量">{{ currentCourse.courseStorage }}人</el-descriptions-item>
+      <el-descriptions-item label="学院">{{ currentCourse.faculty }}</el-descriptions-item>
+      <el-descriptions-item label="学分">{{ currentCourse.credit }}</el-descriptions-item>
+      <el-descriptions-item label="授课教师">{{ currentCourse.teachers.join(', ') }}</el-descriptions-item>
+      <el-descriptions-item label="班级">{{ currentCourse.classes.join(', ') }}</el-descriptions-item>
+      <el-descriptions-item label="提交时间">{{ currentCourse.commitTime }}</el-descriptions-item>
+    </el-descriptions>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">关闭</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -125,7 +152,7 @@ const handleSelectionChange = (selection: any[]) => {
 
 const batchApprove = async () => {
   try {
-    await service.put('/staff/checking/batch', {
+    await service.put('/staff/checking', {
       status: 2,
       ids: selectedCourseIds.value,
     });
@@ -139,7 +166,7 @@ const batchApprove = async () => {
 
 const batchReject = async () => {
   try {
-    await service.put('/staff/checking/batch', {
+    await service.put('/staff/checking', {
       status: 3,
       ids: selectedCourseIds.value,
     });
@@ -152,11 +179,11 @@ const batchReject = async () => {
 };
 const getTypeLabel = (type: number): string => {
   switch (type) {
-    case 1:
+    case 0:
       return "专业课";
-    case 2:
+    case 1:
       return "体育课";
-    case 3:
+    case 2:
       return "通选课";
     default: return"";
   }
@@ -166,4 +193,14 @@ const getTypeLabel = (type: number): string => {
 onMounted(() => {
   fetchFilteredCourses();
 });
+
+// 添加用于控制对话框显示的变量和当前选中的课程信息
+const dialogVisible = ref(false);
+const currentCourse = ref<Course>();
+
+// 显示课程详情的函数
+const showCourseDetails = (course: Course) => {
+  currentCourse.value = course;
+  dialogVisible.value = true;
+};
 </script>

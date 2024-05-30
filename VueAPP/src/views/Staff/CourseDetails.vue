@@ -131,12 +131,6 @@ interface rawCourse {
   roomName: string;
 }
 
-// 定义 Data 接口，包含 courseList 数组
-/* interface rawData {
-  courseList: rawCourse[];
-} */
-//rawData:rawData
-// 使用ref创建响应式数据，这里就是多周测试数据
 let rawCourseData = ref<rawCourse[]>([
 ]);
 
