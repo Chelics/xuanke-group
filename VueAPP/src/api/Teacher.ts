@@ -11,18 +11,8 @@ export async function courseGetAllService(){
     });
 }
 
-export async function courseSearchStatusService(conditions){
-   //return axios.get('https://mock.apifox.com/m2/4461960-4108146-default/175216009',{params:{...conditions.value}})
-   return service.get('/teacher/apply',{params:{...conditions.value}})
-    .then(result=>{
-        return result.data;
-    }).catch(err=>{
-        console.log(err);
-    })
-}
 
 export async function teacherIDsGetService(teacherName) {
-
     //return axios.get('https://mock.apifox.com/m1/4461960-4108146-default/teacher/teachers',{params:{...teacherName.value}})
     return service.get('/teacher/teachers',{params:{...teacherName.value}})
     .then(result=>{
