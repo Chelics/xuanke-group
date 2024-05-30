@@ -54,8 +54,15 @@ service.interceptors.response.use(
        return response.data
      }
   },
-  (error: any) => {
-    console.log("有任何错误")
+  (error) => {
+    const { response } = error;
+    // 如果有响应（即请求发出了但服务器返回了错误）
+    if (response) {
+      // 检查401未授权状态码
+      if (response.status === 401) {
+        console.log('未登录，重定向到登录页');
+        
+          router.push('/login');}}
   }
 )
 export default service;

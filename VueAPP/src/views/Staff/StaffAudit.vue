@@ -6,7 +6,7 @@
         <h2>待审核课程列表</h2>
         <el-form @submit.prevent="fetchFilteredCourses">
           <!-- 搜索输入框等其他表单元素... -->
-          <el-input v-model="courseIdToFetch" placeholder="请输入课程ID进行查询（留空以查看全部）" style="width: 500px;"
+          <el-input v-model="courseNameToFetch" placeholder="请输入课程名进行查询（留空以查看全部）" style="width: 500px;"
             @keyup.enter="fetchFilteredCourses" />
           <el-button type="primary" @click="fetchFilteredCourses">{{ getButtonLabel }}</el-button>
         </el-form>
@@ -79,70 +79,20 @@ interface Course {
 }
 
 const selectedCourseIds = ref<number[]>([]);
-const courseIdToFetch = ref('');
+const courseNameToFetch = ref('');
 const courses = ref<{ total: number; rows: Course[] }>({ total: 0, rows: [] });
 const searchParams = ref({ courseName: '', page: 1, pageSize: 10 });
-//测试数据
-const testData = {
-  total: 3, // 假设我们有3条课程记录
-  rows: [
-    {
-      id: 1,
-      courseName: "大学物理",
-      type: 1, // 类别：理论课
-      courseNumber: "PHY101",
-      courseHour: 48, // 课时
-      courseStorage: 50, // 课程容量
-      faculty: "物理学院",
-      credit: 3, // 学分
-      teacherIds: "T001,T002",
-      classIds: "C01,C02",
-      commitTime: "2024-05-14 17:54:49", // 提交时间，符合ISO 8601格式
-      teachers: ["张三", "李四"], // 授课教师
-      classes: ["711221", "711222"] // 班级
-    },
-    {
-      id: 2,
-      courseName: "高等数学",
-      type: 2, // 类别：实践课
-      courseNumber: "MATH202",
-      courseHour: 64,
-      courseStorage: 60,
-      faculty: "数学学院",
-      credit: 4,
-      teacherIds: "T003",
-      classIds: "C03",
-      commitTime: "2024-04-20 10:30:00",
-      teachers: ["王五"],
-      classes: ["721111"]
-    },
-    {
-      id: 3,
-      courseName: "英语口语",
-      type: 1, // 类别：理论课
-      courseNumber: "ENG101",
-      courseHour: 32,
-      courseStorage: 40,
-      faculty: "外语学院",
-      credit: 2,
-      teacherIds: "T004,T005",
-      classIds: "C04,C05",
-      commitTime: "2024-05-10 09:00:00",
-      teachers: ["赵六", "钱七"],
-      classes: ["731111", "731112"]
-    }
-  ]
-};
+
 //按钮值
 const getButtonLabel = computed(() => {
-  return courseIdToFetch.value ? '查询' : '刷新';
+  return courseNameToFetch.value ? '查询' : '刷新';
 });
 //刷新（查询）
-const fetchFilteredCourses = async () => {
+const  fetchFilteredCourses = async () => {
   try {
-    if (courseIdToFetch.value) {
-      const response :ResponseData= await service.get(`/staff/checking/${courseIdToFetch.value}`);
-      if (response.code !== 1) {
+    if (courseNameToFetch.value) {
+      const response :ResponseData= await service.get(`/staff/checking`,{params:courseNameToFetch.value});
+      if (response?.code !== 1) {
         ElMessage.error('查询课程失败，请检查ID是否正确。');
       }
       courses.value = { total: 1, rows: [response.data] };
