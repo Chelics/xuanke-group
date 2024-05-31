@@ -25,16 +25,9 @@ service.interceptors.request.use(
   (config) => {
     // 使用Pinia store
 const authStore = useAuthStore();
-<<<<<<< HEAD
 const token = authStore.token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;//这块是AI写的，我没学到这
-=======
-const { token } = storeToRefs(authStore);
-    if (token.value) {
-      token.value = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoi5byg5LiJIiwiaWQiOjEsInVzZXJuYW1lIjoiMDEyMzQ1Njc4IiwiZXhwIjoxNzE2NTU2ODI2fQ.zR9U_na4juEkqKelURc7O-k9WNk4FU6XcHPJjK3sgAQ"
-      config.headers.Authorization = `Bearer ${token.value}`;//这块是AI写的，我没学到这
->>>>>>> cb4a3e134dd8e8b5325dbd9bbb283653b7faa2c2
     }
     return config;
   },
@@ -66,7 +59,7 @@ service.interceptors.response.use(
         }
           if (response.status !== 200) {
             //ElMessage.error(response.data.msg)
-             return Promise.reject(response.status)
+             return Promise.reject(response)
            } 
       }
   }
