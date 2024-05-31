@@ -1,5 +1,13 @@
 <template>
     <div class="select-course">
+      <div class="countdown-container">
+    <template v-if="remainingTime > 0">
+      <el-countdown :time="remainingTime" format="HH:mm:ss" ></el-countdown>
+    </template>
+    <template v-else>
+      已开始
+    </template>
+  </div>
       <div class="category-buttons">
         <el-button
           v-for="category in categories"
@@ -82,9 +90,13 @@
   import { ElCollapse, ElCollapseItem, ElButton } from 'element-plus';
   import { watch, onMounted } from 'vue';
 import axios from 'axios';
-import { ElMessage } from 'element-plus';
+import { ElMessage ,ElCountdown } from 'element-plus';
 import  service from '../../util/request';
-  
+const targetTime = ref<Date>(new Date('2023-12-31T23:59:59'));
+  const remainingTime = computed(() => {
+  const now = new Date();
+  return Math.max(targetTime.value.getTime() - now.getTime(), 0);
+});
   interface FullCourse {
     id: number;
     courseName: string;
@@ -281,6 +293,7 @@ function selectCourse(courseId: number, courseNumber: string) {
         }
       }
       catch(error){
+        error;
         ElMessage.error("退课错误！")
       }
     }
@@ -311,7 +324,7 @@ function selectCourse(courseId: number, courseNumber: string) {
         }
       }
       catch(error){
-        ElMessage.error("选课错误！")
+        ElMessage.error(error.data.msg)
       }
     }
     selectCourse(courseId);
@@ -326,8 +339,15 @@ interface ResponseData {
   msg: string;
   data: any;
 }
+async function getTime() {
+  const response :ResponseData=await service.get('/student/stage',{params:{ id:2 }})
+  return response.data.startTime
+}
+let targetTimeString = '2024-02-23T00:00:00';
 onMounted(async() => {
   //实际使用
+  targetTimeString=await getTime();
+  const targetTime = ref(new Date(targetTimeString));
   courses.value=await getCourse();
   executeSearch();
   //已选
@@ -433,5 +453,13 @@ async function executeSearch() {
   .el-collapse-item__header {
   font-size: 1.3em; /* 假设默认字体大小为1em，这里放大2号 */
 }
-
+.countdown-container {
+  /* 添加边框 */
+  border: 1px solid #ddd; /* 可以调整颜色和宽度 */
+  /* 设置背景色 */
+  background-color: #f9f9f9; /* 可以调整背景色 */
+  /* 其他样式，比如内边距，以美化显示 */
+  padding: 16px;
+  text-align: center;
+}
 </style>

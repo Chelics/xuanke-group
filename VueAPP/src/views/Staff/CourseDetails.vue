@@ -337,12 +337,11 @@ const flattenedData = computed(() => {
 });
 const randomLightColor = () => {
   const colors = [
-    'rgba(255, 127, 127, 0.6)', // Soft Pink
-    'rgba(147, 255, 147, 0.6)', // Pale Green
-    'rgba(127, 255, 212, 0.6)', // Light Sky Blue
-    'rgba(240, 190, 130, 0.2)',   // Pale Orange
-    'rgba(191, 255, 191, 0.6)', // Light Lavender
-    'rgba(255, 69, 0, 0.6)'    // Light Coral
+    'rgba(175,217,229,0.4)', // Soft Pink
+    'rgba(202,228,203,0.4)', // Pale Green
+    'rgba(235,216,186,0.4)', // Light Sky Blue
+    'rgba(240, 213, 206, 0.4)', // Light Lavender
+    'rgba(234, 227, 234, 0.4)'    // Light Coral
   ];
   const randomIndex = Math.floor(Math.random() * colors.length);
   return colors[randomIndex];
