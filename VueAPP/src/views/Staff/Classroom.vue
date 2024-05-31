@@ -109,7 +109,7 @@ async function fetchData() {
     for (const classroom of classrooms.value) {
       const courseList = await fetchCourseListForRoom(classroom.id);
       // 将获取到的课程列表赋值给当前教室的courseList属性
-      classroom.courseList = courseList.courseList;
+      classroom.courseList = courseList;
     }
   } catch (error) {
     console.error('获取教室列表失败:', error);
