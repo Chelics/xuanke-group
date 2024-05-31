@@ -294,7 +294,7 @@ function selectCourse(courseId: number, courseNumber: string) {
     
     //实际
     const courseId = findIdByCourNumber(courses.value,courseNumber);
-    const selectCourse=async(course_id)=>{
+    const selectCourse=async(course_id:number|undefined)=>{
       try{
         const response :ResponseData=await service.post(`/student/course/select`,
           
