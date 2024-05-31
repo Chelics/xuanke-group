@@ -1,6 +1,5 @@
 package com.seu.controller.staffController;
 
-import com.seu.dto.response.CourseTable;
 import com.seu.pojo.*;
 import com.seu.service.staffService.StaffRoomService;
 import lombok.extern.slf4j.Slf4j;
