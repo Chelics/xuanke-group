@@ -21,5 +21,12 @@
     "moduleResolution": "Bundler",
     "types": ["node","vite/client"]
   },
-  
+  "include": [
+    // 添加这一行来包含所有的`.ts`文件，或者具体指定某些文件或目录
+    "src/**/*.ts",
+    "src/**/*.vue",
+
+    // 如果您需要特别包含某个文件或目录，可以这样写
+    // "src/api/Login.ts"
+  ],
 }

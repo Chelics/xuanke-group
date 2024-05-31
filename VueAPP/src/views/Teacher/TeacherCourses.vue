@@ -1,3 +1,161 @@
+<template>
+    <el-card style="max-width: 1200px">
+        <div class="card-header">
+            <span>课程管理</span>
+            <el-button type="primary" @click="dialog = true">申请课程</el-button>
+        </div>
+
+        <div>
+            <hr />
+        </div>
+
+        <el-form :inline="true" :model="searchConditions" class="demo-form-inline">
+            <!-- <el-form-item label="">
+          <el-input v-model="formInline.user" placeholder="Approved by" clearable />
+      </el-form-item>-->
+            <el-form-item label="审核状态">
+                <el-select v-model="searchConditions.status" placeholder="审核状态" clearable>
+                    <el-option label="待审核" value="1" />
+                    <el-option label="已通过" value="2" />
+                    <el-option label="已驳回" value="3" />
+                    <el-option label="全部" value="" />
+                </el-select>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="search">查询</el-button>
+            </el-form-item>
+        </el-form>
+
+        <!-- 列表展示 -->
+        <el-table :data="dataList" style="width: 100%">
+            <el-table-column prop="courseNumber" label="课程编号" width="180" />
+            <el-table-column prop="courseName" label="课程名称" />
+            <el-table-column label="审核状态">
+                <template v-slot="{ row }">
+                    <span>{{ getStatusText(row.courseStatus) }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="courseStorage" label="课容量" />
+            <el-table-column prop="courseHour" label="课时数" />
+            <el-table-column prop="teachers" label="授课教师" />
+            <el-table-column label="操作">
+                <template #default="{ row }">
+                    <el-button link type="primary" size="small" @click="handleDetailClick(row)">详情</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+
+        <!-- 详情浮窗 -->
+        <el-dialog v-model="dialogVisible" title="课程申请" width="30%">
+            <el-form :model="detailedRow.value" label-width="100px" style="padding-right:30px">
+                <el-form-item label="课程编号" prop="courseNumber">
+                    <span>{{ detailedRow.courseNumber }}</span>
+                </el-form-item>
+                <el-form-item label="课程名称" prop="courseName">
+                    <span>{{ detailedRow.courseName }}</span>
+                </el-form-item>
+                <el-form-item label="课容量" prop="courseStorage">
+                    <span>{{ detailedRow.courseStorage }}</span>
+                </el-form-item>
+                <el-form-item label="课时数" prop="courseHour">
+                    <span>{{ detailedRow.courseHour }}</span>
+                </el-form-item>
+                <el-form-item label="课程类别" prop="type">
+                    <span>{{ detailedRow.type }}</span>
+                </el-form-item>
+                <el-form-item label="开课单位" prop="faculty">
+                    <span>{{ detailedRow.faculty }}</span>
+                </el-form-item>
+                <el-form-item label="授课教师" prop="teachers">
+                    <span>{{ detailedRow.teachers }}</span>
+                </el-form-item>
+                <el-form-item label="上课班级" prop="classes">
+                    <span>{{ detailedRow.classes }}</span>
+                </el-form-item>
+                <el-form-item label="课程学分" prop="credit">
+                    <span>{{ detailedRow.credit }}</span>
+                </el-form-item>
+                <el-form-item label="审核状态" prop="status">
+                    <span>{{ detailedRow.courseStatus }}</span>
+                </el-form-item>
+                <el-form-item label="提交时间" prop="committime">
+                    <span>{{ detailedRow.commitTime }}</span>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+
+        <!-- 课程申请抽屉 -->
+        <el-drawer v-model="dialog" title="课程信息填写" :before-close="handleApplyCourseClose2" direction="ltr"
+            class="demo-drawer">
+            <div class="demo-drawer__content">
+                <el-form :model="courseModel" :rules="rules">
+                    <el-form-item label="课程编号" :label-width="formLabelWidth" prop="courseNumber">
+                        <el-input v-model="courseModel.courseNumber" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课程名称" :label-width="formLabelWidth" prop="courseName">
+                        <el-input v-model="courseModel.courseName" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课容量" :label-width="formLabelWidth" prop="courseStorage">
+                        <el-input v-model="courseModel.courseStorage" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课时数" :label-width="formLabelWidth" prop="courseHour">
+                        <el-input v-model="courseModel.courseHour" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课程类别" :label-width="formLabelWidth" prop="type">
+                        <el-input v-model="courseModel.type" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="开课单位" :label-width="formLabelWidth" prop="faculty">
+                        <el-input v-model="courseModel.faculty" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="教师ID" :label-width="formLabelWidth" prop="teacherIds">
+                        <el-input v-model="courseModel.teacherIds" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="班级ID" :label-width="formLabelWidth" prop="classIds">
+                        <el-input v-model="courseModel.classIds" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课程学分" :label-width="formLabelWidth" prop="credit">
+                        <el-input v-model="courseModel.credit" minlength="1" maxlength="10"></el-input>
+                    </el-form-item>
+                </el-form>
+                <el-form :model="blurredSearchModel" label-width="100px" style="padding-right:30px">
+                    <el-form-item label="快捷搜索教师" prop="teacherName">
+                        <el-input v-model="blurredSearchModel.teacherName" @input="handleTeacherSearch"
+                            placeholder="输入教师名以模糊搜索"></el-input>
+                        <el-select v-model="teacherSearchResultList" placeholder="请选择搜索结果">
+                            <el-option v-for="item in teacherSearchResultList" :key="item.id" :label="item.id"
+                                :value="item.id">{{ item.id }} - {{ item.username }} - {{ item.teacherName
+                                }}</el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="快捷搜索班级" prop="className">
+                        <el-input v-model="blurredSearchModel.className" @input="handleClassSearch"
+                            placeholder="输入班级名以模糊搜索"></el-input>
+                        <el-select v-model="classSearchResultList" placeholder="请选择搜索结果">
+                            <el-option v-for="item in classSearchResultList" :key="item.id" :label="item.id"
+                                :value="item.id">{{
+                                    item.id }} - {{ item.className }}</el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <div class="demo-drawer__footer">
+                    <el-button @click="cancelForm">取消</el-button>
+                    <el-button type="primary" :loading="loading" @click="onClick">{{ loading ? '提交中...' : '提交'
+                        }}</el-button>
+                </div>
+            </div>
+        </el-drawer>
+
+        <!-- 分页条 -->
+        <div class="el-p">
+            <div class="demonstration"></div>
+            <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize" :page-sizes="[1, 10, 15, 20]"
+                :small="small" :disabled="disabled" :background="background"
+                layout="total, sizes, prev, pager, next, jumper" :total="totalLine" @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" />
+        </div>
+    </el-card>
+</template>
+
 <script setup>
 import { ref } from "vue";
 import { reactive } from "vue";
@@ -339,163 +497,6 @@ const getStatusText = (status) => {
 
 
 
-<template>
-    <el-card style="max-width: 1200px">
-        <div class="card-header">
-            <span>课程管理</span>
-            <el-button type="primary" @click="dialog = true">申请课程</el-button>
-        </div>
-
-        <div>
-            <hr />
-        </div>
-
-        <el-form :inline="true" :model="searchConditions" class="demo-form-inline">
-            <!-- <el-form-item label="">
-          <el-input v-model="formInline.user" placeholder="Approved by" clearable />
-      </el-form-item>-->
-            <el-form-item label="审核状态">
-                <el-select v-model="searchConditions.status" placeholder="审核状态" clearable>
-                    <el-option label="待审核" value="1" />
-                    <el-option label="已通过" value="2" />
-                    <el-option label="已驳回" value="3" />
-                    <el-option label="全部" value="" />
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="search">查询</el-button>
-            </el-form-item>
-        </el-form>
-
-        <!-- 列表展示 -->
-        <el-table :data="dataList" style="width: 100%">
-            <el-table-column prop="courseNumber" label="课程编号" width="180" />
-            <el-table-column prop="courseName" label="课程名称" />
-            <el-table-column label="审核状态">
-                <template v-slot="{ row }">
-                    <span>{{ getStatusText(row.courseStatus) }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="courseStorage" label="课容量" />
-            <el-table-column prop="courseHour" label="课时数" />
-            <el-table-column prop="teachers" label="授课教师" />
-            <el-table-column label="操作">
-                <template #default="{ row }">
-                    <el-button link type="primary" size="small" @click="handleDetailClick(row)">详情</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-
-        <!-- 详情浮窗 -->
-        <el-dialog v-model="dialogVisible" title="课程申请" width="30%">
-            <el-form :model="detailedRow.value" label-width="100px" style="padding-right:30px">
-                <el-form-item label="课程编号" prop="courseNumber">
-                    <span>{{ detailedRow.courseNumber }}</span>
-                </el-form-item>
-                <el-form-item label="课程名称" prop="courseName">
-                    <span>{{ detailedRow.courseName }}</span>
-                </el-form-item>
-                <el-form-item label="课容量" prop="courseStorage">
-                    <span>{{ detailedRow.courseStorage }}</span>
-                </el-form-item>
-                <el-form-item label="课时数" prop="courseHour">
-                    <span>{{ detailedRow.courseHour }}</span>
-                </el-form-item>
-                <el-form-item label="课程类别" prop="type">
-                    <span>{{ detailedRow.type }}</span>
-                </el-form-item>
-                <el-form-item label="开课单位" prop="faculty">
-                    <span>{{ detailedRow.faculty }}</span>
-                </el-form-item>
-                <el-form-item label="授课教师" prop="teachers">
-                    <span>{{ detailedRow.teachers }}</span>
-                </el-form-item>
-                <el-form-item label="上课班级" prop="classes">
-                    <span>{{ detailedRow.classes }}</span>
-                </el-form-item>
-                <el-form-item label="课程学分" prop="credit">
-                    <span>{{ detailedRow.credit }}</span>
-                </el-form-item>
-                <el-form-item label="审核状态" prop="status">
-                    <span>{{ detailedRow.courseStatus }}</span>
-                </el-form-item>
-                <el-form-item label="提交时间" prop="committime">
-                    <span>{{ detailedRow.commitTime }}</span>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
-
-        <!-- 课程申请抽屉 -->
-        <el-drawer v-model="dialog" title="课程信息填写" :before-close="handleApplyCourseClose2" direction="ltr"
-            class="demo-drawer">
-            <div class="demo-drawer__content">
-                <el-form :model="courseModel" :rules="rules">
-                    <el-form-item label="课程编号" :label-width="formLabelWidth" prop="courseNumber">
-                        <el-input v-model="courseModel.courseNumber" minlength="1" maxlength="10"></el-input>
-                    </el-form-item>
-                    <el-form-item label="课程名称" :label-width="formLabelWidth" prop="courseName">
-                        <el-input v-model="courseModel.courseName" minlength="1" maxlength="10"></el-input>
-                    </el-form-item>
-                    <el-form-item label="课容量" :label-width="formLabelWidth" prop="courseStorage">
-                        <el-input v-model="courseModel.courseStorage" minlength="1" maxlength="10"></el-input>
-                    </el-form-item>
-                    <el-form-item label="课时数" :label-width="formLabelWidth" prop="courseHour">
-                        <el-input v-model="courseModel.courseHour" minlength="1" maxlength="10"></el-input>
-                    </el-form-item>
-                    <el-form-item label="课程类别" :label-width="formLabelWidth" prop="type">
-                        <el-input v-model="courseModel.type" minlength="1" maxlength="10"></el-input>
-                    </el-form-item>
-                    <el-form-item label="开课单位" :label-width="formLabelWidth" prop="faculty">
-                        <el-input v-model="courseModel.faculty" minlength="1" maxlength="10"></el-input>
-                    </el-form-item>
-                    <el-form-item label="教师ID" :label-width="formLabelWidth" prop="teacherIds">
-                        <el-input v-model="courseModel.teacherIds" minlength="1" maxlength="10"></el-input>
-                    </el-form-item>
-                    <el-form-item label="班级ID" :label-width="formLabelWidth" prop="classIds">
-                        <el-input v-model="courseModel.classIds" minlength="1" maxlength="10"></el-input>
-                    </el-form-item>
-                    <el-form-item label="课程学分" :label-width="formLabelWidth" prop="credit">
-                        <el-input v-model="courseModel.credit" minlength="1" maxlength="10"></el-input>
-                    </el-form-item>
-                </el-form>
-                <el-form :model="blurredSearchModel" label-width="100px" style="padding-right:30px">
-                    <el-form-item label="快捷搜索教师" prop="teacherName">
-                        <el-input v-model="blurredSearchModel.teacherName" @input="handleTeacherSearch"
-                            placeholder="输入教师名以模糊搜索"></el-input>
-                        <el-select v-model="teacherSearchResultList" placeholder="请选择搜索结果">
-                            <el-option v-for="item in teacherSearchResultList" :key="item.id" :label="item.id"
-                                :value="item.id">{{ item.id }} - {{ item.username }} - {{ item.teacherName
-                                }}</el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="快捷搜索班级" prop="className">
-                        <el-input v-model="blurredSearchModel.className" @input="handleClassSearch"
-                            placeholder="输入班级名以模糊搜索"></el-input>
-                        <el-select v-model="classSearchResultList" placeholder="请选择搜索结果">
-                            <el-option v-for="item in classSearchResultList" :key="item.id" :label="item.id"
-                                :value="item.id">{{
-                                    item.id }} - {{ item.className }}</el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-form>
-                <div class="demo-drawer__footer">
-                    <el-button @click="cancelForm">取消</el-button>
-                    <el-button type="primary" :loading="loading" @click="onClick">{{ loading ? '提交中...' : '提交'
-                        }}</el-button>
-                </div>
-            </div>
-        </el-drawer>
-
-        <!-- 分页条 -->
-        <div class="el-p">
-            <div class="demonstration"></div>
-            <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize" :page-sizes="[1, 10, 15, 20]"
-                :small="small" :disabled="disabled" :background="background"
-                layout="total, sizes, prev, pager, next, jumper" :total="totalLine" @size-change="handleSizeChange"
-                @current-change="handleCurrentChange" />
-        </div>
-    </el-card>
-</template>
 
 <style>
 .demo-form-inline .el-input {

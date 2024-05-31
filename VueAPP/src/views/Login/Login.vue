@@ -1,10 +1,76 @@
+<template>
+
+  <!-- <h1>login</h1>
+  <div class="mb-4">
+    <el-button>测试使用，默认身份学生，需要修改前往stores</el-button>
+    <el-button type="primary" ref="/student" @click="() => router.push('/student')">我是学生</el-button>
+    <el-button type="success" ref="/teacher" @click="() => router.push('/teacher')">我是老师</el-button>
+    <el-button type="info" ref="/admin" @click="() => router.push('/staff')">我是教务</el-button>
+
+  </div> -->
+
+
+
+
+  <!-- <div class="container">
+    <div class="pic"></div>
+    <div class="title">选课管理系统</div>
+    <el-form ref="ruleFormRef" class="form-container" :model="ruleForm" status-icon :rules="rules" label-width="auto">
+      <el-form-item label="用户名" prop="name">
+        <el-input v-model="ruleForm.name" />
+      </el-form-item>
+      <el-form-item label="密码" prop="pass">
+        <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
+      </el-form-item>
+  
+      <el-form-item>
+        <div style="display: flex; justify-content: right;">
+          <el-button type="primary" @click="submitForm(ruleFormRef)">登录</el-button>
+          <el-button @click="resetForm(ruleFormRef)">清空输入</el-button>
+        </div>
+      </el-form-item>
+    </el-form>
+
+  </div> -->
+
+  <div class="container">
+    <div class="pic"></div>
+    <div class="title">选课管理系统</div>
+    <el-form ref="ruleFormRef" class="form-container" :model="ruleForm" status-icon :rules="rules" label-width="auto">
+      <el-form-item label="用户名" prop="name">
+        <el-input v-model="ruleForm.name" />
+      </el-form-item>
+      <el-form-item label="密码" prop="pass">
+        <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
+      </el-form-item>
+      
+      <!-- 错误消息容器 -->
+      <div class="error-message" style="width: 200px; overflow: hidden;"></div>
+      
+      <el-form-item>
+        <div style="display: flex; justify-content: right;">
+          <el-button type="primary" @click="submitForm(ruleFormRef)">登录</el-button>
+          <el-button @click="resetForm(ruleFormRef)">清空输入</el-button>
+        </div>
+      </el-form-item>
+    </el-form>
+</div>
+
+
+
+  
+
+
+</template>
+
+
 <script setup lang="ts">
 // src/views/Login.vue
 import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '../../stores/auth';
 import { useRouter } from 'vue-router';
 import { ElButton } from 'element-plus';
-import { login } from '@/api/Login';
+import { login } from '../../api/Login';
 
 
 //const formData = ref({ username: '', password: '' });
@@ -104,70 +170,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 
 
-<template>
-
-  <!-- <h1>login</h1>
-  <div class="mb-4">
-    <el-button>测试使用，默认身份学生，需要修改前往stores</el-button>
-    <el-button type="primary" ref="/student" @click="() => router.push('/student')">我是学生</el-button>
-    <el-button type="success" ref="/teacher" @click="() => router.push('/teacher')">我是老师</el-button>
-    <el-button type="info" ref="/admin" @click="() => router.push('/staff')">我是教务</el-button>
-
-  </div> -->
-
-
-
-
-  <!-- <div class="container">
-    <div class="pic"></div>
-    <div class="title">选课管理系统</div>
-    <el-form ref="ruleFormRef" class="form-container" :model="ruleForm" status-icon :rules="rules" label-width="auto">
-      <el-form-item label="用户名" prop="name">
-        <el-input v-model="ruleForm.name" />
-      </el-form-item>
-      <el-form-item label="密码" prop="pass">
-        <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
-      </el-form-item>
-  
-      <el-form-item>
-        <div style="display: flex; justify-content: right;">
-          <el-button type="primary" @click="submitForm(ruleFormRef)">登录</el-button>
-          <el-button @click="resetForm(ruleFormRef)">清空输入</el-button>
-        </div>
-      </el-form-item>
-    </el-form>
-
-  </div> -->
-
-  <div class="container">
-    <div class="pic"></div>
-    <div class="title">选课管理系统</div>
-    <el-form ref="ruleFormRef" class="form-container" :model="ruleForm" status-icon :rules="rules" label-width="auto">
-      <el-form-item label="用户名" prop="name">
-        <el-input v-model="ruleForm.name" />
-      </el-form-item>
-      <el-form-item label="密码" prop="pass">
-        <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
-      </el-form-item>
-      
-      <!-- 错误消息容器 -->
-      <div class="error-message" style="width: 200px; overflow: hidden;"></div>
-      
-      <el-form-item>
-        <div style="display: flex; justify-content: right;">
-          <el-button type="primary" @click="submitForm(ruleFormRef)">登录</el-button>
-          <el-button @click="resetForm(ruleFormRef)">清空输入</el-button>
-        </div>
-      </el-form-item>
-    </el-form>
-</div>
-
-
-
-  
-
-
-</template>
 
 
 <style>

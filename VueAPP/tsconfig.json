@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]  // 路径映射，相对于baseUrl
     },
+    
+    "types": ["node"],
     "strictNullChecks": false
   },
 

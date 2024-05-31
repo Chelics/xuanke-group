@@ -1,8 +1,6 @@
 // src/stores/auth.ts
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import request from '@/util/request';
-import service from '@/util/request';
 interface ResponseData {
   code: number;
   msg: string;

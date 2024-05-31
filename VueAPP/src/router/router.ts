@@ -1,20 +1,20 @@
 import { createRouter, createWebHistory } from "vue-router"
-import Login from "@/views/Login/Login.vue"
+//import Login from "../views/Login/Login.vue"
+import Login from "../views/Login/Login.vue"
+import StudentSchedule from "../views/Student/StudentSchedule.vue"
+import StudentCourseSelection from "../views/Student/StudentCourseSelection.vue"
 
-import StudentSchedule from "@/views/Student/StudentSchedule.vue"
-import StudentCourseSelection from "@/views/Student/StudentCourseSelection.vue"
+import TeacherSchedule from "../views/Teacher/TeacherSchedule.vue"
+import TeacherCourses from "../views/Teacher/TeacherCourses.vue"
 
-import TeacherSchedule from "@/views/Teacher/TeacherSchedule.vue"
-import TeacherCourses from "@/views/Teacher/TeacherCourses.vue"
-
-import State from "@/views/Staff/State.vue"
-import Classroom from "@/views/Staff/Classroom.vue"
+import State from "../views/Staff/State.vue"
+import Classroom from "../views/Staff/Classroom.vue"
 
 
-import { useAuthStore } from '@/stores/auth';
-import HtmlTable from "@/testview/htmlTable.vue"
-import StaffAudit from "@/views/Staff/StaffAudit.vue"
-import { isLoggedIn } from "@/api/Login"
+import { useAuthStore } from '../stores/auth';
+import HtmlTable from "../testview/htmlTable.vue"
+import StaffAudit from "../views/Staff/StaffAudit.vue"
+import { isLoggedIn } from "../api/Login"
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -128,4 +128,5 @@ router.beforeEach(async (to, from, next) => {
         next();
     }
 });
+
 export default router

@@ -2,10 +2,10 @@
 import axios from 'axios';
 import { type AxiosInstance } from 'axios';
 import { storeToRefs } from 'pinia';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '../stores/auth';
 //import {pinia} from 'main'
 import { ElMessage } from 'element-plus'; // 或者使用其他UI库的消息提示组件
-import router from '@/router/router'
+import router from '../router/router'
 
 // 创建axios实例
 const service: AxiosInstance = axios.create({

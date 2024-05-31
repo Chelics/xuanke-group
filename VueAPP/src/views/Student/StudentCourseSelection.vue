@@ -83,7 +83,7 @@
   import { watch, onMounted } from 'vue';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-import  service from '@/util/request';
+import  service from '../../util/request';
   
   interface FullCourse {
     id: number;
