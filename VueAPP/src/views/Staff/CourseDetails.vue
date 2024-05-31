@@ -37,11 +37,11 @@
   let props= defineProps<{ courses: rawCourse[] }>();
   import { computed } from 'vue';
     import { ElTable, ElTableColumn ,ElSelect} from 'element-plus';
-    import { getCourseList } from '@/api/courseList';
-    import request from '@/util/request';
+    import { getCourseList } from '../../api/courseList';
+    import request from '../../util/request';
     import { ref,onMounted } from 'vue';
 import axios from 'axios';
-import service from '@/util/request';
+import service from '../../util/request';
 import { defineProps } from 'vue';
     const options = [
   {

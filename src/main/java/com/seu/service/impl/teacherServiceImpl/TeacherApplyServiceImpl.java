@@ -44,7 +44,14 @@ public class TeacherApplyServiceImpl implements TeacherApplyService {
         //1. 设置分页参数
         PageHelper.startPage(page,pageSize);
         //2. 执行查询
-        List<FullCheckingCourse> fullCheckingCours= checkingMapper.page(id,status);
+        List<FullCheckingCourse> fullCheckingCours;
+        if(status!=0&&status!=1&&status!=2){
+            fullCheckingCours=checkingMapper.page2(id);
+        }
+        else{
+            fullCheckingCours= checkingMapper.page(id,status);
+        }
+
         //3.补充完整审核项
         for (int i = 0; i < fullCheckingCours.size(); i++) {
             FullCheckingCourse fullCheckingCourse = fullCheckingCours.get(i);//对于每一个course

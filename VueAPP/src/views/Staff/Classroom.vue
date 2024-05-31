@@ -54,7 +54,7 @@
 import { ref, onMounted, watchEffect,reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 //import { ClassroomSearchParams } from '@/types'; // 假定 ClassroomSearchParams 已定义
-import service from '@/util/request';
+import service from '../../util/request';
 import { ElInput } from 'element-plus';
 import CourseDetails from './CourseDetails.vue';
 interface ResponseData {

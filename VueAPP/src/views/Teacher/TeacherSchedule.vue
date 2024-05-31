@@ -3,5 +3,5 @@
     <htmlTable myurl="/teacher/courseTable"></htmlTable>
 </template>
 <script setup lang="ts">
-import htmlTable from '@/testview/htmlTable.vue';
+import htmlTable from '../../testview/htmlTable.vue';
 </script>

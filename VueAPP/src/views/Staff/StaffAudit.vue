@@ -81,7 +81,7 @@
 import { defineComponent, onMounted, ref, computed } from 'vue';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-import service from '@/util/request';
+import service from '../../util/request';
 interface ResponseData {
   code: number;
   msg: string;

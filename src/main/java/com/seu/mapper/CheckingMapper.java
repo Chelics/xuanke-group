@@ -54,4 +54,6 @@ public interface CheckingMapper {
      * @return
      */
     List<FullCheckingCourse> page(@Param("id") Integer id,  @Param("status")Short status);
+
+    List<FullCheckingCourse> page2(@Param("id") Integer id);
 }

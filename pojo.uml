@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>com.seu.pojo</OriginalElement>
+  <nodes>
+    <node x="0.0" y="1211.0">com.seu.pojo.Users</node>
+    <node x="859.5" y="499.0">com.seu.pojo.FullCheckingCourse</node>
+    <node x="0.0" y="832.0">com.seu.pojo.Result</node>
+    <node x="267.0" y="832.0">com.seu.pojo.Stage</node>
+    <node x="165.0" y="545.0">com.seu.pojo.FullCourse</node>
+    <node x="1210.0" y="832.0">com.seu.pojo.MyClass</node>
+    <node x="685.0" y="0.0">com.seu.pojo.CheckingCourse</node>
+    <node x="668.0" y="832.0">com.seu.pojo.Room</node>
+    <node x="0.0" y="0.0">com.seu.pojo.Course</node>
+    <node x="967.0" y="832.0">com.seu.pojo.PageBean</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.seu.pojo.FullCourse" target="com.seu.pojo.Course" relationship="GENERALIZATION">
+      <point x="0.0" y="-121.0" />
+      <point x="0.0" y="247.5" />
+    </edge>
+    <edge source="com.seu.pojo.FullCheckingCourse" target="com.seu.pojo.CheckingCourse" relationship="GENERALIZATION">
+      <point x="0.0" y="-109.5" />
+      <point x="0.0" y="224.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.9999999999999999" showDependencies="false" x="181.5000000000004" y="167.4999999999999" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

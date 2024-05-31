@@ -16,6 +16,9 @@ public class IdUtils {
     }*/
 
     public static List<Integer> stringToList(String idsString) {
+        if (idsString == null || idsString.isEmpty()) {
+            return List.of(); // 返回一个空的不可变列表
+        }
         String[] idsArray = idsString.split(",");
         return Arrays.stream(idsArray)
                 .map(Integer::parseInt)

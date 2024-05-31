@@ -38,10 +38,10 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import request from '@/util/request';
+import request from '../../util/request';
 import { ElMessage } from 'element-plus';
-import service from '@/util/request';
-import { updateState } from '@/api/Stuff';
+import service from '../../util/request';
+import { updateState } from '../../api/Stuff';
 interface ResponseData {
   code: number;
   msg: string;
