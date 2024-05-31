@@ -75,6 +75,8 @@ const ruleForm = reactive({
   name: '',
 })
 
+
+
 const rules = reactive<FormRules<typeof ruleForm>>({
   name: [{ validator: checkName, trigger: 'blur' }],
   pass: [{ validator: validatePass, trigger: 'blur' }]
@@ -116,7 +118,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 
 
-  <div class="container">
+  <!-- <div class="container">
     <div class="pic"></div>
     <div class="title">选课管理系统</div>
     <el-form ref="ruleFormRef" class="form-container" :model="ruleForm" status-icon :rules="rules" label-width="auto">
@@ -135,7 +137,32 @@ const resetForm = (formEl: FormInstance | undefined) => {
       </el-form-item>
     </el-form>
 
-  </div>
+  </div> -->
+
+  <div class="container">
+    <div class="pic"></div>
+    <div class="title">选课管理系统</div>
+    <el-form ref="ruleFormRef" class="form-container" :model="ruleForm" status-icon :rules="rules" label-width="auto">
+      <el-form-item label="用户名" prop="name">
+        <el-input v-model="ruleForm.name" />
+      </el-form-item>
+      <el-form-item label="密码" prop="pass">
+        <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
+      </el-form-item>
+      
+      <!-- 错误消息容器 -->
+      <div class="error-message" style="width: 200px; overflow: hidden;"></div>
+      
+      <el-form-item>
+        <div style="display: flex; justify-content: right;">
+          <el-button type="primary" @click="submitForm(ruleFormRef)">登录</el-button>
+          <el-button @click="resetForm(ruleFormRef)">清空输入</el-button>
+        </div>
+      </el-form-item>
+    </el-form>
+</div>
+
+
 
   
 
@@ -149,7 +176,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 }
 
 .pic {
-  background-image: url(./sky.jpg);
+  background-image: url(./background.jpg);
   background-size: cover;
   background-position: center bottom;
   height: 900px;
@@ -159,9 +186,10 @@ const resetForm = (formEl: FormInstance | undefined) => {
   position: absolute;
   top: 50%;
   left: 50%;
+  width: 300px; /* 设置固定宽度 */
   transform: translate(-50%, -50%);
-  max-width: 400px;
-  padding: 20px;
+  max-width: 500px;
+  padding: 30px;
   background: rgba(255, 255, 255, 0.8); /* 添加半透明背景以突出显示表单 */
 }
 

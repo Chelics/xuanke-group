@@ -6,7 +6,7 @@
         <h2>待审核课程列表</h2>
         <el-form @submit.prevent="fetchFilteredCourses">
           <!-- 搜索输入框等其他表单元素... -->
-          <el-input v-model="courseIdToFetch" placeholder="请输入课程ID进行查询（留空以查看全部）" style="width: 500px;"
+          <el-input v-model="courseNameToFetch" placeholder="请输入课程名进行查询（留空以查看全部）" style="width: 500px;"
             @keyup.enter="fetchFilteredCourses" />
           <el-button type="primary" @click="fetchFilteredCourses">{{ getButtonLabel }}</el-button>
         </el-form>
@@ -37,6 +37,12 @@
           <el-table-column prop="commitTime" label="提交时间" width="250">
             <template #default="scope">{{ scope.row.commitTime }}</template>
           </el-table-column>
+          <el-table-column label="操作">
+    <template #default="scope">
+      <el-button type="text" size="small" @click="showCourseDetails(scope.row)">详情</el-button>
+    </template>
+  </el-table-column>
+
         </el-table>
         <el-pagination background layout="prev, pager, next, jumper" :total="courses.total"
           :current-page="searchParams.page" :page-size="searchParams.pageSize" @current-change="handlePageChange" />
@@ -49,6 +55,26 @@
       </section>
     </div>
   </div>
+
+  <el-dialog v-model="dialogVisible" title="课程详情" width="600px">
+    <el-descriptions :column="2" border>
+      <el-descriptions-item label="课程名">{{ currentCourse.courseName }}</el-descriptions-item>
+      <el-descriptions-item label="类别">{{ getTypeLabel(currentCourse.type) }}</el-descriptions-item>
+      <el-descriptions-item label="课程编号">{{ currentCourse.courseNumber }}</el-descriptions-item>
+      <el-descriptions-item label="课时">{{ currentCourse.courseHour }}课时</el-descriptions-item>
+      <el-descriptions-item label="课程容量">{{ currentCourse.courseStorage }}人</el-descriptions-item>
+      <el-descriptions-item label="学院">{{ currentCourse.faculty }}</el-descriptions-item>
+      <el-descriptions-item label="学分">{{ currentCourse.credit }}</el-descriptions-item>
+      <el-descriptions-item label="授课教师">{{ currentCourse.teachers.join(', ') }}</el-descriptions-item>
+      <el-descriptions-item label="班级">{{ currentCourse.classes.join(', ') }}</el-descriptions-item>
+      <el-descriptions-item label="提交时间">{{ currentCourse.commitTime }}</el-descriptions-item>
+    </el-descriptions>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">关闭</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -79,70 +105,20 @@ interface Course {
 }
 
 const selectedCourseIds = ref<number[]>([]);
-const courseIdToFetch = ref('');
+const courseNameToFetch = ref('');
 const courses = ref<{ total: number; rows: Course[] }>({ total: 0, rows: [] });
 const searchParams = ref({ courseName: '', page: 1, pageSize: 10 });
-//测试数据
-const testData = {
-  total: 3, // 假设我们有3条课程记录
-  rows: [
-    {
-      id: 1,
-      courseName: "大学物理",
-      type: 1, // 类别：理论课
-      courseNumber: "PHY101",
-      courseHour: 48, // 课时
-      courseStorage: 50, // 课程容量
-      faculty: "物理学院",
-      credit: 3, // 学分
-      teacherIds: "T001,T002",
-      classIds: "C01,C02",
-      commitTime: "2024-05-14 17:54:49", // 提交时间，符合ISO 8601格式
-      teachers: ["张三", "李四"], // 授课教师
-      classes: ["711221", "711222"] // 班级
-    },
-    {
-      id: 2,
-      courseName: "高等数学",
-      type: 2, // 类别：实践课
-      courseNumber: "MATH202",
-      courseHour: 64,
-      courseStorage: 60,
-      faculty: "数学学院",
-      credit: 4,
-      teacherIds: "T003",
-      classIds: "C03",
-      commitTime: "2024-04-20 10:30:00",
-      teachers: ["王五"],
-      classes: ["721111"]
-    },
-    {
-      id: 3,
-      courseName: "英语口语",
-      type: 1, // 类别：理论课
-      courseNumber: "ENG101",
-      courseHour: 32,
-      courseStorage: 40,
-      faculty: "外语学院",
-      credit: 2,
-      teacherIds: "T004,T005",
-      classIds: "C04,C05",
-      commitTime: "2024-05-10 09:00:00",
-      teachers: ["赵六", "钱七"],
-      classes: ["731111", "731112"]
-    }
-  ]
-};
+
 //按钮值
 const getButtonLabel = computed(() => {
-  return courseIdToFetch.value ? '查询' : '刷新';
+  return courseNameToFetch.value ? '查询' : '刷新';
 });
 //刷新（查询）
-const fetchFilteredCourses = async () => {
+const  fetchFilteredCourses = async () => {
   try {
-    if (courseIdToFetch.value) {
-      const response :ResponseData= await service.get(`/staff/checking/${courseIdToFetch.value}`);
-      if (response.code !== 1) {
+    if (courseNameToFetch.value) {
+      const response :ResponseData= await service.get(`/staff/checking`,{params:courseNameToFetch.value});
+      if (response?.code !== 1) {
         ElMessage.error('查询课程失败，请检查ID是否正确。');
       }
       courses.value = { total: 1, rows: [response.data] };
@@ -175,7 +151,7 @@ const handleSelectionChange = (selection: any[]) => {
 
 const batchApprove = async () => {
   try {
-    await service.put('/staff/checking/batch', {
+    await service.put('/staff/checking', {
       status: 2,
       ids: selectedCourseIds.value,
     });
@@ -189,7 +165,7 @@ const batchApprove = async () => {
 
 const batchReject = async () => {
   try {
-    await service.put('/staff/checking/batch', {
+    await service.put('/staff/checking', {
       status: 3,
       ids: selectedCourseIds.value,
     });
@@ -202,11 +178,11 @@ const batchReject = async () => {
 };
 const getTypeLabel = (type: number): string => {
   switch (type) {
-    case 1:
+    case 0:
       return "专业课";
-    case 2:
+    case 1:
       return "体育课";
-    case 3:
+    case 2:
       return "通选课";
     default: return"";
   }
@@ -216,4 +192,14 @@ const getTypeLabel = (type: number): string => {
 onMounted(() => {
   fetchFilteredCourses();
 });
+
+// 添加用于控制对话框显示的变量和当前选中的课程信息
+const dialogVisible = ref(false);
+const currentCourse = ref<Course>();
+
+// 显示课程详情的函数
+const showCourseDetails = (course: Course) => {
+  currentCourse.value = course;
+  dialogVisible.value = true;
+};
 </script>

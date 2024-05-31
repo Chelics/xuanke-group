@@ -1,40 +1,22 @@
 <template>
-  <div>
-    <!-- 筛选部分 -->
-    <el-select
-      v-model="selectedBuildings"
-      multiple
-      placeholder="请选择教学楼"
-      @change="applyBuildingFilter"
-      style="width: 300px;" 
-    >
-      <el-option
-        v-for="filter in buildingFilters"
-        :key="filter.value"
-        :label="filter.text"
-        :value="filter.value"
-      ></el-option>
-    </el-select>  
-
-    <!-- 表格部分 -->
+  <div class="classroom-search">
+    <div class="search-form">
+      <el-input v-model="searchParams.building" placeholder="教学楼" />
+      <el-input v-model="searchParams.roomName" placeholder="教室名" />
+      <el-input v-model="searchParams.storageBegin" placeholder="容量从" />
+      <el-input v-model="searchParams.storageEnd" placeholder="到" />
+      <el-button @click="fetchData">搜索</el-button>
+    </div>
+    
     <el-table
-      :data="filteredClassrooms"
+      v-loading="loading"
+      :data="classrooms"
       stripe
-      style="width: 100%"
-      v-if="filteredClassrooms.length > 0"
-    >
-      <el-table-column
-        prop="building"
-        label="教学楼"
-      ></el-table-column>
-      <el-table-column
-        prop="roomName"
-        label="教室名"
-      ></el-table-column>
-      <el-table-column
-        prop="roomStorage"
-        label="教室容量"
-      ></el-table-column>
+      style="width: 100%">
+      
+      <el-table-column prop="building" label="教学楼" />
+      <el-table-column prop="roomName" label="教室名" />
+      <el-table-column prop="roomStorage" label="教室容量" />
       <el-table-column label="详细信息">
         <template #default="{ row }">
           <el-button link type="primary" @click="showCourseDetails(row.courseList)">
@@ -43,10 +25,18 @@
         </template>
       </el-table-column>
     </el-table>
-      <p v-else>暂无数据</p>
-      <!-- 分页组件可以根据实际情况添加，这里省略以简化示例 -->
 
-      <el-dialog
+    <el-pagination
+      v-model:currentPage="searchParams.page"
+      v-model:page-size="searchParams.pageSize"
+      :page-sizes="[10, 20, 50, 100]"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
+  </div>
+  <el-dialog
       v-model="dialogVisible"
       title="课程详情"
       width="50%"
@@ -58,15 +48,77 @@
         </span>
       </template>
     </el-dialog>
-    </div>
-  </template>
-  
-  <script setup lang="ts">
-  //import { Classroom } from '@/models/Classroom';
-  import service from '@/util/request';
-import CourseDetails from './CourseDetails.vue'
-  import { ref ,computed,onMounted} from 'vue';
-   interface Course {
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, watchEffect,reactive } from 'vue';
+import { ElMessage } from 'element-plus';
+//import { ClassroomSearchParams } from '@/types'; // 假定 ClassroomSearchParams 已定义
+import service from '@/util/request';
+import { ElInput } from 'element-plus';
+import CourseDetails from './CourseDetails.vue';
+interface ResponseData {
+  code: number;
+  msg: string;
+  data: any;
+}
+interface ClassroomSearchParams {
+  building?: string; // 教学楼，可选
+  roomName?: string; // 教室名，可选
+  storageBegin?: number | null; // 范围匹配的开始人数(教室容量)，可选，支持null以表示不限制
+  storageEnd?: number | null; // 范围匹配的结束人数(教室容量)，可选，支持null以表示不限制
+  page: number; // 分页查询的页码，默认为1
+  pageSize: number; // 分页查询的每页记录数，默认为10
+}
+const searchParams = ref<ClassroomSearchParams>({
+  building: '',
+  roomName: '',
+  storageBegin: 1,
+  storageEnd: 300,
+  page: 1,
+  pageSize: 10,
+});
+
+const classrooms = ref<any[]>([]); // 存储教室列表数据
+const total = ref<number>(0); // 存储总记录数
+const loading = ref(false); // 加载状态
+
+// 分页处理函数
+const handleSizeChange = (size: number) => {
+  searchParams.value.pageSize = size;
+  fetchData();
+};
+
+const handleCurrentChange = (page: number) => {
+  searchParams.value.page = page;
+  fetchData();
+};
+
+// 获取教室列表数据
+async function fetchData() {
+  loading.value = true;
+  try {
+    const response :ResponseData = await service.get('/staff/rooms', { params: searchParams.value });
+
+    if (response.code === 1) {
+      classrooms.value = response.data.rows;
+      total.value = response.data.total;
+    } else {
+      ElMessage.error(response.msg || '获取教室列表失败');
+    }
+    for (const classroom of classrooms.value) {
+      const courseList = await fetchCourseListForRoom(classroom.id);
+      // 将获取到的课程列表赋值给当前教室的courseList属性
+      classroom.courseList = courseList.courseList;
+    }
+  } catch (error) {
+    console.error('获取教室列表失败:', error);
+    ElMessage.error('网络错误，请稍后再试。');
+  } finally {
+    loading.value = false;
+  }
+}
+interface Course {
   id: number; // 课程ID
   type: number; // 课程类型
   courseNumber: string; // 课程编号
@@ -85,166 +137,38 @@ import CourseDetails from './CourseDetails.vue'
   classes: string[]; // 授课班级
   roomName: string;
 }
-
- interface Classroom {
-  id: number; // 教室ID
-  building: string; // 教学楼
-  roomName: string; // 教室名
-  roomStorage: number; // 教室容量
-  courseList?: Course[]; // 课程列表
-}
-  // 假设的教室数据模型
-  const mockClassrooms: Classroom[] = [
-  {
-    id: 1,
-    building: "教1",
-    roomName: "1-100",
-    roomStorage: 40,
-    courseList: [
-      {
-        id: 1,
-        courseName: "线性代数",
-        type: 0,
-        courseNumber: "SEUCSE01",
-        roomId: 1,
-        courseHour: 16,
-        courseStorage: 40,
-        startWeek: 1,
-        endWeek: 8,
-        time1: 0,
-        faculty: "数学学院",
-        credit: 2,
-        teachers: ["张老三"],
-        classes: ["1班"],
-        roomName:"教1-1-100"
-      }
-    ]
-  },
-  {
-    id: 2,
-    building: "教2",
-    roomName: "2-303",
-    roomStorage: 120,
-    courseList: [
-      {
-        id: 2,
-        courseName: "工科数学分析",
-        type: 0,
-        courseNumber: "SEUCSE02",
-        roomId: 2,
-        courseHour: 96,
-        courseStorage: 120,
-        startWeek: 1,
-        endWeek: 16,
-        time1: 33,
-        faculty: "数学学院",
-        credit: 6,
-        teachers: ["王老四"],
-        classes: ["2班"],
-        roomName:"教2-2-303"
-      }
-    ]
-  }
-]
-
-// 用户选择的楼栋筛选值
-const selectedBuildings = ref<string[]>([]);
-
-// 固定的筛选选项
-const buildingFilters = [
-  { text: '教1', value: '教1' },
-  { text: '教2', value: '教2' },
-  { text: '教3', value: '教3' },
-  { text: '教4', value: '教4' },
-  { text: '教5', value: '教5' },
-  { text: '教6', value: '教6' },
-  { text: '教7', value: '教7' },
-  { text: '教8', value: '教8' },
-];
-
-// 过滤后的教室数据
-const filteredClassrooms = computed(() => {
-  return classrooms.value.filter(classroom => 
-    !selectedBuildings.value.length || selectedBuildings.value.includes(classroom.building)
-  );
-});
-
-// 应用筛选逻辑
-const applyBuildingFilter = (value: string[]) => {
-  selectedBuildings.value = value;
-};
-
 //详细信息展示
-  const dialogVisible = ref(false);
+const dialogVisible = ref(false);
   let selectedCourses = ref<Course[]>([]);
   const showCourseDetails = (courses: Course[]) => {
-  selectedCourses.value = courses;
+    selectedCourses.value = [];
+  selectedCourses.value = reactive(courses);
+  console.log(courses)
   dialogVisible.value = true;
 };
-
-
-// 假设的教室数据初始化
-let classrooms = ref<Classroom[]>([]);
-
-// 模拟获取教室信息的异步函数
-async function fetchRooms(): Promise<Classroom[]> {
-  // 这里应使用axios等库发出实际请求，例如:
-  const response = await service.get('/staff/rooms');
-  // 但为了演示，我们模拟数据返回
-  /* const mockResponse = [
-    { id: 1, building: "教1", roomName: "1-100", roomStorage: 40 },
-    { id: 2, building: "教2", roomName: "2-303", roomStorage: 120 },
-    // 更多教室数据...
-  ]; */
-  return response.data;
-}
-
 // 模拟根据教室ID获取课程列表的异步函数
-async function fetchCourseListForRoom(roomId: number): Promise<Course[]> {
+async function fetchCourseListForRoom(roomId: number) {
   // 同样，这里应替换为真实请求，例如:
    const response = await service.get(`/staff/rooms/${roomId}`,{params:{id:roomId}});
   // 模拟数据返回
-  /* const mockCourseList = [
-  {
-        id: 1,
-        courseName: "线性代数",
-        type: 0,
-        courseNumber: "SEUCSE01",
-        roomId: 1,
-        courseHour: 16,
-        courseStorage: 40,
-        startWeek: 1,
-        endWeek: 8,
-        time1: 0,
-        faculty: "数学学院",
-        credit: 2,
-        teachers: ["张老三"],
-        classes: ["1班"],
-        roomName:"教1-1-100"
-      }
-    // 更多课程数据...
-  ]; */
-  return response.data;
+   return response.data;
 }
-
-// 在onMounted钩子中执行数据获取逻辑
-onMounted(async () => {
-  try {
-    // 获取所有教室信息
-    classrooms.value = await fetchRooms();
-    console.log(classrooms.value)
-    
-    // 遍历教室，并为每个教室获取课程列表
-    for (const classroom of classrooms.value) {
-      const courseList = await fetchCourseListForRoom(classroom.id);
-      // 将获取到的课程列表赋值给当前教室的courseList属性
-      classroom.courseList = courseList;
-    }
-
-    // 将获取到的教室信息赋值给响应式数据classrooms
-    //classrooms.value = allRooms;
-  } catch (error) {
-    console.error('获取教室或课程列表时出错:', error);
-  }
+onMounted(() => {
+  fetchData();
+  
 });
-  </script>
+
+// 监听searchParams变化，自动触发数据加载
+//watchEffect(fetchData);
+</script>
+
+<style scoped>
+.classroom-search {
+  /* 样式自定义 */
+}
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+</style>

@@ -317,12 +317,24 @@ const handleApplyCourseClose2 = done => {
 };
 
 const cancelForm = () => {
-    
+
     loading.value = false;
     dialog.value = false;
     clearTimeout(timer);
-    
+
 };
+
+const getStatusText = (status) => {
+    switch (status) {
+        case 1:
+            return '待审核';
+        case 2:
+            return '已通过';
+        case 3:
+            return '已驳回';
+    }
+}
+
 </script>
 
 
@@ -347,6 +359,7 @@ const cancelForm = () => {
                     <el-option label="待审核" value="1" />
                     <el-option label="已通过" value="2" />
                     <el-option label="已驳回" value="3" />
+                    <el-option label="全部" value="" />
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -358,7 +371,11 @@ const cancelForm = () => {
         <el-table :data="dataList" style="width: 100%">
             <el-table-column prop="courseNumber" label="课程编号" width="180" />
             <el-table-column prop="courseName" label="课程名称" />
-            <el-table-column prop="courseStatus" label="审核状态" />
+            <el-table-column label="审核状态">
+                <template v-slot="{ row }">
+                    <span>{{ getStatusText(row.courseStatus) }}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="courseStorage" label="课容量" />
             <el-table-column prop="courseHour" label="课时数" />
             <el-table-column prop="teachers" label="授课教师" />
@@ -474,7 +491,7 @@ const cancelForm = () => {
             <div class="demonstration"></div>
             <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize" :page-sizes="[1, 10, 15, 20]"
                 :small="small" :disabled="disabled" :background="background"
-                layout="total, sizes, prev, pager, next, jumper" :total="60" @size-change="handleSizeChange"
+                layout="total, sizes, prev, pager, next, jumper" :total="totalLine" @size-change="handleSizeChange"
                 @current-change="handleCurrentChange" />
         </div>
     </el-card>

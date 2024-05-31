@@ -34,12 +34,13 @@
   <script setup lang="ts">
   //import { Course } from '@/models/Course';
   
-  const props= defineProps<{ courses: rawCourse[] }>();
+  let props= defineProps<{ courses: rawCourse[] }>();
   import { computed } from 'vue';
     import { ElTable, ElTableColumn ,ElSelect} from 'element-plus';
     import { getCourseList } from '@/api/courseList';
     import request from '@/util/request';
     import { ref,onMounted } from 'vue';
+import axios from 'axios';
 import service from '@/util/request';
 import { defineProps } from 'vue';
     const options = [
@@ -130,37 +131,10 @@ interface rawCourse {
   roomName: string;
 }
 
-// 定义 Data 接口，包含 courseList 数组
-/* interface rawData {
-  courseList: rawCourse[];
-} */
-//rawData:rawData
-// 使用ref创建响应式数据，这里就是多周测试数据
 let rawCourseData = ref<rawCourse[]>([
 ]);
 
-/* // 在组件挂载后调用异步函数获取数据
-async function getRawCourseData() {
-  try {
-    console.log("开始获取")
-    console.log(`/${props.myurl}`)
-    //测试 
-    const response :ResponseData= await service.get("https://mock.apifox.com/m1/4461960-4108146-default/student/course/selected")
-      //const response :ResponseData= await service.get(`${props.myurl}`)
-      //console.log(response)
-      if (response.code === 1 && response.msg === 'success'){
-        rawCourseData.value = response.data as rawCourse[]
-      }
-      else {
-        alert(response)
-      }
-    }
-    catch (error) {
-        console.error(error);
-        //直接处理未知错误 error;
-        alert( error)
-      }
-} */
+
 //处理数据,把后端的数据转化为前端方便的形式
 function processRawData(rawCourseData:rawCourse[]) {
   let courseList  = rawCourseData;
@@ -177,9 +151,6 @@ function processRawData(rawCourseData:rawCourse[]) {
     3: [5, 6], 4: [7, 8], 5: [7, 9], // 下午时间段
     6: [10, 11], 7: [10, 12],        // 晚上时间段
   };
-  console.log(rawCourseData)
-  console.log("--------------")
-  console.log(courseList)
   // 遍历rawCourseData，处理每一门课程的每一个时间点
   courseList.forEach((rawCourse:rawCourse) => {
     [rawCourse.time1, rawCourse.time2, rawCourse.time3].forEach((time) => {
@@ -189,7 +160,6 @@ function processRawData(rawCourseData:rawCourse[]) {
       //const weekIndex = Math.floor(time / 8) - 1; // 周数从0开始
 
       const dayAndType = time / 8;//单双周 + 周几
-      console.log(dayAndType)
       let dayIndex: number;
       if (dayAndType < 7) {
         dayIndex = Math.floor( dayAndType); // 单周的星期几
@@ -198,8 +168,6 @@ function processRawData(rawCourseData:rawCourse[]) {
       } else {
         dayIndex = Math.floor(dayAndType - 14) ; // 单双周都有的课
       }
-      console.log(dayIndex)
-      console.log(time % 8+"time % 8")
       //weekIndex 0-15 dayIndex0-6
       // 根据时间映射关系找到起始和结束时间段
       const [startPeriod, endPeriod] = periodMapping[Math.ceil(time % 8)];
@@ -211,7 +179,6 @@ function processRawData(rawCourseData:rawCourse[]) {
         startPeriod,
         endPeriod,
       };
-      console.log(courseToAdd)
       if(dayAndType<7||dayAndType>=14){
         let weekIndex=rawCourse.startWeek-1
         if(rawCourse.startWeek%2-1===1)weekIndex++
@@ -234,14 +201,32 @@ function processRawData(rawCourseData:rawCourse[]) {
     });
   });
 }
+//监视变化
+import { watch } from 'vue';
+watch(() => props.courses, (newCourses) => {
+    // 更新内部状态或执行渲染逻辑
+    // 获取原始课程数据,取消注释，调用上一个函数并传入参数url
+    for (let i = 0; i < courseSchedule.data.length; i++) {
+    for (let j = 0; j < courseSchedule.data[i].length; j++) {
+      courseSchedule.data[i][j] = []; // 清空第三维数组
+    }
+  }
+
+    console.log("参数改变 新数据")
+    rawCourseData.value=newCourses
+    console.log(rawCourseData.value)
+    //暂时写测试数据
+    
+    // 处理数据并更新课程表
+    processRawData(rawCourseData.value);
+    currentWeekIndex.value=2;
+    currentWeekIndex.value=0;
+  });
 //钩子函数，加载数据
 onMounted(async () => {
   try {
-    console.log("检测到token不为空")
     // 获取原始课程数据,取消注释，调用上一个函数并传入参数url
     rawCourseData.value=props.courses
-    console.log(rawCourseData)
-    console.log(props)
     //暂时写测试数据
     
     // 处理数据并更新课程表
