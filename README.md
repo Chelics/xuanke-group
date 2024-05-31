@@ -1,39 +1,34 @@
-# 选课管理系统
+# SElectU 选课管理系统
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+## 介绍
 
-#### 软件架构
-软件架构说明
+**SElectU**，东南大学的英文简称**SEU**与单词**select**的结合，是一个创新的Web选课系统。它不仅提供了基本的选课功能，还通过高效的并行处理和自动排课技术，为用户带来了前所未有的便捷体验。
 
+## 软件架构
 
-#### 安装教程
+系统采用前后端分离的模式，分为学生、教师、教务三个功能模块。
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+- **后端**：使用**SpringBoot v3.2.5**，遵循MVC架构模式。
+- **前端**：基于**Vue3**，提供直观的用户界面。
 
-#### 使用说明
+## 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+根据登录者身份的不同，登录后可进行的操作也不同：
 
-#### 参与贡献
+- **学生**（用户名以`0`开头）：查看课表，选课、退课，模糊搜索课程。
+- **教师**（用户名以`1`开头）：查看课表，申报课程，查看已申报课程信息。
+- **教务**（用户名以`2`开头）：编辑选课阶段名称和时间，审核课程，查看教室课表。
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+## 特技
 
+1. **安全登录**：使用**JWT令牌**进行身份验证和授权。
+2. **高峰期处理**：利用**CompletableFuture**类和简单的消息队列，通过线程池异步并行处理选课请求。
+3. **自动排课**：对于常用课时数，系统能够自动为课程分配时间和教室。
 
-#### 特技
+## 如何贡献
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+我们欢迎社区成员的贡献！如果您有兴趣帮助改进SElectU，请查看我们的贡献指南。
+
+## 问题追踪
+
+遇到问题或有功能建议？请在我们的问题追踪器中告知我们。

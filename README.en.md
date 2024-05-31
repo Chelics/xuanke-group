@@ -1,36 +1,34 @@
-# 选课管理系统
+# SElectU Course Selection Management System
 
-#### Description
-{**When you're done, you can delete the content in this README and update the file with details for others getting started with your repository**}
+## Introduction
 
-#### Software Architecture
-Software architecture description
+**SElectU**, a blend of **SEU**—the acronym for Southeast University—and the word **select**, is an innovative Web-based course selection system. It not only provides basic course selection features but also brings an unprecedented convenient experience to users through efficient parallel processing and automatic scheduling technologies.
 
-#### Installation
+## Software Architecture
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+The system adopts a front-end and back-end separation model, divided into three functional modules: students, teachers, and academic affairs.
 
-#### Instructions
+- **Back-end**: Utilizes **SpringBoot v3.2.5**, following the MVC architectural pattern.
+- **Front-end**: Based on **Vue3**, it provides an intuitive user interface.
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## User Instructions
 
-#### Contribution
+Depending on the identity of the user logging in, different operations can be performed after logging in:
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+- **Students** (username starting with `0`): View class schedules, enroll in or drop courses, and perform fuzzy searches for courses.
+- **Teachers** (username starting with `1`): View class schedules, declare courses, and view declared course information.
+- **Academic Affairs** (username starting with `2`): Edit the names and times of course selection phases, review courses, and view classroom schedules.
 
+## Features
 
-#### Gitee Feature
+1. **Secure Login**: Identity verification and authorization using **JWT tokens**.
+2. **Peak Time Handling**: Utilizes the **CompletableFuture** class and a simple message queue to asynchronously process course selection requests in parallel through a thread pool.
+3. **Automatic Scheduling**: For commonly used class hours, the system can automatically allocate time and classrooms for courses.
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+## How to Contribute
+
+We welcome contributions from community members! If you are interested in helping to improve SElectU, please check out our contribution guide.
+
+## Issue Tracking
+
+Encountering issues or have feature suggestions? Please let us know in our issue tracker.
