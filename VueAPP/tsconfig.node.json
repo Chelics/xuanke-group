@@ -9,7 +9,8 @@
     "src/main.ts",
     "src/util/request.ts",
     "env.d.ts",
-    "src/stores/auth.ts"
+    "src/stores/auth.ts",
+    "src/*.vue"
   ],
   "compilerOptions": {
     "composite": true,

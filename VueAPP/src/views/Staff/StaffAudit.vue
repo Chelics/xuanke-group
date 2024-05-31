@@ -4,12 +4,12 @@
     <div>
       <section>
         <h2>待审核课程列表</h2>
-        <el-form @submit.prevent="fetchFilteredCourses">
-          <!-- 搜索输入框等其他表单元素... -->
+        <!-- <el-form @submit.prevent="fetchFilteredCourses">
+          搜索输入框等其他表单元素...
           <el-input v-model="courseNameToFetch" placeholder="请输入课程名进行查询（留空以查看全部）" style="width: 500px;"
             @keyup.enter="fetchFilteredCourses" />
           <el-button type="primary" @click="fetchFilteredCourses">{{ getButtonLabel }}</el-button>
-        </el-form>
+        </el-form> -->
         <el-table :data="courses.rows" style="margin-top: 20px;" @selection-change="handleSelectionChange" ref="multipleTable">
           <el-table-column type="selection" align="center" />
 
@@ -195,11 +195,28 @@ onMounted(() => {
 
 // 添加用于控制对话框显示的变量和当前选中的课程信息
 const dialogVisible = ref(false);
-const currentCourse = ref<Course>();
+const currentCourse = ref<Course>({
+    
+  // 定义Course接口以匹配实际数据结构
+  id: -1,
+      courseName: '这是一个防止类型推断的占位对象',
+      type: 0, // 类别：理论课
+      courseNumber: 'string',
+      courseHour: 0, // 课时
+      courseStorage: 0, // 课程容量
+      faculty: 'string',
+      credit: 0, // 学分
+      teacherIds: 'string',
+      classIds: 'string',
+      commitTime: 'string', // 提交时间
+      teachers: [], // 授课教师
+      classes: [] // 班级
+
+});
 
 // 显示课程详情的函数
 const showCourseDetails = (course: Course) => {
-  currentCourse.value = course;
+  currentCourse.value = course as Course;
   dialogVisible.value = true;
 };
 </script>

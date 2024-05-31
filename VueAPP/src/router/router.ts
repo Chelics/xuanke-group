@@ -118,7 +118,7 @@ router.beforeEach(async (to, from, next) => {
         next({ name: 'login' });
     } else if (to.meta.role && authStore.userRole !== to.meta.role) {
         // 如果角色不匹配，可以提示错误或重定向到相应的主页
-        alert(`无权访问当前页面`);
+        //alert(`无权访问当前页面`);
         //next(authStore.userRole === 'student' ? { name: 'StudentHome' } : { name: 'TeacherHome' });
         if (authStore.userRole === 'student') next({ name: 'StudentHome' });
         else if (authStore.userRole === 'teacher') next({ name: 'TeacherHome' });
