@@ -1,6 +1,5 @@
 package com.seu.controller.teacherController;
 
-import com.seu.dto.response.CourseTable;
 import com.seu.pojo.FullCourse;
 import com.seu.pojo.Result;
 import com.seu.service.teacherService.TeacherCourseTableService;
@@ -25,7 +24,6 @@ public class TeacherCourseTableController {
         Integer teacherId = (Integer) claims.get("id");
         log.info("根据ID查询课表,ID:{}",teacherId);
         List<FullCourse> courses= tableService.getCoursesByTeacherId(teacherId);
-        CourseTable courseTable=new CourseTable(courses);
-        return Result.success(courseTable);
+        return Result.success(courses);
     }
 }
